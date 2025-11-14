@@ -19,7 +19,7 @@
   --text-prominent: #f1f5f9;
   --tab-bg: linear-gradient(135deg, #374151, #4b5563);          // Neutral dark gradient for tabs
   --tab-active-bg: #ffffff;   // White background for active tab
-  --tab-active-text: #1e3a8a;  // Darker blue text for active tab (better visibility)
+  --tab-active-text: #000000;  // Black text for active tab (maximum visibility)
   --tab-hover-bg: linear-gradient(135deg, #1e3a8a, #1e40af);    // Dark blue for hover
   --free-bots-bg: linear-gradient(135deg, #ffffff, #f8fafc);    // Light white/gray background for free bots
 }
@@ -783,14 +783,10 @@
       width: auto;
       display: flex;
       justify-content: center;
-      
-      &:not(:first-of-type) {
-        display: none !important;
-      }
     }
 
     .animation {  
-      &__button {  
+      &__button#db-animation {  
         &__run-button {  
           background: linear-gradient(135deg, var(--accent), var(--accent4)) !important;
           box-shadow: 0 4px 16px rgba(30, 64, 175, 0.3);
@@ -806,7 +802,6 @@
             font-size: 13px !important;
             height: auto !important;
             min-height: 40px;
-            white-space: nowrap;
           }
         }  
 
@@ -825,7 +820,6 @@
             font-size: 13px !important;
             height: auto !important;
             min-height: 40px;
-            white-space: nowrap;
           }
         }  
       }  
@@ -865,8 +859,8 @@
 
 .animation__wrapper {
   .animation {
-    &__button {  
-      &__run-button {  
+    &__button#db-animation {
+      &__run-button {
         background: linear-gradient(135deg, var(--accent), var(--accent4)) !important;
         box-shadow: 0 4px 16px rgba(30, 64, 175, 0.3);
         transition: all 0.3s ease;
@@ -875,7 +869,7 @@
           box-shadow: 0 6px 24px rgba(30, 64, 175, 0.4);
           transform: translateY(-2px);
         }
-      }  
+      }
 
       &__stop-button {  
         background: linear-gradient(135deg, var(--brand-red-coral), #dc2626) !important;
@@ -1061,7 +1055,26 @@
   }  
 
   &__run-strategy-wrapper {  
-    display: none !important;
+    inset-inline-end: 1.6rem;  
+    top: 1.6rem;  
+    z-index: 2;  
+
+    @include desktop-screen {  
+      position: absolute;  
+    }  
+
+    .animation {  
+      &__button {  
+        background: linear-gradient(135deg, var(--accent), var(--accent4)) !important;
+        box-shadow: 0 4px 16px rgba(30, 64, 175, 0.3);
+      }  
+
+      &__container {  
+        background: var(--general-main-1);  
+        border: 2px solid rgba(30, 64, 175, 0.2);
+        border-radius: 12px;
+      }  
+    }  
   }  
 
   &__sidebar-wrapper {  
