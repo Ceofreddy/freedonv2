@@ -339,11 +339,12 @@ const AppWrapper = observer(() => {
   useEffect(() => {
     const fetchBots = async () => {
       const botFiles = [
-        "AUTO Under 9 _ Under 3 D.Bot.xml",
-        "Ai-bot ✅.xml",
-        "EPIC 2prediction BOT🤑🥂.xml",
-        "Deriv wizard 1.xml",
-        "Titan v3.xml",
+        "EVEN_MYTH V2.0 .xml",
+        "EVEN_ODD MYTH V1.xml",
+        "Mega_Mind V1👻.xml",
+        "Over_HitnRun🤖.xml",
+        "Under-Pro Bot💫.xml",
+
       ]
       const botPromises = botFiles.map(async (file) => {
         try {
