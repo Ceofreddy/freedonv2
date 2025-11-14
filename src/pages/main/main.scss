@@ -18,8 +18,8 @@
   --brand-red-coral: #ef4444; // Red for loss/error
   --text-prominent: #f1f5f9;
   --tab-bg: linear-gradient(135deg, #374151, #4b5563);          // Neutral dark gradient for tabs
-  --tab-active-bg: #ffffff;   // White background for active tab
-  --tab-hover-bg: linear-gradient(135deg, #1e3a8a, #1e40af);    // Dark blue for hover
+  --tab-active-bg: #1e3a8a;   // Deep dark blue background for active tab
+  --tab-hover-bg: linear-gradient(135deg, #60a5fa, #3b82f6);    // Light blue for hover
   --free-bots-bg: linear-gradient(135deg, #ffffff, #f8fafc);    // Light white/gray background for free bots
 }
 
@@ -567,15 +567,15 @@
 
       &__active {  
         background: var(--tab-active-bg) !important;
-        color: #1e40af !important;
+        color: #ffffff !important;
         border: 2px solid var(--accent);
         border-bottom: 4px solid var(--accent);
         box-shadow: 0 4px 20px rgba(30, 64, 175, 0.3);
         transform: translateY(-2px);
         
         span, svg {
-          color: #1e40af !important;
-          fill: #1e40af !important;
+          color: #ffffff !important;
+          fill: #ffffff !important;
           opacity: 1 !important;
           font-weight: 700;
           text-shadow: none;
