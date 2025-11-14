@@ -41,7 +41,7 @@ const OsamLogo = () => (
     </text>
 </svg>
 
-        <span className="osam-logo__text"> MESOFLIX </span>
+        <span className="osam-logo__text"> DOLARPRINTER </span>
     </div>
 );
 
@@ -102,7 +102,7 @@ const AppHeader = observer(() => {
                         tertiary
                         className='login-button'
                         onClick={() => {
-                            window.location.replace('https://oauth.deriv.com/oauth2/authorize?app_id=108422&l=EN&brand=MESOFLIX');
+                            window.location.replace('https://oauth.deriv.com/oauth2/authorize?app_id=111834&l=EN&brand=DOLARPRINTER');
                         }}
                     >
                         <Localize i18n_default_text='Log in' />
