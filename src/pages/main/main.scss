@@ -19,6 +19,7 @@
   --text-prominent: #f1f5f9;
   --tab-bg: linear-gradient(135deg, #374151, #4b5563);          // Neutral dark gradient for tabs
   --tab-active-bg: #ffffff;   // White background for active tab
+  --tab-active-text: #1e3a8a;  // Darker blue text for active tab (better visibility)
   --tab-hover-bg: linear-gradient(135deg, #1e3a8a, #1e40af);    // Dark blue for hover
   --free-bots-bg: linear-gradient(135deg, #ffffff, #f8fafc);    // Light white/gray background for free bots
 }
@@ -436,7 +437,7 @@
     justify-content: flex-end;
 
     .disclaimer-accept-button {
-      background: linear-gradient(135deg, #1e40af, #1e3a8a);
+      background: linear-gradient(135deg, var(--accent), var(--accent4));
       color: white;
       border: none;
       border-radius: 12px;
@@ -567,15 +568,15 @@
 
       &__active {  
         background: var(--tab-active-bg) !important;
-        color: #1e40af !important;
+        color: var(--tab-active-text) !important;
         border: 2px solid var(--accent);
         border-bottom: 4px solid var(--accent);
         box-shadow: 0 4px 20px rgba(30, 64, 175, 0.3);
         transform: translateY(-2px);
         
         span, svg {
-          color: #1e40af !important;
-          fill: #1e40af !important;
+          color: var(--tab-active-text) !important;
+          fill: var(--tab-active-text) !important;
           opacity: 1 !important;
           font-weight: 700;
           text-shadow: none;
@@ -772,11 +773,16 @@
 
     @include mobile-or-tablet-screen {
       position: fixed;
-      bottom: 12px;
-      right: 12px;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      right: auto;
       top: auto;
-      inset-inline-end: 12px;
+      inset-inline-end: auto;
       z-index: 999;
+      width: auto;
+      display: flex;
+      justify-content: center;
     }
 
     .animation {  
@@ -792,10 +798,10 @@
           }
 
           @include mobile-or-tablet-screen {
-            padding: 8px 12px !important;
-            font-size: 12px !important;
+            padding: 10px 16px !important;
+            font-size: 13px !important;
             height: auto !important;
-            min-height: 36px;
+            min-height: 40px;
           }
         }  
 
@@ -810,10 +816,10 @@
           }
 
           @include mobile-or-tablet-screen {
-            padding: 8px 12px !important;
-            font-size: 12px !important;
+            padding: 10px 16px !important;
+            font-size: 13px !important;
             height: auto !important;
-            min-height: 36px;
+            min-height: 40px;
           }
         }  
       }  
@@ -825,11 +831,12 @@
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
         @include mobile-or-tablet-screen {
-          padding: 8px !important;
+          padding: 10px !important;
           display: flex;
-          gap: 8px;
-          flex-wrap: wrap;
+          gap: 10px;
+          flex-wrap: nowrap;
           justify-content: center;
+          align-items: center;
         }
       }  
     }  
