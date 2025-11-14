@@ -1,6 +1,6 @@
 {
-"name":"MESOFLIX",
-"short_name":"MESOFLIX",
+"name":"DOLARPRINTER",
+"short_name":"DOLARPRINTER",
 "theme_color":"#414652",
 "description":"Trade on your finger prints.",
 "background_color":"#414652",
@@ -14,4 +14,5 @@
  }
    ]
 }
+
 
