@@ -9,7 +9,7 @@ import './app-root.scss';
 
 const AppContent = lazy(() => import('./app-content'));
 
-const TypingMesoflix = ({text = "mesoflix", speed = 150}) => {
+const TypingMesoflix = ({text = "DOLARPRINTER", speed = 150}) => {
     const [displayed, setDisplayed] = useState("");
     useEffect(() => {
         let i = 0;
