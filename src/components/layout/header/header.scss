@@ -3,12 +3,12 @@
 
 // OSAM Trading Hub Blue theme color variables
 :root {
-    --osam-blue: #1769aa;
-    --osam-blue-hover: #114a7d;
-    --osam-light-blue: #5eb8ff;
-    --osam-light-blue-hover: #48a6ea;
-    --osam-accent: #1e90ff;
-    --osam-shadow: rgba(23, 105, 170, 0.25);
+    --osam-blue: #1e3a8a;
+    --osam-blue-hover: #1e40af;
+    --osam-light-blue: #3b82f6;
+    --osam-light-blue-hover: #2563eb;
+    --osam-accent: #1d4ed8;
+    --osam-shadow: rgba(30, 58, 138, 0.25);
 }
 
 .osam-logo {
@@ -45,7 +45,7 @@
     }
 
     &:hover &__svg {
-        filter: drop-shadow(0 8px 25px rgba(30, 144, 255, 0.4));
+        filter: drop-shadow(0 8px 25px rgba(30, 58, 138, 0.4));
     }
 
     &__text {
@@ -54,7 +54,7 @@
         font-size: 1.5rem;
         color: var(--osam-blue);
         letter-spacing: 0.09em;
-        text-shadow: 0 2px 8px rgba(94, 184, 255, 0.13);
+        text-shadow: 0 2px 8px rgba(59, 130, 246, 0.13);
         user-select: none;
 
         @include mobile-or-tablet-screen {
@@ -90,7 +90,7 @@
 
     &:hover,
     &:focus {
-        background: rgba(23, 105, 170, 0.07);
+        background: rgba(30, 58, 138, 0.07);
         border-radius: 50%;
     }
 
@@ -118,7 +118,7 @@
     justify-content: center;
     border: 2px solid #fff;
     z-index: 1;
-    box-shadow: 0 2px 8px rgba(23, 105, 170, 0.10);
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.10);
     pointer-events: none;
 }
 
@@ -145,7 +145,7 @@
     position: relative;
     background: #fff;
     border-radius: 18px;
-    box-shadow: 0 10px 32px rgba(23, 105, 170, 0.16);
+    box-shadow: 0 10px 32px rgba(30, 58, 138, 0.16);
     max-width: 420px;
     width: 92vw;
     max-height: 78vh;
@@ -255,9 +255,22 @@
             &:hover {
                 background: linear-gradient(135deg, var(--osam-blue-hover), var(--osam-blue));
                 transform: translateY(-2px);
-                box-shadow: 0 6px 16px rgba(23, 105, 170, 0.4);
+                box-shadow: 0 6px 16px rgba(30, 58, 138, 0.4);
             }
         }
+    }
+}
+
+.account-switcher,
+.app-header__account-switcher {
+    background: #ffffff !important;
+    border: 1px solid rgba(30, 58, 138, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    
+    &:hover {
+        background: rgba(59, 130, 246, 0.05) !important;
+        border-color: var(--osam-blue);
     }
 }
 
