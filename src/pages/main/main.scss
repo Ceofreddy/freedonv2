@@ -19,7 +19,6 @@
   --text-prominent: #f1f5f9;
   --tab-bg: linear-gradient(135deg, #374151, #4b5563);          // Neutral dark gradient for tabs
   --tab-active-bg: #ffffff;   // White background for active tab
-  --tab-active-text: #000000;  // Black text for active tab (maximum visibility)
   --tab-hover-bg: linear-gradient(135deg, #1e3a8a, #1e40af);    // Dark blue for hover
   --free-bots-bg: linear-gradient(135deg, #ffffff, #f8fafc);    // Light white/gray background for free bots
 }
@@ -437,7 +436,7 @@
     justify-content: flex-end;
 
     .disclaimer-accept-button {
-      background: linear-gradient(135deg, var(--accent), var(--accent4));
+      background: linear-gradient(135deg, #1e40af, #1e3a8a);
       color: white;
       border: none;
       border-radius: 12px;
@@ -568,15 +567,15 @@
 
       &__active {  
         background: var(--tab-active-bg) !important;
-        color: var(--tab-active-text) !important;
+        color: #1e40af !important;
         border: 2px solid var(--accent);
         border-bottom: 4px solid var(--accent);
         box-shadow: 0 4px 20px rgba(30, 64, 175, 0.3);
         transform: translateY(-2px);
         
         span, svg {
-          color: var(--tab-active-text) !important;
-          fill: var(--tab-active-text) !important;
+          color: #1e40af !important;
+          fill: #1e40af !important;
           opacity: 1 !important;
           font-weight: 700;
           text-shadow: none;
@@ -773,16 +772,11 @@
 
     @include mobile-or-tablet-screen {
       position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      right: auto;
+      bottom: 12px;
+      right: 12px;
       top: auto;
-      inset-inline-end: auto;
+      inset-inline-end: 12px;
       z-index: 999;
-      width: auto;
-      display: flex;
-      justify-content: center;
     }
 
     .animation {  
@@ -798,10 +792,10 @@
           }
 
           @include mobile-or-tablet-screen {
-            padding: 10px 16px !important;
-            font-size: 13px !important;
+            padding: 8px 12px !important;
+            font-size: 12px !important;
             height: auto !important;
-            min-height: 40px;
+            min-height: 36px;
           }
         }  
 
@@ -816,10 +810,10 @@
           }
 
           @include mobile-or-tablet-screen {
-            padding: 10px 16px !important;
-            font-size: 13px !important;
+            padding: 8px 12px !important;
+            font-size: 12px !important;
             height: auto !important;
-            min-height: 40px;
+            min-height: 36px;
           }
         }  
       }  
@@ -831,12 +825,11 @@
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 
         @include mobile-or-tablet-screen {
-          padding: 10px !important;
+          padding: 8px !important;
           display: flex;
-          gap: 10px;
-          flex-wrap: nowrap;
+          gap: 8px;
+          flex-wrap: wrap;
           justify-content: center;
-          align-items: center;
         }
       }  
     }  
