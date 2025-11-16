@@ -139,11 +139,7 @@
   box-shadow: var(--shadow-md);
 }
 
-.symbolSelect:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
+/* Added styling for optgroup labels for better category visibility */
 .symbolSelect optgroup {
   font-weight: bold;
   color: var(--accent-primary);
@@ -195,6 +191,7 @@
   border-radius: 2px;
 }
 
+/* Improved responsive digit grid with better mobile support */
 .digitGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
@@ -218,6 +215,7 @@
   animation: pulse 1s ease-in-out infinite;
 }
 
+/* Improved circle wrapper for better responsiveness across devices */
 .digitCircleWrapper {
   position: relative;
   width: clamp(70px, 12vw, 100px);
@@ -268,6 +266,7 @@
   text-shadow: 0 0 16px rgba(239, 68, 68, 0.6);
 }
 
+/* Enhanced percentage styling for crystal clear visibility */
 .digitPercentage {
   font-size: clamp(12px, 2vw, 15px);
   font-weight: 700;
