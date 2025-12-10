@@ -340,7 +340,7 @@ const AppWrapper = observer(() => {
     const fetchBots = async () => {
       const botFiles = [
         "ODD_Autobot.xml",
-        "ODD_Autobot (1).xml",
+        "EVEN_Autobot.xml",
         "OVER_UNDER AUTOBOT.xml",
         "Over 3 strategybot.xml",
         "EVEN_MYTH V2.0 .xml",
