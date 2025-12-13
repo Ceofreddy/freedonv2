@@ -339,7 +339,7 @@ const AppWrapper = observer(() => {
   useEffect(() => {
     const fetchBots = async () => {
       const botFiles = [
-        "Osam_Digit_Switcher🤖🤖.xml",
+        "Osam_Digit_Switcher🤖🤖 (1).xml",
         "AUTO C4 VOLT 🇬🇧 2 🇬🇧 AI PREMIUM ROBOT 💯.xml",
         "THE BINOTEK 5 - 2025🥇.xml",
         "FREEDON 🥇OVER PRO BOT 💫.xml",
