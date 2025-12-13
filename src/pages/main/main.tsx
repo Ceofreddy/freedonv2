@@ -312,10 +312,10 @@ const AppWrapper = observer(() => {
   const { isDesktop, isMobile } = useDevice()
   const [bots, setBots] = useState([])
   const [showDisclaimer, setShowDisclaimer] = useState(false)
-  const analysisUrl = "https://mesoflixldpnew.vercel.app/"
+  const analysisUrl = "https://mesoflxadvanced.netlify.app/"
   const mtoolUrl = "https://your-mtool-url.com/"
   const strategyUrl = "https://mesoflixstrategies.netlify.app/"
-  const toolsUrl = "https://alltools-ten.vercel.app/"
+  const toolsUrl = "https://whatsapp.com/channel/0029Vb6FiCw8vd1HDvva2i2K"
 
   useEffect(() => {
     const tabLetter = getTabLetterFromUrl()
