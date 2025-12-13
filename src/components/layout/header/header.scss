@@ -3,12 +3,12 @@
 
 // OSAM Trading Hub Blue theme color variables
 :root {
-    --osam-blue: #1e3a8a;
-    --osam-blue-hover: #1e40af;
-    --osam-light-blue: #3b82f6;
-    --osam-light-blue-hover: #2563eb;
-    --osam-accent: #1d4ed8;
-    --osam-shadow: rgba(30, 58, 138, 0.25);
+    --osam-blue: #D4AF37;
+    --osam-blue-hover: #E6C869;
+    --osam-light-blue: #D4AF37;
+    --osam-light-blue-hover: #C5A030;
+    --osam-accent: #D4AF37;
+    --osam-shadow: rgba(212, 175, 55, 0.25);
 }
 
 .osam-logo {
@@ -38,6 +38,7 @@
             width: 36px;
             height: 36px;
         }
+
         @media (max-width: 360px) {
             width: 28px;
             height: 28px;
@@ -60,6 +61,7 @@
         @include mobile-or-tablet-screen {
             font-size: 1.2rem;
         }
+
         @media (max-width: 360px) {
             font-size: 1rem;
         }
@@ -137,15 +139,21 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .notifications__popup {
     position: relative;
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 10px 32px rgba(30, 58, 138, 0.16);
+    background: #16161D;
+    color: #EDEDED;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    box-shadow: 0 10px 32px rgba(212, 175, 55, 0.16);
     max-width: 420px;
     width: 92vw;
     max-height: 78vh;
@@ -166,8 +174,15 @@
 }
 
 @keyframes popupEnter {
-    from { transform: scale(0.95) translateY(10px); opacity: 0; }
-    to   { transform: scale(1) translateY(0); opacity: 1; }
+    from {
+        transform: scale(0.95) translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
 }
 
 .notifications__close {
@@ -194,7 +209,7 @@
     height: 64vh;
     border-radius: 12px;
     border: none;
-    background: #f7f7f7;
+    background: #0E0E11;
 
     @include mobile-or-tablet-screen {
         height: 57vh;
@@ -206,6 +221,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+
     @include mobile-or-tablet-screen {
         gap: 8px;
     }
@@ -263,11 +279,11 @@
 
 .account-switcher,
 .app-header__account-switcher {
-    background: #ffffff !important;
-    border: 1px solid rgba(30, 58, 138, 0.2);
+    background: #16161D !important;
+    border: 1px solid rgba(212, 175, 55, 0.2);
     border-radius: 8px;
     padding: 0.5rem 1rem;
-    
+
     &:hover {
         background: rgba(59, 130, 246, 0.05) !important;
         border-color: var(--osam-blue);
@@ -279,14 +295,29 @@
     .left-section {
         flex-direction: row;
         gap: 8px;
-        > :nth-child(1) { order: 1; } /* MobileMenu */
-        > :nth-child(2) { order: 2; } /* Logo */
-        > :nth-child(3) { order: 3; } /* AppLogo */
+
+        > :nth-child(1) {
+            order: 1;
+        }
+
+        /* MobileMenu */
+        > :nth-child(2) {
+            order: 2;
+        }
+
+        /* Logo */
+        > :nth-child(3) {
+            order: 3;
+        }
+
+        /* AppLogo */
     }
+
     .osam-logo__svg {
         width: 36px;
         height: 36px;
     }
+
     .osam-logo__text {
         font-size: 1.2rem;
     }
@@ -295,9 +326,11 @@
 @media (max-width: 360px) {
     .auth-actions {
         gap: 6px;
+
         button {
             padding: 0.4rem 0.7rem;
             font-size: 0.75rem;
+
             svg {
                 width: 12px;
                 height: 12px;
@@ -305,10 +338,12 @@
             }
         }
     }
+
     .osam-logo__svg {
         width: 28px;
         height: 28px;
     }
+
     .osam-logo__text {
         font-size: 1rem;
     }

@@ -46,8 +46,8 @@ const FreeBotsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="url(#grad1)" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" stopOpacity="1" />
-        <stop offset="100%" stopColor="#1e40af" stopOpacity="1" />
+        <stop offset="0%" stopColor="#D4AF37" stopOpacity="1" />
+        <stop offset="100%" stopColor="#E6C869" stopOpacity="1" />
       </linearGradient>
     </defs>
     <rect x="4" y="6" width="16" height="12" rx="3" fill="url(#grad1)" />
@@ -63,8 +63,8 @@ const BotSettingsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="url(#grad1)" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" />
-        <stop offset="100%" stopColor="#1e40af" />
+        <stop offset="0%" stopColor="#D4AF37" />
+        <stop offset="100%" stopColor="#E6C869" />
       </linearGradient>
     </defs>
     <path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.03-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.65l-2-3.46a.5.5 0 0 0-.61-.21l-2.49 1a7.03 7.03 0 0 0-1.69-.98l-.38-2.65A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.42l-.38 2.65a7.03 7.03 0 0 0-1.69.98l-2.49-1a.5.5 0 0 0-.61.21l-2 3.46a.5.5 0 0 0 .12.65l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65a.5.5 0 0 0-.12.65l2 3.46a.5.5 0 0 0 .61.21l2.49-1c.5.4 1.07.73 1.69.98l.38 2.65A.5.5 0 0 0 10 22h4c.25 0 .46-.18.5-.42l.38-2.65c.62-.25 1.19-.58 1.69-.98l2.49 1a.5.5 0 0 0 .61-.21l2-3.46a.5.5 0 0 0-.12-.65l-2.11-1.65zM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5z" />
@@ -75,8 +75,8 @@ const ChartsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="url(#grad1)" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" />
-        <stop offset="100%" stopColor="#1e40af" />
+        <stop offset="0%" stopColor="#D4AF37" />
+        <stop offset="100%" stopColor="#E6C869" />
       </linearGradient>
     </defs>
     <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="url(#grad1)" strokeWidth="2" />
@@ -99,8 +99,8 @@ const DCirclesIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" />
-        <stop offset="100%" stopColor="#1e40af" />
+        <stop offset="0%" stopColor="#D4AF37" />
+        <stop offset="100%" stopColor="#E6C869" />
       </linearGradient>
     </defs>
     <path d="M12 2a10 10 0 1 1-7.07 2.93" fill="none" stroke="url(#grad1)" strokeWidth="2.5" strokeLinecap="round" />
@@ -114,8 +114,8 @@ const MToolIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="gradMTool" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" />
-        <stop offset="100%" stopColor="#1e40af" />
+        <stop offset="0%" stopColor="#D4AF37" />
+        <stop offset="100%" stopColor="#E6C869" />
       </linearGradient>
     </defs>
     <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="url(#gradMTool)" strokeWidth="2" />
@@ -139,8 +139,8 @@ const AnalysisToolIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" />
-        <stop offset="100%" stopColor="#1e40af" />
+        <stop offset="0%" stopColor="#D4AF37" />
+        <stop offset="100%" stopColor="#E6C869" />
       </linearGradient>
     </defs>
     <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="url(#grad1)" strokeWidth="2" />
@@ -156,13 +156,13 @@ const ToolsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M12 2.5L13.5 4.5L16 4L17 6.5L19.5 7.5L19 10L21.5 12L19 14L19.5 16.5L17 17.5L16 20L13.5 19.5L12 21.5L10.5 19.5L8 20L7 17.5L4.5 16.5L5 14L2.5 12L5 10L4.5 7.5L7 6.5L8 4L10.5 4.5L12 2.5Z"
-      stroke="#1e40af"
+      stroke="#D4AF37"
       strokeWidth="2"
       strokeLinejoin="round"
     />
     <path
       d="M9 15L12 12M12 12C13.1 12 14 11.1 14 10C14 8.9 13.1 8 12 8C10.9 8 10 8.9 10 10C10 10.55 10.45 11 11 11"
-      stroke="#1e40af"
+      stroke="#D4AF37"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -174,8 +174,8 @@ const CopyTradingIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" />
-        <stop offset="100%" stopColor="#1e40af" />
+        <stop offset="0%" stopColor="#D4AF37" />
+        <stop offset="100%" stopColor="#E6C869" />
       </linearGradient>
     </defs>
     <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="url(#grad1)" strokeWidth="2" />
@@ -188,7 +188,7 @@ const StrategyIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" />
+        <stop offset="0%" stopColor="#D4AF37" />
         <stop offset="100%" stopColor="#1e40af" />
       </linearGradient>
     </defs>
@@ -209,8 +209,8 @@ const SignalsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#1e3a8a" />
-        <stop offset="100%" stopColor="#1e40af" />
+        <stop offset="0%" stopColor="#D4AF37" />
+        <stop offset="100%" stopColor="#E6C869" />
       </linearGradient>
     </defs>
     <rect x="3" y="4" width="18" height="14" rx="2" ry="2" fill="none" stroke="url(#blueGrad)" strokeWidth="2" />
@@ -230,19 +230,19 @@ const TutorialsIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M4 5C4 4.447 4.447 4 5 4H15C16.105 4 17 4.895 17 6V20C17 20.553 16.553 21 16 21H6C4.895 21 4 20.105 4 19V5Z"
-      stroke="#1e40af"
+      stroke="#D4AF37"
       strokeWidth="2"
       fill="none"
       strokeLinejoin="round"
     />
     <path
       d="M17 6H19C20.105 6 21 6.895 21 8V20C21 20.553 20.553 21 20 21H17"
-      stroke="#1e40af"
+      stroke="#D4AF37"
       strokeWidth="2"
       fill="none"
       strokeLinejoin="round"
     />
-    <circle cx="10" cy="12" r="3" fill="#1e40af" />
+    <circle cx="10" cy="12" r="3" fill="#D4AF37" />
     <polygon points="9,10.5 12,12 9,13.5" fill="white" />
   </svg>
 )
