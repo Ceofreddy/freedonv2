@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 100 100">
+    <defs>
+        <linearGradient id="freedonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#00d2ff" />
+            <stop offset="100%" stopColor="#3a7bd5" />
+        </linearGradient>
+        <filter id="glow">
+            <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    <rect width="100" height="100" fill="#050505" />
+    <path 
+        d="M 20 20 H 80 L 80 30 H 35 L 35 45 H 70 L 70 55 H 35 L 35 80 H 20 Z" 
+        fill="url(#freedonGrad)" 
+        stroke="#ffffff" 
+        stroke-width="2"
+        filter="url(#glow)" 
+    />
+    <path 
+        d="M 50 20 H 80 C 100 20 100 80 80 80 H 50 Z" 
+        fill="none" 
+        stroke="url(#freedonGrad)" 
+        stroke-width="4" 
+        stroke-dasharray="10 5"
+        opacity="0.5"
+    />
+</svg>

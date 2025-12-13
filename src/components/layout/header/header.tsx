@@ -16,33 +16,7 @@ import AccountSwitcher from './account-switcher';
 import MobileMenu from './mobile-menu';
 import './header.scss';
 import React, { useState } from 'react';
-
-const OsamLogo = () => (
-    <div className="osam-logo" title="OSAM Trading Hub">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="26" viewBox="0 0 160 160">
-            <defs>
-                <linearGradient id="fxg" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#D4AF37" />
-                    <stop offset="50%" stopColor="#E6C869" />
-                    <stop offset="100%" stopColor="#C5A030" />
-                </linearGradient>
-            </defs>
-            <circle cx="80" cy="80" r="70" fill="url(#fxg)" />
-            <circle cx="80" cy="80" r="70" fill="none" stroke="#EDEDED" strokeWidth="4" strokeOpacity="0.9" />
-            <line x1="55" y1="50" x2="55" y2="105" stroke="#FFFFFF" strokeWidth="3" />
-            <rect x="49" y="70" width="12" height="25" rx="2" fill="#FFFFFF" />
-            <line x1="80" y1="45" x2="80" y2="100" stroke="#FFFFFF" strokeWidth="3" />
-            <rect x="74" y="65" width="12" height="25" rx="2" fill="#FFFFFF" />
-            <line x1="105" y1="55" x2="105" y2="110" stroke="#FFFFFF" strokeWidth="3" />
-            <rect x="99" y="75" width="12" height="25" rx="2" fill="#FFFFFF" />
-            <text x="80" y="135" textAnchor="middle" fontFamily="Poppins, Segoe UI, sans-serif" fontWeight="700" fontSize="10" fill="white" opacity="0.95">
-                MESOFLIX
-            </text>
-        </svg>
-
-        <span className="osam-logo__text"> DOLARPRINTER </span>
-    </div>
-);
+import FreedonLogo from '@/components/shared/freedon-logo';
 
 const AppHeader = observer(() => {
     const { isDesktop } = useDevice();
@@ -101,7 +75,7 @@ const AppHeader = observer(() => {
                         tertiary
                         className='login-button'
                         onClick={() => {
-                            window.location.replace('https://oauth.deriv.com/oauth2/authorize?app_id=111834&l=EN&brand=DOLARPRINTER');
+                            window.location.replace('https://oauth.deriv.com/oauth2/authorize?app_id=111834&l=EN&brand=Freedon');
                         }}
                     >
                         <Localize i18n_default_text='Log in' />
@@ -132,13 +106,19 @@ const AppHeader = observer(() => {
                     {!isDesktop && (
                         <>
                             <MobileMenu />
-                            <OsamLogo />
+                            <div className="osam-logo" title="Freedon">
+                                <FreedonLogo />
+                                <span className="osam-logo__text"> FREEDON </span>
+                            </div>
                             <AppLogo />
                         </>
                     )}
                     {isDesktop && (
                         <>
-                            <OsamLogo />
+                            <div className="osam-logo" title="Freedon">
+                                <FreedonLogo />
+                                <span className="osam-logo__text"> FREEDON </span>
+                            </div>
                         </>
                     )}
                 </div>
