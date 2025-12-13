@@ -339,16 +339,13 @@ const AppWrapper = observer(() => {
   useEffect(() => {
     const fetchBots = async () => {
       const botFiles = [
-        "ODD_Autobot.xml",
-        "EVEN_Autobot.xml",
-        "OVER_UNDER AUTOBOT.xml",
-        "Over 3 strategybot.xml",
-        "EVEN_MYTH V2.0 .xml",
-        "EVEN_ODD MYTH V1.xml",
-        "Mega_Mind V1👻.xml",
-        "Over_HitnRun🤖.xml",
-        "Under-Pro Bot💫.xml",
-
+        "Osam_Digit_Switcher🤖🤖.xml",
+        "AUTO C4 VOLT 🇬🇧 2 🇬🇧 AI PREMIUM ROBOT 💯.xml",
+        "THE BINOTEK 5 - 2025🥇.xml",
+        "FREEDON 🥇OVER PRO BOT 💫.xml",
+        "ENHANCED AUTO C4 VOLT 🇬🇧 3 🇬🇧 AI PREMIUM 🤖   (3) PASS: Ac4@Volt.xml",
+        "EXPERT TRADER BOT NV  (1).xml",
+        "WALLSTREET_AUTO_C4_PRO_2025 2.0.xml",
       ]
       const botPromises = botFiles.map(async (file) => {
         try {
