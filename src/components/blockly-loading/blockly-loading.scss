@@ -1,12 +1,42 @@
-.bot {
-    &__loading {
-        position: fixed;
-        z-index: 99999;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: var(--overlay-outside-dialog);
-        pointer-events: none;
+.bot__loading {
+    position: fixed;
+    z-index: 99999;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #0E0E11;
+    /* Deep Charcoal */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: #00d2ff;
+    font-family: 'Consolas', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    pointer-events: none;
+
+    .tech-spinner.small {
+        width: 40px;
+        height: 40px;
+        border: 2px solid transparent;
+        border-top: 2px solid #00d2ff;
+        border-right: 2px solid #3a7bd5;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }

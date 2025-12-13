@@ -27,22 +27,28 @@ import './app.scss';
 import 'react-toastify/dist/ReactToastify.css';
 import '../components/bot-notification/bot-notification.scss';
 
-// LoadingDots component
-const LoadingDots = () => {
-    const [dots, setDots] = React.useState('');
-    useEffect(() => {
-        let count = 0;
-        const timer = setInterval(() => {
-            setDots((prev) => (prev.length < 3 ? prev + '.' : ''));
-            count++;
-            if (count > 15) clearInterval(timer); // ~2s max
-        }, 120);
-        return () => clearInterval(timer);
-    }, []);
+import FreedonLogo from '@/components/shared/freedon-logo';
+
+const MarketLoader = () => {
     return (
-        <div className="loading-dots-content">
-            <div className="loading-dots-spinner"></div>
-            <div className="loading-dots-text">Loading<span>{dots}</span></div>
+        <div className="market-loader-content">
+            <div className="market-loader-container">
+                <div className="radar-scan"></div>
+                <div className="logo-wrapper">
+                    <FreedonLogo className="market-loader-logo" />
+                </div>
+            </div>
+            <div className="market-loader-status">
+                <h3 className="status-title">CONNECTING TO MARKETS</h3>
+                <div className="status-steps">
+                    <div className="step active">Syncing APIs...</div>
+                    <div className="step">Loading Assets...</div>
+                    <div className="step">Establishing Feed...</div>
+                </div>
+                <div className="connection-bar">
+                    <div className="connection-progress"></div>
+                </div>
+            </div>
         </div>
     );
 };
@@ -198,7 +204,7 @@ const AppContent = observer(() => {
     if (common?.error) return null;
 
     return is_loading ? (
-        <LoadingDots />
+        <MarketLoader />
     ) : (
         <>
             <ThemeProvider theme={is_dark_mode_on ? 'dark' : 'light'}>
