@@ -343,7 +343,7 @@ const AppWrapper = observer(() => {
         "AUTO C4 VOLT 🇬🇧 2 🇬🇧 AI PREMIUM ROBOT 💯.xml",
         "THE BINOTEK 5 - 2025🥇.xml",
         "FREEDON 🥇OVER PRO BOT 💫.xml",
-        "ENHANCED AUTO C4 VOLT 🇬🇧 3 🇬🇧 AI PREMIUM 🤖   (3) PASS: Ac4@Volt.xml",
+        "ENHANCED AUTO C4 VOLT 🇬🇧 3 🇬🇧 AI PREMIUM 🤖   (3) PASS_ Ac4@Volt (1).xml",
         "EXPERT TRADER BOT NV  (1).xml",
         "WALLSTREET_AUTO_C4_PRO_2025 2.0.xml",
       ]
