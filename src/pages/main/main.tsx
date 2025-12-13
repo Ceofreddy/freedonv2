@@ -448,7 +448,7 @@ const AppWrapper = observer(() => {
                 {/* Social Media Icons */}
                 <div className="social-media-container">
                   <a
-                    href="https://youtube.com/"
+                    href="https://www.youtube.com/@Ceofredrick"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="social-icon youtube-icon"
@@ -456,7 +456,7 @@ const AppWrapper = observer(() => {
                     <YouTubeIcon />
                   </a>
                   <a
-                    href="https://www.instagram.com/"
+                    href="https://www.instagram.com/ceofredrick?igsh=bHRteGFhbzJicmhv"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="social-icon instagram-icon"
@@ -464,7 +464,7 @@ const AppWrapper = observer(() => {
                     <InstagramIcon />
                   </a>
                   <a
-                    href="https://whatsapp.com/"
+                    href="https://whatsapp.com/channel/0029Vb6FiCw8vd1HDvva2i2K"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="social-icon whatsapp-icon"
@@ -472,7 +472,7 @@ const AppWrapper = observer(() => {
                     <WhatsAppIcon />
                   </a>
                   <a
-                    href="https://www.tiktok.com/"
+                    href="https://www.tiktok.com/@ceofredrickofficial?_t=ZM-8yyeVE2Mo7S&_r=1"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="social-icon tiktok-icon"
@@ -480,7 +480,7 @@ const AppWrapper = observer(() => {
                     <TikTokIcon />
                   </a>
                   <a
-                    href="https://t.me/"
+                    href="https://t.me/+7WdulCdgeFQxOWQ0"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="social-icon telegram-icon"
