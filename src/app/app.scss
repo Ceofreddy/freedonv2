@@ -51,8 +51,8 @@ strong {
     justify-content: center;
     min-height: 100vh;
     width: 100vw;
-    background: #0E0E11; // Deep Charcoal
-    color: #EDEDED;
+    background: #0e0e11; // Deep Charcoal
+    color: #ededed;
     font-family: 'Consolas', 'Monaco', monospace;
     position: fixed;
     top: 0;
@@ -120,7 +120,7 @@ strong {
 
         .step {
             &.active {
-                color: #EDEDED;
+                color: #ededed;
             }
         }
     }
@@ -128,7 +128,7 @@ strong {
     .connection-bar {
         width: 250px;
         height: 2px;
-        background: #16161D;
+        background: #16161d;
         margin: 0 auto;
         border-radius: 1px;
         overflow: hidden;

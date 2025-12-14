@@ -158,24 +158,6 @@ const AnalysisToolIcon = () => (
     </svg>
 );
 
-const ToolsIcon = () => (
-    <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-        <path
-            d='M12 2.5L13.5 4.5L16 4L17 6.5L19.5 7.5L19 10L21.5 12L19 14L19.5 16.5L17 17.5L16 20L13.5 19.5L12 21.5L10.5 19.5L8 20L7 17.5L4.5 16.5L5 14L2.5 12L5 10L4.5 7.5L7 6.5L8 4L10.5 4.5L12 2.5Z'
-            stroke='#D4AF37'
-            strokeWidth='2'
-            strokeLinejoin='round'
-        />
-        <path
-            d='M9 15L12 12M12 12C13.1 12 14 11.1 14 10C14 8.9 13.1 8 12 8C10.9 8 10 8.9 10 10C10 10.55 10.45 11 11 11'
-            stroke='#D4AF37'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-        />
-    </svg>
-);
-
 const CopyTradingIcon = () => (
     <svg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
         <defs>
@@ -299,6 +281,24 @@ const TelegramIcon = () => (
     </svg>
 );
 
+const PremiumBadgeIcon = () => (
+    <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+        <defs>
+            <linearGradient id='gradPremium' x1='0%' y1='0%' x2='100%' y2='100%'>
+                <stop offset='0%' stopColor='#FFD700' />
+                <stop offset='100%' stopColor='#FDB931' />
+            </linearGradient>
+        </defs>
+        <path
+            d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z'
+            fill='url(#gradPremium)'
+            stroke='#B8860B'
+            strokeWidth='1'
+        />
+        <circle cx='12' cy='12' r='3' fill='rgba(255,255,255,0.2)' />
+    </svg>
+);
+
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
     const { dashboard, load_modal, run_panel, summary_card } = useStore();
@@ -320,7 +320,6 @@ const AppWrapper = observer(() => {
     const [showDisclaimer, setShowDisclaimer] = useState(false);
     const analysisUrl = 'https://mesoflxadvanced.netlify.app/';
     const strategyUrl = 'https://mesoflixstrategies.netlify.app/';
-    const toolsUrl = 'https://whatsapp.com/channel/0029Vb6FiCw8vd1HDvva2i2K';
 
     useEffect(() => {
         const tabLetter = getTabLetterFromUrl();
@@ -490,7 +489,8 @@ const AppWrapper = observer(() => {
                                         <TelegramIcon />
                                     </a>
                                 </div>
-                                <div className='free-bots__content-wrapper'>
+                                {/* Additional padding-bottom for responsiveness */}
+                                <div className='free-bots__content-wrapper' style={{ paddingBottom: '100px' }}>
                                     {/* Premium Bots Section */}
                                     <div className='premium-bots-section' style={{ marginBottom: '2rem' }}>
                                         <h3
@@ -505,51 +505,76 @@ const AppWrapper = observer(() => {
                                                 padding: '0 1rem',
                                             }}
                                         >
-                                            <BotSettingsIcon />
+                                            <PremiumBadgeIcon />
                                             Premium Bots
                                         </h3>
                                         <div className='free-bots__content'>
                                             <div
                                                 className='free-bot-item'
                                                 style={{
-                                                    border: '1px solid rgba(212, 175, 55, 0.5)',
-                                                    background:
-                                                        'linear-gradient(145deg, rgba(20, 20, 20, 0.9), rgba(0, 0, 0, 0.9))',
-                                                    boxShadow: '0 4px 15px rgba(212, 175, 55, 0.1)',
+                                                    border: '1px solid rgba(212, 175, 55, 0.4)',
+                                                    background: 'linear-gradient(135deg, #111 0%, #222 100%)',
+                                                    boxShadow: '0 8px 32px 0 rgba(212, 175, 55, 0.2)',
+                                                    borderRadius: '16px',
+                                                    position: 'relative',
+                                                    overflow: 'hidden',
                                                 }}
                                             >
+                                                {/* Glassmorphism overlay */}
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        background:
+                                                            'radial-gradient(circle at top right, rgba(255, 215, 0, 0.1), transparent 60%)',
+                                                        pointerEvents: 'none',
+                                                    }}
+                                                />
                                                 <div
                                                     className='gradient-border'
-                                                    style={{ background: 'linear-gradient(45deg, #D4AF37, #FFD700)' }}
+                                                    style={{
+                                                        background: 'linear-gradient(90deg, #D4AF37, #FDB931, #D4AF37)',
+                                                        height: '3px',
+                                                    }}
                                                 />
-                                                <div className='bot-info'>
+                                                <div className='bot-info' style={{ position: 'relative', zIndex: 1 }}>
                                                     <div className='bot-icon-container'>
-                                                        <BotSettingsIcon />
+                                                        <PremiumBadgeIcon />
                                                     </div>
                                                     <div className='bot-details'>
                                                         <h3
                                                             className='bot-title'
                                                             style={{
-                                                                color: '#FFD700',
-                                                                textShadow: '0 0 10px rgba(212, 175, 55, 0.3)',
+                                                                background:
+                                                                    'linear-gradient(to right, #D4AF37, #FDB931)',
+                                                                WebkitBackgroundClip: 'text',
+                                                                WebkitTextFillColor: 'transparent',
+                                                                fontWeight: '800',
+                                                                fontSize: '1.1rem',
+                                                                letterSpacing: '0.5px',
+                                                                textTransform: 'uppercase',
                                                             }}
                                                         >
                                                             The ANEX -ENHANCED TRADING AI
                                                         </h3>
                                                         <div
                                                             className='bot-tags'
-                                                            style={{ display: 'flex', gap: '5px', marginTop: '5px' }}
+                                                            style={{ display: 'flex', gap: '8px', marginTop: '8px' }}
                                                         >
                                                             <span
                                                                 style={{
                                                                     background:
-                                                                        'linear-gradient(90deg, #D4AF37, #FDB931)',
+                                                                        'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)',
                                                                     color: '#000',
-                                                                    padding: '2px 8px',
-                                                                    borderRadius: '4px',
+                                                                    padding: '4px 10px',
+                                                                    borderRadius: '20px',
                                                                     fontSize: '10px',
                                                                     fontWeight: '800',
                                                                     letterSpacing: '0.5px',
+                                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                                                                 }}
                                                             >
                                                                 PREMIUM
@@ -559,8 +584,8 @@ const AppWrapper = observer(() => {
                                                                     background: 'rgba(212, 175, 55, 0.1)',
                                                                     color: '#D4AF37',
                                                                     border: '1px solid rgba(212, 175, 55, 0.3)',
-                                                                    padding: '2px 8px',
-                                                                    borderRadius: '4px',
+                                                                    padding: '4px 10px',
+                                                                    borderRadius: '20px',
                                                                     fontSize: '10px',
                                                                     fontWeight: '600',
                                                                 }}
@@ -583,9 +608,28 @@ const AppWrapper = observer(() => {
                                                     style={{
                                                         background: 'linear-gradient(90deg, #D4AF37, #FDB931)',
                                                         color: '#000',
-                                                        fontWeight: '700',
+                                                        fontWeight: '800',
                                                         border: 'none',
-                                                        boxShadow: '0 2px 10px rgba(212, 175, 55, 0.2)',
+                                                        borderRadius: '8px',
+                                                        padding: '12px 24px',
+                                                        boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)',
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '1px',
+                                                        fontSize: '12px',
+                                                        transition: 'transform 0.2s, box-shadow 0.2s',
+                                                        cursor: 'pointer',
+                                                        width: '100%',
+                                                        marginTop: '1rem',
+                                                    }}
+                                                    onMouseOver={e => {
+                                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                                        e.currentTarget.style.boxShadow =
+                                                            '0 6px 20px rgba(212, 175, 55, 0.5)';
+                                                    }}
+                                                    onMouseOut={e => {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow =
+                                                            '0 4px 15px rgba(212, 175, 55, 0.3)';
                                                     }}
                                                 >
                                                     Get Access
@@ -706,33 +750,6 @@ const AppWrapper = observer(() => {
                                     width='100%'
                                     height='100%'
                                     title='Analysis'
-                                    style={{
-                                        border: 'none',
-                                        display: 'block',
-                                        background: '#ffffff',
-                                        flex: 1,
-                                    }}
-                                    scrolling='yes'
-                                />
-                            </div>
-                        </div>
-
-                        {/* 7. Tools - Tab G */}
-                        <div
-                            label={
-                                <>
-                                    <ToolsIcon />
-                                    <Localize i18n_default_text='Tools' />
-                                </>
-                            }
-                            id='id-tools'
-                        >
-                            <div style={fullPanelStyle}>
-                                <iframe
-                                    src={toolsUrl}
-                                    width='100%'
-                                    height='100%'
-                                    title='Tools'
                                     style={{
                                         border: 'none',
                                         display: 'block',

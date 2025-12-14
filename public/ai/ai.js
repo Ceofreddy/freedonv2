@@ -1,7 +1,7 @@
 let derivWs;
 let tickHistory = [];
-let currentSymbol = "R_100";  // Default symbol
-let tickCount = 120;          // Default tick count
+let currentSymbol = 'R_100'; // Default symbol
+let tickCount = 120; // Default tick count
 let decimalPlaces = 2;
 
 let digitChart, evenOddChart, riseFallChart;
@@ -24,7 +24,7 @@ function startWebSocket() {
         if (data.history) {
             tickHistory = data.history.prices.map((price, index) => ({
                 time: data.history.times[index],
-                quote: parseFloat(price)
+                quote: parseFloat(price),
             }));
 
             detectDecimalPlaces();
@@ -45,9 +45,9 @@ function requestTickHistory() {
     const request = {
         ticks_history: currentSymbol,
         count: tickCount,
-        end: "latest",
-        style: "ticks",
-        subscribe: 1
+        end: 'latest',
+        style: 'ticks',
+        subscribe: 1,
     };
     derivWs.send(JSON.stringify(request));
 }
@@ -67,16 +67,16 @@ function updateTickCount(newTickCount) {
 }
 
 // Add event listeners for symbol and tick count inputs
-document.getElementById("symbol-select").addEventListener("change", function (event) {
+document.getElementById('symbol-select').addEventListener('change', function (event) {
     updateSymbol(event.target.value);
 });
 
-document.getElementById("tick-count-input").addEventListener("change", function (event) {
+document.getElementById('tick-count-input').addEventListener('change', function (event) {
     const newTickCount = parseInt(event.target.value, 10);
     if (newTickCount > 0) {
         updateTickCount(newTickCount);
     } else {
-        console.warn("⚠️ Tick count must be greater than 0.");
+        console.warn('⚠️ Tick count must be greater than 0.');
     }
 });
 
@@ -85,7 +85,7 @@ function detectDecimalPlaces() {
     if (tickHistory.length === 0) return;
 
     let decimalCounts = tickHistory.map(tick => {
-        let decimalPart = tick.quote.toString().split(".")[1] || "";
+        let decimalPart = tick.quote.toString().split('.')[1] || '';
         return decimalPart.length;
     });
 
@@ -95,11 +95,11 @@ function detectDecimalPlaces() {
 // Function to extract the last digit
 function getLastDigit(price) {
     let priceStr = price.toString();
-    let priceParts = priceStr.split(".");
-    let decimals = priceParts[1] || "";
+    let priceParts = priceStr.split('.');
+    let decimals = priceParts[1] || '';
 
     while (decimals.length < decimalPlaces) {
-        decimals += "0";
+        decimals += '0';
     }
 
     return Number(decimals.slice(-1));
@@ -107,12 +107,12 @@ function getLastDigit(price) {
 
 // Function to update the UI
 function updateUI() {
-    const currentPriceElement = document.getElementById("current-price");
+    const currentPriceElement = document.getElementById('current-price');
     if (tickHistory.length > 0) {
         const currentPrice = tickHistory[tickHistory.length - 1].quote.toFixed(decimalPlaces);
         currentPriceElement.textContent = `${currentPrice}`;
     } else {
-        currentPriceElement.textContent = "N/A";
+        currentPriceElement.textContent = 'N/A';
     }
     updateDigitDisplay();
     updateCharts();
@@ -133,35 +133,35 @@ function updateDigitDisplay() {
 
     const currentDigit = tickHistory.length > 0 ? getLastDigit(tickHistory[tickHistory.length - 1].quote) : null;
 
-    const digitDisplayContainer = document.getElementById("digit-display-container");
-    digitDisplayContainer.innerHTML = ""; // Clear existing content
+    const digitDisplayContainer = document.getElementById('digit-display-container');
+    digitDisplayContainer.innerHTML = ''; // Clear existing content
 
     digitPercentages.forEach((percentage, digit) => {
-        const digitContainer = document.createElement("div");
-        digitContainer.classList.add("digit-container");
+        const digitContainer = document.createElement('div');
+        digitContainer.classList.add('digit-container');
 
         // Add the yellow arrow and apply the current class for the current digit
         if (digit === currentDigit) {
-            digitContainer.classList.add("current");
-            const arrow = document.createElement("div");
-            arrow.classList.add("arrow");
+            digitContainer.classList.add('current');
+            const arrow = document.createElement('div');
+            arrow.classList.add('arrow');
             digitContainer.appendChild(arrow);
         }
 
-        const digitBox = document.createElement("div");
-        digitBox.classList.add("digit-box");
+        const digitBox = document.createElement('div');
+        digitBox.classList.add('digit-box');
 
         // Apply the highest and lowest styles to only one digit each
         if (percentage === maxPercentage && digitPercentages.indexOf(maxPercentage) === digit) {
-            digitBox.classList.add("highest");
+            digitBox.classList.add('highest');
         } else if (percentage === minPercentage && digitPercentages.indexOf(minPercentage) === digit) {
-            digitBox.classList.add("lowest");
+            digitBox.classList.add('lowest');
         }
 
         digitBox.textContent = digit;
 
-        const percentageText = document.createElement("div");
-        percentageText.classList.add("digit-percentage");
+        const percentageText = document.createElement('div');
+        percentageText.classList.add('digit-percentage');
         percentageText.textContent = `${percentage.toFixed(2)}`;
 
         digitContainer.appendChild(digitBox);
@@ -177,28 +177,30 @@ function initializeCharts() {
         type: 'bar',
         data: {
             labels: Array.from({ length: 10 }, (_, i) => i.toString()),
-            datasets: [{
-                label: 'Digit Distribution (%)',
-                data: Array(10).fill(0),
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: Array(10).fill('rgba(54, 162, 235, 1)'),
-                borderWidth: 2,
-                borderRadius: 10,
-                barPercentage: 0.80, // Bars span full width
-                categoryPercentage: 0.8 // No spacing between bars
-            }]
+            datasets: [
+                {
+                    label: 'Digit Distribution (%)',
+                    data: Array(10).fill(0),
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: Array(10).fill('rgba(54, 162, 235, 1)'),
+                    borderWidth: 2,
+                    borderRadius: 10,
+                    barPercentage: 0.8, // Bars span full width
+                    categoryPercentage: 0.8, // No spacing between bars
+                },
+            ],
         },
         options: {
             indexAxis: 'x', // Vertical bars
             plugins: {
                 legend: { display: false }, // Hide legend
-                tooltip: { enabled: true } // Enable tooltips
+                tooltip: { enabled: true }, // Enable tooltips
             },
             scales: {
                 x: { display: true }, // Show x-axis
-                y: { display: true }  // Show y-axis
-            }
-        }
+                y: { display: true }, // Show y-axis
+            },
+        },
     });
 
     const ctxEvenOdd = document.getElementById('even-odd-chart').getContext('2d');
@@ -206,27 +208,29 @@ function initializeCharts() {
         type: 'bar',
         data: {
             labels: ['Even', 'Odd'],
-            datasets: [{
-                label: 'Even/Odd Distribution',
-                data: [0, 0],
-                backgroundColor: ['#8BEDA6', '#FF7F7F'],
-                borderColor: ['#8BEDA6', '#FF7F7F'],
-                borderWidth: 1,
-                barPercentage: 0.9, // Bars span full width
-                categoryPercentage: 0.9 // No spacing between bars
-            }]
+            datasets: [
+                {
+                    label: 'Even/Odd Distribution',
+                    data: [0, 0],
+                    backgroundColor: ['#8BEDA6', '#FF7F7F'],
+                    borderColor: ['#8BEDA6', '#FF7F7F'],
+                    borderWidth: 1,
+                    barPercentage: 0.9, // Bars span full width
+                    categoryPercentage: 0.9, // No spacing between bars
+                },
+            ],
         },
         options: {
             indexAxis: 'y', // Horizontal bars
             plugins: {
                 legend: { display: false }, // Hide legend
-                tooltip: { enabled: true } // Enable tooltips
+                tooltip: { enabled: true }, // Enable tooltips
             },
             scales: {
                 x: { display: false }, // Hide x-axis
-                y: { display: false }  // Hide y-axis
-            }
-        }
+                y: { display: false }, // Hide y-axis
+            },
+        },
     });
 
     const ctxRiseFall = document.getElementById('rise-fall-chart').getContext('2d');
@@ -234,27 +238,29 @@ function initializeCharts() {
         type: 'bar',
         data: {
             labels: ['Rise', 'Fall'],
-            datasets: [{
-                label: 'Rise/Fall Distribution',
-                data: [0, 0],
-                backgroundColor: ['#8BEDA6', '#FF7F7F'],
-                borderColor: ['#8BEDA6', '#FF7F7F'],
-                borderWidth: 1,
-                barPercentage: 0.9, // Bars span full width
-                categoryPercentage: 0.9 // No spacing between bars
-            }]
+            datasets: [
+                {
+                    label: 'Rise/Fall Distribution',
+                    data: [0, 0],
+                    backgroundColor: ['#8BEDA6', '#FF7F7F'],
+                    borderColor: ['#8BEDA6', '#FF7F7F'],
+                    borderWidth: 1,
+                    barPercentage: 0.9, // Bars span full width
+                    categoryPercentage: 0.9, // No spacing between bars
+                },
+            ],
         },
         options: {
             indexAxis: 'y', // Horizontal bars
             plugins: {
                 legend: { display: false }, // Hide legend
-                tooltip: { enabled: true } // Enable tooltips
+                tooltip: { enabled: true }, // Enable tooltips
             },
             scales: {
                 x: { display: false }, // Hide x-axis
-                y: { display: false }  // Hide y-axis
-            }
-        }
+                y: { display: false }, // Hide y-axis
+            },
+        },
     });
 }
 
@@ -274,7 +280,7 @@ function updateCharts() {
     // Display highest and lowest percentages
     const maxPercentage = Math.max(...digitPercentages).toFixed(2);
     const minPercentage = Math.min(...digitPercentages).toFixed(2);
-    document.getElementById("digit-percentage").textContent = `Highest: ${maxPercentage}%, Lowest: ${minPercentage}%`;
+    document.getElementById('digit-percentage').textContent = `Highest: ${maxPercentage}%, Lowest: ${minPercentage}%`;
 
     // Update even/odd chart
     const evenCount = digitCounts.filter((_, i) => i % 2 === 0).reduce((a, b) => a + b, 0);
@@ -286,10 +292,11 @@ function updateCharts() {
     evenOddChart.update();
 
     // Display even and odd percentages
-    document.getElementById("even-odd-percentage").textContent = `Even: ${evenPercentage}%, Odd: ${oddPercentage}%`;
+    document.getElementById('even-odd-percentage').textContent = `Even: ${evenPercentage}%, Odd: ${oddPercentage}%`;
 
     // Update rise/fall chart
-    let riseCount = 0, fallCount = 0;
+    let riseCount = 0,
+        fallCount = 0;
     for (let i = 1; i < tickHistory.length; i++) {
         if (tickHistory[i].quote > tickHistory[i - 1].quote) riseCount++;
         else if (tickHistory[i].quote < tickHistory[i - 1].quote) fallCount++;
@@ -301,23 +308,23 @@ function updateCharts() {
     riseFallChart.update();
 
     // Display rise and fall percentages
-    document.getElementById("rise-fall-percentage").textContent = `Rise: ${risePercentage}%, Fall: ${fallPercentage}%`;
+    document.getElementById('rise-fall-percentage').textContent = `Rise: ${risePercentage}%, Fall: ${fallPercentage}%`;
 }
 
 // Function to update the last 50 digits as "E" (Even) or "O" (Odd)
 function updateLast50OE() {
     const last50Digits = tickHistory.slice(-50).map(tick => getLastDigit(tick.quote));
     const oeValues = last50Digits.map(digit => ({
-        value: digit % 2 === 0 ? "E" : "O",
-        class: digit % 2 === 0 ? "even" : "odd"
+        value: digit % 2 === 0 ? 'E' : 'O',
+        class: digit % 2 === 0 ? 'even' : 'odd',
     }));
 
-    const last50OEContainer = document.getElementById("last-50-oe-container");
-    last50OEContainer.innerHTML = ""; // Clear existing content
+    const last50OEContainer = document.getElementById('last-50-oe-container');
+    last50OEContainer.innerHTML = ''; // Clear existing content
 
     oeValues.forEach(({ value, class: oeClass }) => {
-        const oeBox = document.createElement("div");
-        oeBox.classList.add("oe-box", oeClass);
+        const oeBox = document.createElement('div');
+        oeBox.classList.add('oe-box', oeClass);
         oeBox.textContent = value;
         last50OEContainer.appendChild(oeBox);
     });

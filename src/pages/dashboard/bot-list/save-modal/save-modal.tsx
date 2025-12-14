@@ -51,7 +51,7 @@ const SaveModalForm: React.FC<TSaveModalForm> = ({
             bot_name: bot_name === config().default_file_name ? '' : bot_name,
         }}
         validate={validateBotName}
-        onSubmit={(values) => {
+        onSubmit={values => {
             const xmlContent = generateXMLContent(values); // Assume this function generates the XML content
             const signature = HmacSHA256(xmlContent, 'your-secret-key').toString(Hex);
             const signedXMLContent = `${xmlContent}\n<!-- SIGNATURE: ${signature} -->`;
@@ -65,7 +65,9 @@ const SaveModalForm: React.FC<TSaveModalForm> = ({
                     <Form className={classNames({ 'form--active-keyboard': is_onscreen_keyboard_active })}>
                         <div className='modal__content'>
                             <Text size='xs' lineHeight='l'>
-                                {localize('Enter your bot name, choose to save on your computer or Google Drive, and hit ')}
+                                {localize(
+                                    'Enter your bot name, choose to save on your computer or Google Drive, and hit '
+                                )}
                                 <strong>{localize('Save.')}</strong>
                             </Text>
                             <div className='modal__content-row'>

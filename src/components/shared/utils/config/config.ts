@@ -72,12 +72,12 @@ export const getAppId = () => {
     let app_id = window.localStorage.getItem('config.app_id');
 
     if (!app_id || app_id === '96624') {
-        console.warn("⚠️ App ID is invalid, forcing correct App ID...");
+        console.warn('⚠️ App ID is invalid, forcing correct App ID...');
         app_id = '96624';
         window.localStorage.setItem('config.app_id', app_id);
     }
 
-    console.log("🔍 [config.ts] Using App ID:", app_id);
+    console.log('🔍 [config.ts] Using App ID:', app_id);
     return app_id;
 };
 

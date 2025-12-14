@@ -81,7 +81,7 @@ export default class RiseFallBarChart extends PureComponent<OverUnderProps> {
                     <XAxis type='number' label='' />
                     <YAxis type='category' dataKey='name' />
                     <Tooltip />
-                    <Bar dataKey='percentage'  isAnimationActive={!is_mobile}>
+                    <Bar dataKey='percentage' isAnimationActive={!is_mobile}>
                         {data.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={barColors[index]} />
                         ))}

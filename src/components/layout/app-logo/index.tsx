@@ -6,7 +6,5 @@ export const AppLogo = () => {
     const { isDesktop } = useDevice();
 
     if (!isDesktop) return null;
-    return (
-        <DerivLogo className='app-header__logo' href="https://osamhnr.com" target='_blank'/>
-    );
+    return <DerivLogo className='app-header__logo' href='https://osamhnr.com' target='_blank' />;
 };

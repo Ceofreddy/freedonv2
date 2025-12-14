@@ -1,19 +1,16 @@
 {
-"name":"dolarprinter",
-"short_name":"dolarprinter",
-"theme_color":"#414652",
-"description":"Trade on your finger prints.",
-"background_color":"#414652",
-"display":"standalone",
-"start_url":"/",
-"icons": [
- {
-"src":"deriv-logo.svg",
-"sizes":"24x24",
-"type":"image/svg"
- }
-   ]
+    "name": "dolarprinter",
+    "short_name": "dolarprinter",
+    "theme_color": "#414652",
+    "description": "Trade on your finger prints.",
+    "background_color": "#414652",
+    "display": "standalone",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "deriv-logo.svg",
+            "sizes": "24x24",
+            "type": "image/svg"
+        }
+    ]
 }
-
-
-

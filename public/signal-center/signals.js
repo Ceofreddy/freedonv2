@@ -3,7 +3,7 @@ const ticksStorage = {
     R_25: [],
     R_50: [],
     R_75: [],
-    R_100: []
+    R_100: [],
 };
 
 let selectedMarket = null;
@@ -18,16 +18,18 @@ ws.onopen = () => {
 };
 
 function subscribeTicks(symbol) {
-    ws.send(JSON.stringify({
-        ticks_history: symbol,
-        count: 255,
-        end: 'latest',
-        style: 'ticks',
-        subscribe: 1
-    }));
+    ws.send(
+        JSON.stringify({
+            ticks_history: symbol,
+            count: 255,
+            end: 'latest',
+            style: 'ticks',
+            subscribe: 1,
+        })
+    );
 }
 
-ws.onmessage = (event) => {
+ws.onmessage = event => {
     const data = JSON.parse(event.data);
     if (data.history?.prices) {
         const symbol = data.echo_req.ticks_history;
@@ -40,10 +42,10 @@ ws.onmessage = (event) => {
 };
 
 function updateTables() {
-    const riseFallTable = document.getElementById("riseFallTable");
-    const overUnderTable = document.getElementById("overUnderTable");
-    riseFallTable.innerHTML = "";
-    overUnderTable.innerHTML = "";
+    const riseFallTable = document.getElementById('riseFallTable');
+    const overUnderTable = document.getElementById('overUnderTable');
+    riseFallTable.innerHTML = '';
+    overUnderTable.innerHTML = '';
 
     Object.keys(ticksStorage).forEach(symbol => {
         const ticks = ticksStorage[symbol];
@@ -53,10 +55,10 @@ function updateTables() {
         const isBuy = risePercentage > 57;
         const isSell = fallPercentage > 57;
 
-        const rowRiseFall = document.createElement("tr");
-        rowRiseFall.innerHTML = `<td>${symbol}</td><td>${isBuy ? "Rise" : "----"}</td><td>${isSell ? "Fall" : "----"}</td>`;
-        rowRiseFall.addEventListener("click", () => selectMarket(symbol, rowRiseFall));
-        if (symbol === selectedMarket) rowRiseFall.classList.add("selected");
+        const rowRiseFall = document.createElement('tr');
+        rowRiseFall.innerHTML = `<td>${symbol}</td><td>${isBuy ? 'Rise' : '----'}</td><td>${isSell ? 'Fall' : '----'}</td>`;
+        rowRiseFall.addEventListener('click', () => selectMarket(symbol, rowRiseFall));
+        if (symbol === selectedMarket) rowRiseFall.classList.add('selected');
         riseFallTable.appendChild(rowRiseFall);
 
         const digitCounts = new Array(10).fill(0);
@@ -70,10 +72,10 @@ function updateTables() {
         const isOver = digitPercentages[7] < 10 && digitPercentages[8] < 10 && digitPercentages[9] < 10;
         const isUnder = digitPercentages[0] < 10 && digitPercentages[1] < 10 && digitPercentages[2] < 10;
 
-        const rowOverUnder = document.createElement("tr");
-        rowOverUnder.innerHTML = `<td>${symbol}</td><td>${isOver ? "Over 2" : "----"}</td><td>${isUnder ? "Under 7" : "----"}</td>`;
-        rowOverUnder.addEventListener("click", () => selectMarket(symbol, rowOverUnder));
-        if (symbol === selectedMarket) rowOverUnder.classList.add("selected");
+        const rowOverUnder = document.createElement('tr');
+        rowOverUnder.innerHTML = `<td>${symbol}</td><td>${isOver ? 'Over 2' : '----'}</td><td>${isUnder ? 'Under 7' : '----'}</td>`;
+        rowOverUnder.addEventListener('click', () => selectMarket(symbol, rowOverUnder));
+        if (symbol === selectedMarket) rowOverUnder.classList.add('selected');
         overUnderTable.appendChild(rowOverUnder);
     });
 }
@@ -82,7 +84,8 @@ function calculateTrendPercentage(symbol, ticksCount) {
     const ticks = ticksStorage[symbol].slice(-ticksCount);
     if (ticks.length < 2) return { risePercentage: 0, fallPercentage: 0 };
 
-    let riseCount = 0, fallCount = 0;
+    let riseCount = 0,
+        fallCount = 0;
     for (let i = 1; i < ticks.length; i++) {
         if (ticks[i] > ticks[i - 1]) riseCount++;
         else if (ticks[i] < ticks[i - 1]) fallCount++;
@@ -91,67 +94,67 @@ function calculateTrendPercentage(symbol, ticksCount) {
     const total = riseCount + fallCount;
     return {
         risePercentage: total > 0 ? (riseCount / total) * 100 : 0,
-        fallPercentage: total > 0 ? (fallCount / total) * 100 : 0
+        fallPercentage: total > 0 ? (fallCount / total) * 100 : 0,
     };
 }
 
 function selectMarket(symbol, row) {
     if (selectedMarket === symbol) {
         selectedMarket = null;
-        row.classList.remove("selected");
-        document.getElementById("startButton").disabled = true;
+        row.classList.remove('selected');
+        document.getElementById('startButton').disabled = true;
     } else {
         selectedMarket = symbol;
-        document.querySelectorAll("tr").forEach(tr => tr.classList.remove("selected"));
-        row.classList.add("selected");
-        document.getElementById("startButton").disabled = false;
+        document.querySelectorAll('tr').forEach(tr => tr.classList.remove('selected'));
+        row.classList.add('selected');
+        document.getElementById('startButton').disabled = false;
     }
 }
 
-document.getElementById("oauthButton").addEventListener("click", () => {
+document.getElementById('oauthButton').addEventListener('click', () => {
     const authUrl = `https://oauth.deriv.com/oauth2/authorize?app_id=80750&response_type=token&scope=read,trade`;
-    window.open(authUrl, "_blank");
+    window.open(authUrl, '_blank');
 });
 
 function setToken(token) {
     oauthToken = token;
-    alert("Logged in successfully!");
-    document.getElementById("startButton").disabled = false;
+    alert('Logged in successfully!');
+    document.getElementById('startButton').disabled = false;
     fetchUserData();
 }
 
 async function fetchUserData() {
-    const response = await fetch("https://ws.derivws.com/websockets/v3", {
-        method: "POST",
+    const response = await fetch('https://ws.derivws.com/websockets/v3', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${oauthToken}`
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${oauthToken}`,
         },
-        body: JSON.stringify({ authorize: oauthToken })
+        body: JSON.stringify({ authorize: oauthToken }),
     });
 
     const result = await response.json();
     if (result.authorize) {
         const { fullname, balance } = result.authorize;
-        document.getElementById("userInfo").innerHTML = `Welcome, ${fullname}. Balance: $${balance}`;
+        document.getElementById('userInfo').innerHTML = `Welcome, ${fullname}. Balance: $${balance}`;
     } else {
-        console.error("Failed to fetch user data", result);
+        console.error('Failed to fetch user data', result);
     }
 }
 
-document.getElementById("startButton").addEventListener("click", () => {
-    if (!oauthToken) return alert("Please log in first.");
-    if (!selectedMarket) return alert("Please select a market.");
-    
+document.getElementById('startButton').addEventListener('click', () => {
+    if (!oauthToken) return alert('Please log in first.');
+    if (!selectedMarket) return alert('Please select a market.');
+
     isTrading = true;
-    document.getElementById("stopButton").disabled = false;
+    document.getElementById('stopButton').disabled = false;
     trade();
 });
 
-document.getElementById("stopButton").addEventListener("click", () => {
+document.getElementById('stopButton').addEventListener('click', () => {
     isTrading = false;
-    document.getElementById("stopButton").disabled = true;
-    alert("Trading stopped.");
+    document.getElementById('stopButton').disabled = true;
+    alert('Trading stopped.');
 });
 
 async function trade() {
@@ -162,8 +165,8 @@ async function trade() {
     const isSell = fallPercentage > 57;
 
     let tradeType = null;
-    if (isBuy) tradeType = "CALL";
-    if (isSell) tradeType = "PUT";
+    if (isBuy) tradeType = 'CALL';
+    if (isSell) tradeType = 'PUT';
 
     if (!tradeType) {
         setTimeout(trade, 3000);
@@ -175,22 +178,22 @@ async function trade() {
         price: 10,
         parameters: {
             amount: 10,
-            basis: "stake",
+            basis: 'stake',
             contract_type: tradeType,
-            currency: "USD",
+            currency: 'USD',
             duration: 1,
-            duration_unit: "t",
-            symbol: selectedMarket
-        }
+            duration_unit: 't',
+            symbol: selectedMarket,
+        },
     };
 
-    const response = await fetch("https://ws.derivws.com/websockets/v3", {
-        method: "POST",
+    const response = await fetch('https://ws.derivws.com/websockets/v3', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${oauthToken}`
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${oauthToken}`,
         },
-        body: JSON.stringify(tradeData)
+        body: JSON.stringify(tradeData),
     });
 
     const result = await response.json();
@@ -198,7 +201,7 @@ async function trade() {
         const contractId = result.buy.contract_id;
         trackTrade(contractId);
     } else {
-        console.error("Trade failed", result);
+        console.error('Trade failed', result);
         tradeHistory.unshift(`Trade failed: ${result.error?.message}`);
         updateTradeHistory();
     }
@@ -211,7 +214,7 @@ async function trackTrade(contractId) {
     const result = await response.json();
 
     if (result.contract) {
-        const tradeResult = result.contract.profit > 0 ? "Win" : "Loss";
+        const tradeResult = result.contract.profit > 0 ? 'Win' : 'Loss';
         tradeHistory.unshift(`Trade on ${selectedMarket}: ${tradeResult} ($${result.contract.profit})`);
         updateTradeHistory();
     }
@@ -220,8 +223,8 @@ async function trackTrade(contractId) {
 }
 
 function updateTradeHistory() {
-    const tradeHistoryDiv = document.getElementById("tradeHistory");
-    tradeHistoryDiv.innerHTML = tradeHistory.map(entry => `<p>${entry}</p>`).join("");
+    const tradeHistoryDiv = document.getElementById('tradeHistory');
+    tradeHistoryDiv.innerHTML = tradeHistory.map(entry => `<p>${entry}</p>`).join('');
 }
 
 setInterval(updateTables, 1000);

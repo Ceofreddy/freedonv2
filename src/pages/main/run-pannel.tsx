@@ -37,7 +37,7 @@ const RunPanel = () => {
         }
     };
 
-    const handleToggleChange = (e) => {
+    const handleToggleChange = e => {
         const useSignalsToggle = e.target.checked;
         setUseSignals(useSignalsToggle);
 
@@ -47,36 +47,22 @@ const RunPanel = () => {
     };
 
     return (
-        <div className="run-panel">
-            <div className="settings">
+        <div className='run-panel'>
+            <div className='settings'>
                 <label>
                     Stake:
-                    <input
-                        type="number"
-                        value={stake}
-                        onChange={(e) => setStake(Number(e.target.value))}
-                    />
+                    <input type='number' value={stake} onChange={e => setStake(Number(e.target.value))} />
                 </label>
                 <label>
                     Martingale Factor:
-                    <input
-                        type="number"
-                        value={martingale}
-                        onChange={(e) => setMartingale(Number(e.target.value))}
-                    />
+                    <input type='number' value={martingale} onChange={e => setMartingale(Number(e.target.value))} />
                 </label>
                 <label>
                     Use Signals:
-                    <input
-                        type="checkbox"
-                        checked={useSignals}
-                        onChange={handleToggleChange}
-                    />
+                    <input type='checkbox' checked={useSignals} onChange={handleToggleChange} />
                 </label>
             </div>
-            <button onClick={handleRunClick}>
-                {isRunning ? 'Stop' : 'Run'}
-            </button>
+            <button onClick={handleRunClick}>{isRunning ? 'Stop' : 'Run'}</button>
         </div>
     );
 };

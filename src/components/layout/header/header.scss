@@ -3,11 +3,11 @@
 
 // OSAM Trading Hub Blue theme color variables
 :root {
-    --osam-blue: #D4AF37;
-    --osam-blue-hover: #E6C869;
-    --osam-light-blue: #D4AF37;
-    --osam-light-blue-hover: #C5A030;
-    --osam-accent: #D4AF37;
+    --osam-blue: #d4af37;
+    --osam-blue-hover: #e6c869;
+    --osam-light-blue: #d4af37;
+    --osam-light-blue-hover: #c5a030;
+    --osam-accent: #d4af37;
     --osam-shadow: rgba(212, 175, 55, 0.25);
 }
 
@@ -120,7 +120,7 @@
     justify-content: center;
     border: 2px solid #fff;
     z-index: 1;
-    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.10);
+    box-shadow: 0 2px 8px rgba(30, 58, 138, 0.1);
     pointer-events: none;
 }
 
@@ -150,8 +150,8 @@
 
 .notifications__popup {
     position: relative;
-    background: #16161D;
-    color: #EDEDED;
+    background: #16161d;
+    color: #ededed;
     border: 1px solid rgba(212, 175, 55, 0.1);
     box-shadow: 0 10px 32px rgba(212, 175, 55, 0.16);
     max-width: 420px;
@@ -209,7 +209,7 @@
     height: 64vh;
     border-radius: 12px;
     border: none;
-    background: #0E0E11;
+    background: #0e0e11;
 
     @include mobile-or-tablet-screen {
         height: 57vh;
@@ -279,7 +279,7 @@
 
 .account-switcher,
 .app-header__account-switcher {
-    background: #16161D !important;
+    background: #16161d !important;
     border: 1px solid rgba(212, 175, 55, 0.2);
     border-radius: 8px;
     padding: 0.5rem 1rem;

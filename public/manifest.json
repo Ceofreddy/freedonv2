@@ -1,16 +1,16 @@
 {
-  "name": "Freedon",
-  "short_name": "Freedon",
-  "theme_color": "#414652",
-  "description": "Trade on your finger prints.",
-  "background_color": "#414652",
-  "display": "standalone",
-  "start_url": "/",
-  "icons": [
-    {
-      "src": "freedon-logo.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml"
-    }
-  ]
+    "name": "Freedon",
+    "short_name": "Freedon",
+    "theme_color": "#414652",
+    "description": "Trade on your finger prints.",
+    "background_color": "#414652",
+    "display": "standalone",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "freedon-logo.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
+        }
+    ]
 }

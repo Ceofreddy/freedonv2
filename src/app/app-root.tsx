@@ -13,25 +13,29 @@ import FreedonLogo from '@/components/shared/freedon-logo';
 
 const TypingFreedon = () => {
     return (
-        <div className="typing-freedon">
-            <div className="scan-line"></div>
-            <h2 className="glitch-text" data-text="FREEDON">FREEDON</h2>
-            <div className="loading-status">
-                <span className="status-text">INITIALIZING SYSTEMS...</span>
-                <div className="progress-bar"><div className="progress-fill"></div></div>
+        <div className='typing-freedon'>
+            <div className='scan-line'></div>
+            <h2 className='glitch-text' data-text='FREEDON'>
+                FREEDON
+            </h2>
+            <div className='loading-status'>
+                <span className='status-text'>INITIALIZING SYSTEMS...</span>
+                <div className='progress-bar'>
+                    <div className='progress-fill'></div>
+                </div>
             </div>
         </div>
     );
 };
 
 const Spinner = () => (
-    <div className="spinner-root freedon-loader">
-        <div className="tech-spinner">
-            <div className="ring ring-1"></div>
-            <div className="ring ring-2"></div>
-            <div className="ring ring-3"></div>
-            <div className="center-logo">
-                <FreedonLogo className="loader-logo" />
+    <div className='spinner-root freedon-loader'>
+        <div className='tech-spinner'>
+            <div className='ring ring-1'></div>
+            <div className='ring ring-2'></div>
+            <div className='ring ring-3'></div>
+            <div className='center-logo'>
+                <FreedonLogo className='loader-logo' />
             </div>
         </div>
         <TypingFreedon />

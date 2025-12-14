@@ -25,7 +25,7 @@ export const extractBlocksFromXml = xml => {
                 value: field.textContent.trim(),
             };
         });
-        
+
         const signature = generateBlockSignature(type, fields);
         return { type, fields, signature };
     });

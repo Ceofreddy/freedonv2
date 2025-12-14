@@ -31,22 +31,22 @@ import FreedonLogo from '@/components/shared/freedon-logo';
 
 const MarketLoader = () => {
     return (
-        <div className="market-loader-content">
-            <div className="market-loader-container">
-                <div className="radar-scan"></div>
-                <div className="logo-wrapper">
-                    <FreedonLogo className="market-loader-logo" />
+        <div className='market-loader-content'>
+            <div className='market-loader-container'>
+                <div className='radar-scan'></div>
+                <div className='logo-wrapper'>
+                    <FreedonLogo className='market-loader-logo' />
                 </div>
             </div>
-            <div className="market-loader-status">
-                <h3 className="status-title">CONNECTING TO MARKETS</h3>
-                <div className="status-steps">
-                    <div className="step active">Syncing APIs...</div>
-                    <div className="step">Loading Assets...</div>
-                    <div className="step">Establishing Feed...</div>
+            <div className='market-loader-status'>
+                <h3 className='status-title'>CONNECTING TO MARKETS</h3>
+                <div className='status-steps'>
+                    <div className='step active'>Syncing APIs...</div>
+                    <div className='step'>Loading Assets...</div>
+                    <div className='step'>Establishing Feed...</div>
                 </div>
-                <div className="connection-bar">
-                    <div className="connection-progress"></div>
+                <div className='connection-bar'>
+                    <div className='connection-progress'></div>
                 </div>
             </div>
         </div>

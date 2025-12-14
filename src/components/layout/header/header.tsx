@@ -75,7 +75,9 @@ const AppHeader = observer(() => {
                         tertiary
                         className='login-button'
                         onClick={() => {
-                            window.location.replace('https://oauth.deriv.com/oauth2/authorize?app_id=96624&l=EN&brand=Freedon');
+                            window.location.replace(
+                                'https://oauth.deriv.com/oauth2/authorize?app_id=96624&l=EN&brand=Freedon'
+                            );
                         }}
                     >
                         <Localize i18n_default_text='Log in' />
@@ -101,31 +103,29 @@ const AppHeader = observer(() => {
                 'app-header--mobile': !isDesktop,
             })}
         >
-            <Wrapper variant="left">
-                <div className="left-section">
+            <Wrapper variant='left'>
+                <div className='left-section'>
                     {!isDesktop && (
                         <>
                             <MobileMenu />
-                            <div className="osam-logo" title="Freedon">
+                            <div className='osam-logo' title='Freedon'>
                                 <FreedonLogo />
-                                <span className="osam-logo__text"> FREEDON </span>
+                                <span className='osam-logo__text'> FREEDON </span>
                             </div>
                             <AppLogo />
                         </>
                     )}
                     {isDesktop && (
                         <>
-                            <div className="osam-logo" title="Freedon">
+                            <div className='osam-logo' title='Freedon'>
                                 <FreedonLogo />
-                                <span className="osam-logo__text"> FREEDON </span>
+                                <span className='osam-logo__text'> FREEDON </span>
                             </div>
                         </>
                     )}
                 </div>
             </Wrapper>
-            <Wrapper variant="right">
-                {renderAccountSection()}
-            </Wrapper>
+            <Wrapper variant='right'>{renderAccountSection()}</Wrapper>
         </Header>
     );
 });

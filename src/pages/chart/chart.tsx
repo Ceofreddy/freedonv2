@@ -62,7 +62,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
     };
 
     const [is_trading_view, setIsTradingView] = useState(false);
-    const derivTradingViewURL = "https://charts.deriv.com/deriv";
+    const derivTradingViewURL = 'https://charts.deriv.com/deriv';
 
     useEffect(() => {
         return () => {
@@ -137,7 +137,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                         cursor: 'pointer',
                         fontWeight: 'bold',
                         fontSize: 16,
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
                     }}
                 >
                     {is_trading_view ? 'Charts' : 'Trading View'}
@@ -148,7 +148,7 @@ const Chart = observer(({ show_digits_stats }: { show_digits_stats: boolean }) =
                 <iframe
                     src={derivTradingViewURL}
                     style={{ width: '100%', height: '600px', border: 'none', marginTop: 16 }}
-                    title="Deriv Trading View"
+                    title='Deriv Trading View'
                     allowFullScreen
                 />
             ) : (
