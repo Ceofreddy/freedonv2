@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { formatMoney } from '@/components/shared/utils/currency/currency';
-import { Button } from '@/components/shared_ui/button';
-import { Input } from '@/components/shared_ui/input';
-import { Text } from '@/components/shared_ui/text';
+import Button from '@/components/shared_ui/button';
+import Input from '@/components/shared_ui/input';
+import Text from '@/components/shared_ui/text';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
 import { Localize } from '@deriv-com/translations';
