@@ -448,7 +448,7 @@ const AppWrapper = observer(() => {
     };
 
     return (
-        <React.Fragment>
+        <>
             <div className='main'>
                 <div className='main__container'>
                     <Tabs
@@ -900,7 +900,7 @@ const AppWrapper = observer(() => {
                 </div>
 
             </Tabs>
-        </div>
+        </div >
             </div >
 
     {/* Risk Disclaimer Button */ }
@@ -1134,7 +1134,7 @@ Disclaimer
             >
                 {message}
             </Dialog>
-        </React.Fragment >
+        </>
     );
 });
 
