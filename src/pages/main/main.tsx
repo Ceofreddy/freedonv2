@@ -304,6 +304,24 @@ const TelegramIcon = () => (
     </svg>
 );
 
+const PremiumBadgeIcon = () => (
+    <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+        <defs>
+            <linearGradient id='gradPremium' x1='0%' y1='0%' x2='100%' y2='100%'>
+                <stop offset='0%' stopColor='#FFD700' />
+                <stop offset='100%' stopColor='#FDB931' />
+            </linearGradient>
+        </defs>
+        <path
+            d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z'
+            fill='url(#gradPremium)'
+            stroke='#B8860B'
+            strokeWidth='1'
+        />
+        <circle cx='12' cy='12' r='3' fill='rgba(255,255,255,0.2)' />
+    </svg>
+);
+
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
     const { dashboard, load_modal, run_panel, summary_card } = useStore();
@@ -521,427 +539,577 @@ const AppWrapper = observer(() => {
                                             </div>
                                         ))}
                                     </div>
+                                    <div className='premium-bots-section' style={{ marginBottom: '2rem', marginTop: '2rem' }}>
+                                        <h3
+                                            style={{
+                                                color: '#D4AF37',
+                                                marginBottom: '1rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.5rem',
+                                                fontSize: '1.2rem',
+                                                fontWeight: '600',
+                                                padding: '0 1rem',
+                                            }}
+                                        >
+                                            <PremiumBadgeIcon />
+                                            Premium Bots
+                                        </h3>
+                                        <div className='free-bots__content'>
+                                            <div
+                                                className='free-bot-item'
+                                                style={{
+                                                    border: '1px solid rgba(212, 175, 55, 0.4)',
+                                                    background: 'linear-gradient(135deg, #111 0%, #222 100%)',
+                                                    boxShadow: '0 8px 32px 0 rgba(212, 175, 55, 0.2)',
+                                                    borderRadius: '16px',
+                                                    position: 'relative',
+                                                    overflow: 'hidden',
+                                                }}
+                                            >
+                                                {/* Glassmorphism overlay */}
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        background:
+                                                            'radial-gradient(circle at top right, rgba(255, 215, 0, 0.1), transparent 60%)',
+                                                        pointerEvents: 'none',
+                                                    }}
+                                                />
+                                                <div
+                                                    className='gradient-border'
+                                                    style={{
+                                                        background: 'linear-gradient(90deg, #D4AF37, #FDB931, #D4AF37)',
+                                                        height: '3px',
+                                                    }}
+                                                />
+                                                <div className='bot-info' style={{ position: 'relative', zIndex: 1 }}>
+                                                    <div className='bot-icon-container'>
+                                                        <PremiumBadgeIcon />
+                                                    </div>
+                                                    <div className='bot-details'>
+                                                        <h3
+                                                            className='bot-title'
+                                                            style={{
+                                                                background:
+                                                                    'linear-gradient(to right, #D4AF37, #FDB931)',
+                                                                WebkitBackgroundClip: 'text',
+                                                                WebkitTextFillColor: 'transparent',
+                                                                fontWeight: '800',
+                                                                fontSize: '1.1rem',
+                                                                letterSpacing: '0.5px',
+                                                                textTransform: 'uppercase',
+                                                            }}
+                                                        >
+                                                            The ANEX -ENHANCED TRADING AI
+                                                        </h3>
+                                                        <div
+                                                            className='bot-tags'
+                                                            style={{ display: 'flex', gap: '8px', marginTop: '8px' }}
+                                                        >
+                                                            <span
+                                                                style={{
+                                                                    background:
+                                                                        'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)',
+                                                                    color: '#000',
+                                                                    padding: '4px 10px',
+                                                                    borderRadius: '20px',
+                                                                    fontSize: '10px',
+                                                                    fontWeight: '800',
+                                                                    letterSpacing: '0.5px',
+                                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                                                                }}
+                                                            >
+                                                                PREMIUM
+                                                            </span>
+                                                            <span
+                                                                style={{
+                                                                    background: 'rgba(212, 175, 55, 0.1)',
+                                                                    color: '#D4AF37',
+                                                                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                                                                    padding: '4px 10px',
+                                                                    borderRadius: '20px',
+                                                                    fontSize: '10px',
+                                                                    fontWeight: '600',
+                                                                }}
+                                                            >
+                                                                AI ENHANCED
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => {
+                                                        const message =
+                                                            'I want the bot named .. The ANEX -ENHANCED TRADING AI';
+                                                        window.open(
+                                                            `https://wa.me/254793632071?text=${encodeURIComponent(message)}`,
+                                                            '_blank'
+                                                        );
+                                                    }}
+                                                    className='load-bot-button'
+                                                    style={{
+                                                        background: 'linear-gradient(90deg, #D4AF37, #FDB931)',
+                                                        color: '#000',
+                                                        fontWeight: '800',
+                                                        border: 'none',
+                                                        borderRadius: '8px',
+                                                        padding: '12px 24px',
+                                                        boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)',
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '1px',
+                                                        fontSize: '12px',
+                                                        transition: 'transform 0.2s, box-shadow 0.2s',
+                                                        cursor: 'pointer',
+                                                        width: '100%',
+                                                        marginTop: '1rem',
+                                                    }}
+                                                    onMouseOver={e => {
+                                                        e.currentTarget.style.transform = 'translateY(-2px)';
+                                                        e.currentTarget.style.boxShadow =
+                                                            '0 6px 20px rgba(212, 175, 55, 0.5)';
+                                                    }}
+                                                    onMouseOut={e => {
+                                                        e.currentTarget.style.transform = 'translateY(0)';
+                                                        e.currentTarget.style.boxShadow =
+                                                            '0 4px 15px rgba(212, 175, 55, 0.3)';
+                                                    }}
+                                                >
+                                                    Get Access
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        {/* 2. Bot Settings - Tab B */}
-                        <div
-                            label={
-                                <>
-                                    <BotSettingsIcon />
-                                    <Localize i18n_default_text='Bot Settings' />
-                                </>
-                            }
-                            id='id-bot-settings'
-                        >
-                            <div style={fullPanelStyle}>
-                                <Dashboard handleTabChange={handleTabChange} />
-                                <button onClick={handleOpen}>Load Bot</button>
-                            </div>
-                        </div>
-
-                        {/* 3. Charts - Tab C */}
-                        <div
-                            label={
-                                <>
-                                    <ChartsIcon />
-                                    <Localize i18n_default_text='Charts' />
-                                </>
-                            }
-                            id='id-charts'
-                        >
-                            <div style={fullPanelStyle}>
-                                <Suspense
-                                    fallback={<ChunkLoader message={localize('Please wait, loading chart...')} />}
-                                >
-                                    <Chart show_digits_stats={false} />
-                                </Suspense>
-                            </div>
-                        </div>
-
-                        {/* 4. Dcircles - Tab D */}
-                        <div
-                            label={
-                                <>
-                                    <DCirclesIcon />
-                                    <Localize i18n_default_text='Dcircles' />
-                                </>
-                            }
-                            id='id-dcircles'
-                        >
-                            <Suspense fallback={<ChunkLoader message={localize('Please wait, loading Dcircles...')} />}>
-                                <div style={fullPanelStyle}>
-                                    <Dcircles />
-                                </div>
-                            </Suspense>
-                        </div>
-
-                        {/* 5. MTool - Tab E */}
-                        <div
-                            label={
-                                <>
-                                    <MToolIcon />
-                                    <Localize i18n_default_text='MTool' />
-                                </>
-                            }
-                            id='id-mtool'
-                        >
-                            <Suspense fallback={<ChunkLoader message={localize('Please wait, loading MTool...')} />}>
-                                <div style={fullPanelStyle}>
-                                    <Advanced />
-                                </div>
-                            </Suspense>
-                        </div>
-
-                        {/* 6. Analysis - Tab F */}
-                        <div
-                            label={
-                                <>
-                                    <AnalysisToolIcon />
-                                    <Localize i18n_default_text='Analysis' />
-                                </>
-                            }
-                            id='id-analysis'
-                        >
-                            <div style={fullPanelStyle}>
-                                <iframe
-                                    src={analysisUrl}
-                                    width='100%'
-                                    height='100%'
-                                    title='Analysis'
-                                    style={{
-                                        border: 'none',
-                                        display: 'block',
-                                        background: '#ffffff',
-                                        flex: 1,
-                                    }}
-                                    scrolling='yes'
-                                />
-                            </div>
-                        </div>
-
-                        {/* 8. Copytrading - Tab H */}
-                        <div
-                            label={
-                                <>
-                                    <CopyTradingIcon />
-                                    <Localize i18n_default_text='Copytrading' />
-                                </>
-                            }
-                            id='id-copytrading'
-                        >
-                            <div style={fullPanelStyle}>
-                                <Suspense
-                                    fallback={<ChunkLoader message={localize('Please wait, loading copytrading...')} />}
-                                >
-                                    <Copytrading />
-                                </Suspense>
-                            </div>
-                        </div>
-
-                        {/* 9. Strategies - Tab I */}
-                        <div
-                            label={
-                                <>
-                                    <StrategyIcon />
-                                    <Localize i18n_default_text='Strategy' />
-                                </>
-                            }
-                            id='id-strategy'
-                        >
-                            <div style={fullPanelStyle}>
-                                <iframe
-                                    src={strategyUrl}
-                                    width='100%'
-                                    height='100%'
-                                    title='Strategy'
-                                    style={{
-                                        border: 'none',
-                                        display: 'block',
-                                        background: '#ffffff',
-                                        flex: 1,
-                                    }}
-                                    scrolling='yes'
-                                />
-                            </div>
-                        </div>
-
-                        {/* 10. Signals - Tab J */}
-                        <div
-                            label={
-                                <>
-                                    <SignalsIcon />
-                                    <Localize i18n_default_text='Signals' />
-                                </>
-                            }
-                            id='id-signals'
-                        >
-                            <div
-                                className={classNames('dashboard__chart-wrapper', {
-                                    'dashboard__chart-wrapper--expanded': is_drawer_open && isDesktop,
-                                    'dashboard__chart-wrapper--modal': is_chart_modal_visible && isDesktop,
-                                })}
-                                style={fullPanelStyle}
-                            >
-                                <iframe
-                                    src='signals'
-                                    width='100%'
-                                    height='100%'
-                                    style={{
-                                        border: 'none',
-                                        display: 'block',
-                                        background: '#ffffff',
-                                        flex: 1,
-                                    }}
-                                    scrolling='yes'
-                                />
-                            </div>
-                        </div>
-
-                        {/* 11. Tutorials - Tab K */}
-                        <div
-                            label={
-                                <>
-                                    <TutorialsIcon />
-                                    <Localize i18n_default_text='Tutorials' />
-                                </>
-                            }
-                            id='id-tutorials'
-                        >
-                            <div style={fullPanelStyle}>
-                                <Suspense
-                                    fallback={<ChunkLoader message={localize('Please wait, loading tutorials...')} />}
-                                >
-                                    <Tutorial handleTabChange={handleTabChange} />
-                                </Suspense>
-                            </div>
-                        </div>
-                        {/* 12. SpeedBot - Tab L */}
-                        <div
-                            label={
-                                <>
-                                    <SpeedBotIcon />
-                                    <Localize i18n_default_text='SpeedBot' />
-                                </>
-                            }
-                            id='id-speedbot'
-                        >
-                            <Suspense fallback={<ChunkLoader message={localize('Please wait, loading SpeedBot...')} />}>
-                                <div style={fullPanelStyle}>
-                                    <SpeedBot />
-                                </div>
-                            </Suspense>
-                        </div>
-                    </Tabs>
                 </div>
-            </div>
 
-            {/* Risk Disclaimer Button */}
-            <button
-                onClick={() => setShowDisclaimer(true)}
-                className='risk-disclaimer-button'
-                style={{
-                    position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
-                    background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '20px',
-                    padding: '8px 16px',
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                    zIndex: 1000,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                }}
-                onMouseOver={e => {
-                    e.currentTarget.style.transform = 'scale(1.05)';
-                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
-                }}
-                onMouseOut={e => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-                }}
-            >
-                <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-                    <path d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' />
-                </svg>
-                Disclaimer
-            </button>
-
-            {/* Risk Disclaimer Modal */}
-            {showDisclaimer && (
+                {/* 2. Bot Settings - Tab B */}
                 <div
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 1001,
-                    }}
+                    label={
+                        <>
+                            <BotSettingsIcon />
+                            <Localize i18n_default_text='Bot Settings' />
+                        </>
+                    }
+                    id='id-bot-settings'
                 >
-                    <div
-                        style={{
-                            backgroundColor: 'white',
-                            borderRadius: '12px',
-                            padding: '24px',
-                            maxWidth: '600px',
-                            width: '90%',
-                            maxHeight: '80vh',
-                            overflowY: 'auto',
-                            position: 'relative',
-                            boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                        }}
-                    >
-                        <button
-                            onClick={() => setShowDisclaimer(false)}
-                            style={{
-                                position: 'absolute',
-                                top: '16px',
-                                right: '16px',
-                                background: 'none',
-                                border: 'none',
-                                fontSize: '20px',
-                                cursor: 'pointer',
-                                color: '#6B7280',
-                            }}
-                        >
-                            ×
-                        </button>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                            <div
-                                style={{
-                                    background: '#FEE2E2',
-                                    borderRadius: '50%',
-                                    width: '40px',
-                                    height: '40px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <svg
-                                    width='24'
-                                    height='24'
-                                    viewBox='0 0 24 24'
-                                    fill='none'
-                                    stroke='#EF4444'
-                                    strokeWidth='2'
-                                >
-                                    <path d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' />
-                                </svg>
-                            </div>
-                            <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1F2937', margin: 0 }}>
-                                Deriv Trading Risk Disclaimer
-                            </h3>
-                        </div>
-                        <div style={{ marginBottom: '16px' }}>
-                            <p style={{ lineHeight: '1.6', color: '#4B5563', marginBottom: '12px' }}>
-                                Trading multipliers and other derivative products on Deriv involves significant risk of
-                                loss and is not suitable for all investors. Before deciding to trade, carefully consider
-                                your financial situation and experience level.
-                            </p>
-                            <h4 style={{ color: '#1F2937', margin: '12px 0 8px 0' }}>Key Risks:</h4>
-                            <ul
-                                style={{
-                                    paddingLeft: '20px',
-                                    lineHeight: '1.6',
-                                    color: '#4B5563',
-                                    marginBottom: '16px',
-                                }}
-                            >
-                                <li style={{ marginBottom: '8px' }}>
-                                    <strong>Leverage Risk:</strong> Deriv&apos;s multiplier products allow you to
-                                    multiply potential gains, but also magnify potential losses.
-                                </li>
-                                <li style={{ marginBottom: '8px' }}>
-                                    <strong>Market Risk:</strong> Financial markets are volatile and can move rapidly in
-                                    unexpected directions.
-                                </li>
-                                <li style={{ marginBottom: '8px' }}>
-                                    <strong>Liquidity Risk:</strong> Some markets may become illiquid, making it
-                                    difficult to close positions.
-                                </li>
-                                <li style={{ marginBottom: '8px' }}>
-                                    <strong>Technical Risk:</strong> System failures, internet connectivity issues, or
-                                    other technical problems may prevent order execution.
-                                </li>
-                                <li>
-                                    <strong>Regulatory Risk:</strong> Deriv operates under different regulatory
-                                    frameworks which may affect your rights as a trader.
-                                </li>
-                            </ul>
-                            <h4 style={{ color: '#1F2937', margin: '12px 0 8px 0' }}>Important Considerations:</h4>
-                            <ul style={{ paddingLeft: '20px', lineHeight: '1.6', color: '#4B5563' }}>
-                                <li style={{ marginBottom: '8px' }}>
-                                    You could lose some or all of your invested capital.
-                                </li>
-                                <li style={{ marginBottom: '8px' }}>
-                                    Never trade with money you cannot afford to lose.
-                                </li>
-                                <li style={{ marginBottom: '8px' }}>
-                                    Past performance is not indicative of future results.
-                                </li>
-                                <li>
-                                    Seek independent financial advice if you have any doubts about your understanding of
-                                    these risks.
-                                </li>
-                            </ul>
-                        </div>
-                        <div
-                            style={{
-                                backgroundColor: '#F3F4F6',
-                                padding: '12px',
-                                borderRadius: '8px',
-                                marginBottom: '16px',
-                            }}
-                        >
-                            <p
-                                style={{
-                                    fontSize: '14px',
-                                    color: '#6B7280',
-                                    fontStyle: 'italic',
-                                    margin: 0,
-                                    lineHeight: '1.5',
-                                }}
-                            >
-                                By continuing to use this platform, you acknowledge that you have read, understood, and
-                                accept these risks associated with trading on Deriv.
-                            </p>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <button
-                                onClick={() => setShowDisclaimer(false)}
-                                style={{
-                                    background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    padding: '10px 20px',
-                                    fontSize: '14px',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s ease',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                                }}
-                            >
-                                I Understand the Risks
-                            </button>
-                        </div>
+                    <div style={fullPanelStyle}>
+                        <Dashboard handleTabChange={handleTabChange} />
+                        <button onClick={handleOpen}>Load Bot</button>
                     </div>
                 </div>
-            )}
+
+                {/* 3. Charts - Tab C */}
+                <div
+                    label={
+                        <>
+                            <ChartsIcon />
+                            <Localize i18n_default_text='Charts' />
+                        </>
+                    }
+                    id='id-charts'
+                >
+                    <div style={fullPanelStyle}>
+                        <Suspense
+                            fallback={<ChunkLoader message={localize('Please wait, loading chart...')} />}
+                        >
+                            <Chart show_digits_stats={false} />
+                        </Suspense>
+                    </div>
+                </div>
+
+                {/* 4. Dcircles - Tab D */}
+                <div
+                    label={
+                        <>
+                            <DCirclesIcon />
+                            <Localize i18n_default_text='Dcircles' />
+                        </>
+                    }
+                    id='id-dcircles'
+                >
+                    <Suspense fallback={<ChunkLoader message={localize('Please wait, loading Dcircles...')} />}>
+                        <div style={fullPanelStyle}>
+                            <Dcircles />
+                        </div>
+                    </Suspense>
+                </div>
+
+                {/* 5. MTool - Tab E */}
+                <div
+                    label={
+                        <>
+                            <MToolIcon />
+                            <Localize i18n_default_text='MTool' />
+                        </>
+                    }
+                    id='id-mtool'
+                >
+                    <Suspense fallback={<ChunkLoader message={localize('Please wait, loading MTool...')} />}>
+                        <div style={fullPanelStyle}>
+                            <Advanced />
+                        </div>
+                    </Suspense>
+                </div>
+
+                {/* SpeedBot - Tab F (Shifted) */}
+                <div
+                    label={
+                        <>
+                            <SpeedBotIcon />
+                            <Localize i18n_default_text='SpeedBot' />
+                        </>
+                    }
+                    id='id-speedbot'
+                >
+                    <Suspense fallback={<ChunkLoader message={localize('Please wait, loading SpeedBot...')} />}>
+                        <div style={fullPanelStyle}>
+                            <SpeedBot />
+                        </div>
+                    </Suspense>
+                </div>
+
+                {/* 6. Analysis - Tab F */}
+                <div
+                    label={
+                        <>
+                            <AnalysisToolIcon />
+                            <Localize i18n_default_text='Analysis' />
+                        </>
+                    }
+                    id='id-analysis'
+                >
+                    <div style={fullPanelStyle}>
+                        <iframe
+                            src={analysisUrl}
+                            width='100%'
+                            height='100%'
+                            title='Analysis'
+                            style={{
+                                border: 'none',
+                                display: 'block',
+                                background: '#ffffff',
+                                flex: 1,
+                            }}
+                            scrolling='yes'
+                        />
+                    </div>
+                </div>
+
+                {/* 8. Copytrading - Tab H */}
+                <div
+                    label={
+                        <>
+                            <CopyTradingIcon />
+                            <Localize i18n_default_text='Copytrading' />
+                        </>
+                    }
+                    id='id-copytrading'
+                >
+                    <div style={fullPanelStyle}>
+                        <Suspense
+                            fallback={<ChunkLoader message={localize('Please wait, loading copytrading...')} />}
+                        >
+                            <Copytrading />
+                        </Suspense>
+                    </div>
+                </div>
+
+                {/* 9. Strategies - Tab I */}
+                <div
+                    label={
+                        <>
+                            <StrategyIcon />
+                            <Localize i18n_default_text='Strategy' />
+                        </>
+                    }
+                    id='id-strategy'
+                >
+                    <div style={fullPanelStyle}>
+                        <iframe
+                            src={strategyUrl}
+                            width='100%'
+                            height='100%'
+                            title='Strategy'
+                            style={{
+                                border: 'none',
+                                display: 'block',
+                                background: '#ffffff',
+                                flex: 1,
+                            }}
+                            scrolling='yes'
+                        />
+                    </div>
+                </div>
+
+                {/* 10. Signals - Tab J */}
+                <div
+                    label={
+                        <>
+                            <SignalsIcon />
+                            <Localize i18n_default_text='Signals' />
+                        </>
+                    }
+                    id='id-signals'
+                >
+                    <div
+                        className={classNames('dashboard__chart-wrapper', {
+                            'dashboard__chart-wrapper--expanded': is_drawer_open && isDesktop,
+                            'dashboard__chart-wrapper--modal': is_chart_modal_visible && isDesktop,
+                        })}
+                        style={fullPanelStyle}
+                    >
+                        <iframe
+                            src='signals'
+                            width='100%'
+                            height='100%'
+                            style={{
+                                border: 'none',
+                                display: 'block',
+                                background: '#ffffff',
+                                flex: 1,
+                            }}
+                            scrolling='yes'
+                        />
+                    </div>
+                </div>
+
+                {/* 11. Tutorials - Tab K */}
+                <div
+                    label={
+                        <>
+                            <TutorialsIcon />
+                            <Localize i18n_default_text='Tutorials' />
+                        </>
+                    }
+                    id='id-tutorials'
+                >
+                    <div style={fullPanelStyle}>
+                        <Suspense
+                            fallback={<ChunkLoader message={localize('Please wait, loading tutorials...')} />}
+                        >
+                            <Tutorial handleTabChange={handleTabChange} />
+                        </Suspense>
+                    </div>
+                </div>
+
+            </Tabs>
+        </div>
+            </div >
+
+    {/* Risk Disclaimer Button */ }
+    < button
+onClick = {() => setShowDisclaimer(true)}
+className = 'risk-disclaimer-button'
+style = {{
+    position: 'fixed',
+        bottom: '20px',
+            right: '20px',
+                background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
+                    color: 'white',
+                        border: 'none',
+                            borderRadius: '20px',
+                                padding: '8px 16px',
+                                    fontSize: '12px',
+                                        fontWeight: '600',
+                                            cursor: 'pointer',
+                                                transition: 'all 0.3s ease',
+                                                    boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                                        zIndex: 1000,
+                                                            display: 'flex',
+                                                                alignItems: 'center',
+                                                                    gap: '6px',
+                }}
+onMouseOver = { e => {
+    e.currentTarget.style.transform = 'scale(1.05)';
+    e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+}}
+onMouseOut = { e => {
+    e.currentTarget.style.transform = 'scale(1)';
+    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+}}
+            >
+    <svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+        <path d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' />
+    </svg>
+Disclaimer
+            </button >
+
+    {/* Risk Disclaimer Modal */ }
+{
+    showDisclaimer && (
+        <div
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1001,
+            }}
+        >
+            <div
+                style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    padding: '24px',
+                    maxWidth: '600px',
+                    width: '90%',
+                    maxHeight: '80vh',
+                    overflowY: 'auto',
+                    position: 'relative',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                }}
+            >
+                <button
+                    onClick={() => setShowDisclaimer(false)}
+                    style={{
+                        position: 'absolute',
+                        top: '16px',
+                        right: '16px',
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '20px',
+                        cursor: 'pointer',
+                        color: '#6B7280',
+                    }}
+                >
+                    ×
+                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div
+                        style={{
+                            background: '#FEE2E2',
+                            borderRadius: '50%',
+                            width: '40px',
+                            height: '40px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <svg
+                            width='24'
+                            height='24'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='#EF4444'
+                            strokeWidth='2'
+                        >
+                            <path d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' />
+                        </svg>
+                    </div>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1F2937', margin: 0 }}>
+                        Deriv Trading Risk Disclaimer
+                    </h3>
+                </div>
+                <div style={{ marginBottom: '16px' }}>
+                    <p style={{ lineHeight: '1.6', color: '#4B5563', marginBottom: '12px' }}>
+                        Trading multipliers and other derivative products on Deriv involves significant risk of
+                        loss and is not suitable for all investors. Before deciding to trade, carefully consider
+                        your financial situation and experience level.
+                    </p>
+                    <h4 style={{ color: '#1F2937', margin: '12px 0 8px 0' }}>Key Risks:</h4>
+                    <ul
+                        style={{
+                            paddingLeft: '20px',
+                            lineHeight: '1.6',
+                            color: '#4B5563',
+                            marginBottom: '16px',
+                        }}
+                    >
+                        <li style={{ marginBottom: '8px' }}>
+                            <strong>Leverage Risk:</strong> Deriv&apos;s multiplier products allow you to
+                            multiply potential gains, but also magnify potential losses.
+                        </li>
+                        <li style={{ marginBottom: '8px' }}>
+                            <strong>Market Risk:</strong> Financial markets are volatile and can move rapidly in
+                            unexpected directions.
+                        </li>
+                        <li style={{ marginBottom: '8px' }}>
+                            <strong>Liquidity Risk:</strong> Some markets may become illiquid, making it
+                            difficult to close positions.
+                        </li>
+                        <li style={{ marginBottom: '8px' }}>
+                            <strong>Technical Risk:</strong> System failures, internet connectivity issues, or
+                            other technical problems may prevent order execution.
+                        </li>
+                        <li>
+                            <strong>Regulatory Risk:</strong> Deriv operates under different regulatory
+                            frameworks which may affect your rights as a trader.
+                        </li>
+                    </ul>
+                    <h4 style={{ color: '#1F2937', margin: '12px 0 8px 0' }}>Important Considerations:</h4>
+                    <ul style={{ paddingLeft: '20px', lineHeight: '1.6', color: '#4B5563' }}>
+                        <li style={{ marginBottom: '8px' }}>
+                            You could lose some or all of your invested capital.
+                        </li>
+                        <li style={{ marginBottom: '8px' }}>
+                            Never trade with money you cannot afford to lose.
+                        </li>
+                        <li style={{ marginBottom: '8px' }}>
+                            Past performance is not indicative of future results.
+                        </li>
+                        <li>
+                            Seek independent financial advice if you have any doubts about your understanding of
+                            these risks.
+                        </li>
+                    </ul>
+                </div>
+                <div
+                    style={{
+                        backgroundColor: '#F3F4F6',
+                        padding: '12px',
+                        borderRadius: '8px',
+                        marginBottom: '16px',
+                    }}
+                >
+                    <p
+                        style={{
+                            fontSize: '14px',
+                            color: '#6B7280',
+                            fontStyle: 'italic',
+                            margin: 0,
+                            lineHeight: '1.5',
+                        }}
+                    >
+                        By continuing to use this platform, you acknowledge that you have read, understood, and
+                        accept these risks associated with trading on Deriv.
+                    </p>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <button
+                        onClick={() => setShowDisclaimer(false)}
+                        style={{
+                            background: 'linear-gradient(135deg, #1e40af, #1e3a8a)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            padding: '10px 20px',
+                            fontSize: '14px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                        }}
+                    >
+                        I Understand the Risks
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
 
             <DesktopWrapper>
                 <div className='main__run-strategy-wrapper'>
@@ -966,7 +1134,7 @@ const AppWrapper = observer(() => {
             >
                 {message}
             </Dialog>
-        </React.Fragment>
+        </React.Fragment >
     );
 });
 
