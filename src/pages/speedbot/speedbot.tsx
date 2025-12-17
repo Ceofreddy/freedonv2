@@ -1,23 +1,32 @@
 import React, { useCallback, useEffect, useRef,useState } from 'react';
 import { observer } from 'mobx-react-lite';
+import { formatMoney } from '@/components/shared/utils/currency/currency';
+import { Button } from '@/components/shared_ui/button';
+import { Input } from '@/components/shared_ui/input';
+import { Text } from '@/components/shared_ui/text';
 import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
-import { Button, Icon,Input, Text } from '@deriv/components';
-import { formatMoney } from '@deriv/shared';
 import { Localize } from '@deriv-com/translations';
 import './speedbot.scss';
 
 // --- Interfaces ---
 
-interface StrategyState {
+interface StrategyConfig {
     initialStake: number;
-    winStakeMode: 'reset' | 'fixed' | 'compound'; // 2.2
-    takeProfit: number;
+    targetProfit: number;
     stopLoss: number;
-    maxTrades: number;
-    cooldownTicks: number;
+    martingaleLevel: number; // 1.0 = no martingale
+    winStakeMode: 'reset' | 'compound'; // "Compound" = keep adding profit? Spec says "Reset" recommended.
     selectedMarket: string;
-    martingaleLevel: number; // Keep for 'compound' logic or if needed
+    cooldownTicks: number; // e.g. 5 ticks
+}
+
+interface SymbolData {
+    symbol: string;
+    display_name: string;
+    market: string;
+    subgroup: string;
+    display_order: number;
 }
 
 interface ExecutionState {
@@ -29,31 +38,28 @@ interface ExecutionState {
     statusMessage: string;
 }
 
-interface SymbolData {
-    display_name: string;
-    market: string;
-    subgroup: string;
-    symbol: string;
-    display_order: number;
+interface TradeHistoryItem {
+    id: number;
+    timestamp: Date;
+    stake: number;
+    type: 'win' | 'loss';
+    result: 'win' | 'loss'; // duplication? Type could be call/put.
+    profit: number;
 }
 
-const DEFAULT_MARKET = 'R_100';
-
 const SpeedBot = observer(() => {
-    // --- Stores & Hooks ---
     const { client } = useStore();
-    const { api } = useApiBase(); // Authenticated API for trading
+    const api = useApiBase();
 
     // --- State ---
-    const [strategy, setStrategy] = useState<StrategyState>({
+    const [strategy, setStrategy] = useState<StrategyConfig>({
         initialStake: 1,
+        targetProfit: 10,
+        stopLoss: 50,
+        martingaleLevel: 2.1,
         winStakeMode: 'reset',
-        takeProfit: 10,
-        stopLoss: 10, // Treated as positive value for "lose X amount"
-        maxTrades: 50,
+        selectedMarket: 'R_100', // Default
         cooldownTicks: 5,
-        selectedMarket: DEFAULT_MARKET,
-        martingaleLevel: 2, // Default martingale multiplier
     });
 
     const [executionState, setExecutionState] = useState<ExecutionState>({
@@ -62,57 +68,42 @@ const SpeedBot = observer(() => {
         totalProfit: 0,
         totalTrades: 0,
         lastTrade: null,
-        statusMessage: 'Ready to start',
+        statusMessage: 'Ready',
     });
 
+    const [tradeHistory, setTradeHistory] = useState<TradeHistoryItem[]>([]);
     const [symbolsList, setSymbolsList] = useState<SymbolData[]>([]);
-    const [currentPrice, setCurrentPrice] = useState<string>('Loading...');
-    const [tickHistory, setTickHistory] = useState<number[]>([]); // Last 1000 ticks
-    const [tradeHistory, setTradeHistory] = useState<
-        Array<{
-            id: number;
-            timestamp: Date;
-            stake: number;
-            type: string;
-            result: 'win' | 'loss';
-            profit: number;
-        }>
-    >([]);
-    const [error, setError] = useState<string | null>(null);
+    const [tickHistory, setTickHistory] = useState<number[]>([]);
+    const [currentPrice, setCurrentPrice] = useState<string>('---');
 
-    // --- Refs ---
-    const wsRef = useRef<WebSocket | null>(null); // Dedicated WS for market data
+    // --- Refs for logic (avoid stale closures) ---
+    const stateRef = useRef({ strategy, executionState });
+    const wsRef = useRef<WebSocket | null>(null);
     const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-    const activeTradeRef = useRef<boolean>(false); // Prevent double trades
-    const cooldownCounterRef = useRef<number>(0);
-    const stateRef = useRef({ strategy, executionState }); // For access inside WS callbacks
+    const activeTradeRef = useRef(false);
+    const historyRef = useRef<number[]>([]);
+    const cooldownCounterRef = useRef(0);
 
-    // Keep refs in sync
+    // Sync Ref with State
     useEffect(() => {
         stateRef.current = { strategy, executionState };
     }, [strategy, executionState]);
 
-    // --- WebSocket Logic (Market Data) ---
-    // Mimicking Advanced/MTool logic for independent data feed
-    const connectWebSocket = useCallback(() => {
-        if (wsRef.current) {
-            wsRef.current.close();
-        }
-
-        const app_id = 96624; // Use system App ID
-        const ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${app_id}`);
+    // --- 1. WebSocket & Market Data (Independent Feed) ---
+    useEffect(() => {
+        const APP_ID = '96624'; // Or from config
+        const wsUrl = `wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`;
+        const ws = new WebSocket(wsUrl);
         wsRef.current = ws;
 
         ws.onopen = () => {
-            console.log('[SpeedBot] Data WS Connected');
-            // Start heartbeat
-            if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
+            console.log('SpeedBot WS Connected');
+            // Fetch Symbols
+            ws.send(JSON.stringify({ active_symbols: 'brief', product_type: 'basic' }));
+            // Start Ping
             pingIntervalRef.current = setInterval(() => {
                 if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ ping: 1 }));
-            }, 30000);
-
-            // Fetch active symbols
-            ws.send(JSON.stringify({ active_symbols: 'brief', product_type: 'basic' }));
+            }, 10000);
         };
 
         ws.onmessage = msg => {
@@ -142,7 +133,7 @@ const SpeedBot = observer(() => {
 
                 // Only process if it matches selected market (safety check)
                 if (market === stateRef.current.strategy.selectedMarket) {
-                    processTick(price);
+                    processTickRef(price);
                 }
             }
         };
@@ -153,7 +144,7 @@ const SpeedBot = observer(() => {
             if (pingIntervalRef.current) clearInterval(pingIntervalRef.current);
             ws.close();
         };
-    }, []);
+    }, [processTickRef]);
 
     const subscribeToMarket = (ws: WebSocket, symbol: string) => {
         // Forget all previous streams first? For simplicty, we just subscribe new history which subscribes to ticks
@@ -170,11 +161,6 @@ const SpeedBot = observer(() => {
         );
     };
 
-    useEffect(() => {
-        const cleanup = connectWebSocket();
-        return cleanup;
-    }, [connectWebSocket]);
-
     // Handle Market Change
     const handleMarketChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newMarket = e.target.value;
@@ -184,62 +170,6 @@ const SpeedBot = observer(() => {
             wsRef.current.send(JSON.stringify({ forget_all: 'ticks' }));
             setTimeout(() => subscribeToMarket(wsRef.current!, newMarket), 100);
         }
-    };
-
-    // --- Core Logic: Process Tick & Strategy ---
-    const processTick = (price: number) => {
-        setCurrentPrice(price.toFixed(2));
-        setTickHistory(prev => {
-            const updated = [...prev, price];
-            if (updated.length > 1000) return updated.slice(-1000); // Keep last 1000
-            return updated;
-        });
-
-        // If bot is running, analyze and trade
-        const { isRunning } = stateRef.current.executionState;
-        if (isRunning && !activeTradeRef.current) {
-            analyzeAndTrade();
-        }
-    };
-
-    const analyzeAndTrade = async () => {
-        const { strategy, executionState } = stateRef.current; // access fresh state
-
-        // 0. Cooldown check
-        if (cooldownCounterRef.current > 0) {
-            cooldownCounterRef.current--;
-            setExecutionState(prev => ({ ...prev, statusMessage: `Cooling down... ${cooldownCounterRef.current}` }));
-            return;
-        }
-
-        // 1. Risk Checks (Session Limits)
-        if (executionState.totalProfit >= strategy.takeProfit) {
-            stopStrategy('Take Profit Reached! 💰');
-            return;
-        }
-        if (executionState.totalProfit <= -strategy.stopLoss) {
-            stopStrategy('Stop Loss Hit! 🛑');
-            return;
-        }
-        if (executionState.totalTrades >= strategy.maxTrades) {
-            stopStrategy('Max Trades Reached');
-            return;
-        }
-
-        // 2. Data Sufficiency
-
-        // Actually, updated via setTickHistory but we are inside processTick scope?
-        // No, processTick calls this. But tickHistory state might lag.
-        // Better to use the ref derived/passed tick list or rely on stateRef if we synced it.
-        // We will trust the stateRef is roughly up to date or use local variable if we passed full history.
-        // Let's use `tickHistory` state directly as it's in scope of render/effect,
-        // BUT processTick is called from WS callback.
-        // We should really use a Ref for history to be instantly accessible in callback.
-        // For now, let's assume we use what we have.
-        // FIX: Let's use the updating array logic inside processTick.
-        // Actually, let's rely on `ticks` passed from `processTick` if we modified it?
-        // No, `processTick` updates React state.
-        // Let's use a Ref for history to ensure sync access in the analysis.
     };
 
     // Use a Ref for history to guarantee synchronous access in WS callback
@@ -263,7 +193,7 @@ const SpeedBot = observer(() => {
         if (stateRef.current.executionState.isRunning && !activeTradeRef.current) {
             runStrategyLogic();
         }
-    }, []); // No deps, reads from refs
+    }, []); // Refs used inside, so stable
 
     const runStrategyLogic = async () => {
         const { strategy, executionState } = stateRef.current;
@@ -434,9 +364,10 @@ const SpeedBot = observer(() => {
             } else {
                 throw new Error('Trade timeout');
             }
-        } catch (e: any) {
+        } catch (e: unknown) {
             console.error(e);
-            setExecutionState(prev => ({ ...prev, statusMessage: 'Error: ' + e.message }));
+            const errorMessage = e instanceof Error ? e.message : String(e);
+            setExecutionState(prev => ({ ...prev, statusMessage: 'Error: ' + errorMessage }));
             // Reset active flag
             activeTradeRef.current = false;
         }
@@ -554,7 +485,6 @@ const SpeedBot = observer(() => {
         <div className='speedbot-container' style={{ '--market-color': '#2196f3' } as React.CSSProperties}>
             <div className='speedbot-header'>
                 <Text as='h1' weight='bold' className='speedbot-title'>
-                    <Icon icon='IcTradingPlatform' className='speedbot-title-icon' />
                     <Localize i18n_default_text='SpeedBot Pro' />
                 </Text>
 
