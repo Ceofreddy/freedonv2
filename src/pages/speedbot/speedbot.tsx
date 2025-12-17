@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef,useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { formatMoney } from '@/components/shared/utils/currency/currency';
 import { Button } from '@/components/shared_ui/button';
@@ -73,7 +73,6 @@ const SpeedBot = observer(() => {
 
     const [tradeHistory, setTradeHistory] = useState<TradeHistoryItem[]>([]);
     const [symbolsList, setSymbolsList] = useState<SymbolData[]>([]);
-    const [tickHistory, setTickHistory] = useState<number[]>([]);
     const [currentPrice, setCurrentPrice] = useState<string>('---');
 
     // --- Refs for logic (avoid stale closures) ---
@@ -121,7 +120,7 @@ const SpeedBot = observer(() => {
 
             if (data.msg_type === 'history') {
                 const prices = data.history.prices.map((p: string) => Number.parseFloat(p));
-                setTickHistory(prices); // Initial load
+                historyRef.current = prices; // Initial load
 
                 // Subscribe to ticks
                 ws.send(JSON.stringify({ ticks: data.echo_req.ticks_history, subscribe: 1 }));
@@ -165,18 +164,12 @@ const SpeedBot = observer(() => {
     const handleMarketChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newMarket = e.target.value;
         setStrategy(prev => ({ ...prev, selectedMarket: newMarket }));
-        setTickHistory([]); // Clear history
+        historyRef.current = []; // Clear history
         if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
             wsRef.current.send(JSON.stringify({ forget_all: 'ticks' }));
             setTimeout(() => subscribeToMarket(wsRef.current!, newMarket), 100);
         }
     };
-
-    // Use a Ref for history to guarantee synchronous access in WS callback
-    const historyRef = useRef<number[]>([]);
-    useEffect(() => {
-        historyRef.current = tickHistory;
-    }, [tickHistory]);
 
     // Re-implement processTick to use refs effectively
     const processTickRef = useCallback((price: number) => {
@@ -186,13 +179,14 @@ const SpeedBot = observer(() => {
         historyRef.current = newHistory;
 
         // Update State (for UI)
-        setTickHistory(newHistory); // Triggers re-render
+        // setTickHistory(newHistory); // Removed unused state, currentPrice triggers render
         setCurrentPrice(price.toFixed(price.toString().split('.')[1]?.length || 2));
 
         // Logic
         if (stateRef.current.executionState.isRunning && !activeTradeRef.current) {
             runStrategyLogic();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Refs used inside, so stable
 
     const runStrategyLogic = async () => {
