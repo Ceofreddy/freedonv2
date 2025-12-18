@@ -103,10 +103,13 @@ const SpeedBot = observer(() => {
                 });
 
                 if (response.active_symbols && isMounted) {
+                    // Match MTool filtering: Include all proper 'synthetics' subgroup symbols
+                    // This covers Volatility Indices and Jump Indices
                     const volatilitySymbols = response.active_symbols.filter(
-                        (symbol: any) => symbol.subgroup === 'synthetics' && symbol.market === 'synthetic_index'
+                        (symbol: any) => symbol.subgroup === 'synthetics'
                     );
 
+                    // Sort by display order
                     volatilitySymbols.sort((a: any, b: any) => a.display_order - b.display_order);
 
                     const formattedMarkets = volatilitySymbols.map((m: any) => ({
