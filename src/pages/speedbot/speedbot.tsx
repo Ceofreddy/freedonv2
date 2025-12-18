@@ -8,6 +8,7 @@ import SelectNative from '@/components/shared_ui/select-native';
 import Text from '@/components/shared_ui/text';
 import { useStore } from '@/hooks/useStore';
 import { Icon } from '@/utils/tmp/dummy';
+// @ts-expect-error
 import { api_base } from '@deriv/bot-skeleton';
 import { Localize } from '@deriv-com/translations';
 import './speedbot.scss';
@@ -37,45 +38,11 @@ interface VolatilityMarket {
     volatility: number;
 }
 
-const VOLATILITY_MARKETS: VolatilityMarket[] = [
-    {
-        text: 'Volatility 10 (1s) Index',
-        value: '1HZ10V',
-        symbol: 'R_10',
-        volatility: 0.3,
-    },
-    {
-        text: 'Volatility 25 (1s) Index',
-        value: '1HZ25V',
-        symbol: 'R_25',
-        volatility: 0.4,
-    },
-    {
-        text: 'Volatility 50 (1s) Index',
-        value: '1HZ50V',
-        symbol: 'R_50',
-        volatility: 0.5,
-    },
-    {
-        text: 'Volatility 75 (1s) Index',
-        value: '1HZ75V',
-        symbol: 'R_75',
-        volatility: 0.6,
-    },
-    {
-        text: 'Volatility 100 (1s) Index',
-        value: '1HZ100V',
-        symbol: 'R_100',
-        volatility: 0.7,
-    },
-];
-
-const DEFAULT_MARKET = VOLATILITY_MARKETS[2]; // Default to Volatility 50
-
 const SpeedBot = observer(() => {
     const store = useStore();
     const client = store?.client;
     const [isStrategyRunning, setIsStrategyRunning] = useState(false);
+    const [markets, setMarkets] = useState<VolatilityMarket[]>([]);
     const [strategy, setStrategy] = useState<
         Omit<StrategyState, 'isRunning' | 'currentStake' | 'totalProfit' | 'lastTrade'>
     >({
@@ -87,9 +54,9 @@ const SpeedBot = observer(() => {
         takeProfit: 5,
         stopLoss: -10,
         martingaleLevel: 2,
-        selectedMarket: DEFAULT_MARKET.value,
-        marketSymbol: DEFAULT_MARKET.symbol,
-        volatility: DEFAULT_MARKET.volatility,
+        selectedMarket: 'R_100', // Default
+        marketSymbol: 'R_100',
+        volatility: 0.5,
     });
 
     const [executionState, setExecutionState] = useState({
@@ -102,28 +69,74 @@ const SpeedBot = observer(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [tradeHistory, setTradeHistory] = useState<
-        Array<{
-            id: number;
-            timestamp: Date;
-            stake: number;
-            prediction: number;
-            result: 'win' | 'loss';
-            profit: number;
-        }>
-    >([]);
+    const [tradeHistory, setTradeHistory] = useState<Array<{
+        id: number;
+        timestamp: Date;
+        stake: number;
+        prediction: number;
+        result: 'win' | 'loss';
+        profit: number;
+    }>>([]);
 
     // Use ref to access current state in callbacks
     const stateRef = useRef({
         ...strategy,
-        ...executionState,
+        ...executionState
     });
     useEffect(() => {
         stateRef.current = {
             ...strategy,
-            ...executionState,
+            ...executionState
         };
     }, [strategy, executionState]);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchMarkets = async () => {
+            if (!api_base.api) return;
+
+            try {
+                const response = await api_base.api.send({
+                    active_symbols: 'brief',
+                    product_type: 'basic'
+                });
+
+                if (response.active_symbols && isMounted) {
+                    const volatilitySymbols = response.active_symbols.filter(
+                        (symbol: any) => symbol.subgroup === 'synthetics' && symbol.market === 'synthetic_index'
+                    );
+
+                    volatilitySymbols.sort((a: any, b: any) => a.display_order - b.display_order);
+
+                    const formattedMarkets = volatilitySymbols.map((m: any) => ({
+                        text: m.display_name,
+                        value: m.symbol,
+                        symbol: m.symbol,
+                        volatility: 0.5 // Default or calculated if needed based on tick history
+                    }));
+
+                    setMarkets(formattedMarkets);
+
+                    if (formattedMarkets.length > 0 && !formattedMarkets.find((m: any) => m.value === strategy.selectedMarket)) {
+                        setStrategy(prev => ({
+                            ...prev,
+                            selectedMarket: formattedMarkets[0].value,
+                            marketSymbol: formattedMarkets[0].symbol
+                        }));
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch markets:", err);
+            }
+        };
+
+        fetchMarkets();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     const handleInputChange = (field: keyof typeof strategy, value: string | number) => {
         const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
@@ -164,89 +177,85 @@ const SpeedBot = observer(() => {
         return true;
     };
 
-    const executeTrade = useCallback(
-        async (stake: number, prediction: number): Promise<{ isWin: boolean; profit: number }> => {
-            // Real API Implementation
-            try {
-                const symbol = stateRef.current.selectedMarket;
-                // Assuming DIGITMATCH or similar? The user has "Prediction"
-                // Usually Digit Match or Digit Over/Under?
-                // Previous code used DIGITOVER/UNDER.
-                // User code says "Prediction Before Loss". This implies Digit Match or Digit Diff?
-                // "Prediction" usually matches "DIGITMATCH".
-                // Or maybe "DIGITDIFF".
-                // If the user inputs a single digit "Prediction", it's likely DIGITMATCH (win on match) or DIGITDIFF (win on diff).
-                // Given "martingale" strategies are common on DIGITDIFF (high win rate, low payout) or DIGITMATCH (high payout, lo win rate).
-                // Let's assume DIGITMATCH for high payout? Or DIGITDIFF?
-                // The simulation had "Win Rate = 0.5".
-                // Digit Match win rate is 0.1. Digit Diff is 0.9.
-                // Over/Under is ~0.4 - 0.5.
-                // "Prediction" implies specific digit.
-                // Let's try DIGITMATCH based on variable name `prediction`.
-                // But wait, the simulation had logic: `winRate = ...`
+    const executeTrade = useCallback(async (stake: number, prediction: number): Promise<{ isWin: boolean; profit: number }> => {
+        // Real API Implementation with Subscription
+        try {
+            const symbol = stateRef.current.selectedMarket;
+            const contractType = 'DIGITMATCH';
 
-                // CRITICAL: The user's prompt showed `SpeedBot` in a previous turn using `DIGITOVER/UNDER` logic on `22` freq.
-                // This new code has `predictionBeforeLoss` (single digit).
-                // "Prediction" usually means the target digit.
-                // Let's use DIGITMATCH for now, or maybe DIGITDIFF?
-                // Actually, if it's "SpeedBot", maybe it's Matches?
-                // Let's stick to DIGITMATCH for safety with `prediction`.
+            const proposal = await api_base.api.send({
+                proposal: 1,
+                amount: stake,
+                basis: 'stake',
+                contract_type: contractType,
+                currency: client?.currency || 'USD',
+                duration: 1,
+                duration_unit: 't',
+                symbol: symbol,
+                barrier: String(prediction),
+            });
 
-                const contractType = 'DIGITMATCH';
-
-                const proposal = await api_base.api.send({
-                    proposal: 1,
-                    amount: stake,
-                    basis: 'stake',
-                    contract_type: contractType,
-                    currency: client?.currency || 'USD',
-                    duration: 1,
-                    duration_unit: 't',
-                    symbol: symbol,
-                    barrier: String(prediction),
-                });
-
-                if (proposal.error) {
-                    throw new Error(proposal.error.message);
-                }
-
-                const buy = await api_base.api.send({
-                    buy: proposal.proposal.id,
-                    price: proposal.proposal.ask_price,
-                });
-
-                if (buy.error) {
-                    throw new Error(buy.error.message);
-                }
-
-                const contractId = buy.buy.contract_id;
-
-                // Poll for result (fast for 1 tick)
-                let retries = 20;
-                let resultProfit = 0;
-                let isWin = false;
-
-                while (retries > 0) {
-                    await new Promise(r => setTimeout(r, 500));
-                    const status = await api_base.api.send({ proposal_open_contract: 1, contract_id: contractId });
-                    if (status.proposal_open_contract && status.proposal_open_contract.is_sold) {
-                        const contract = status.proposal_open_contract;
-                        resultProfit = Number(contract.profit);
-                        isWin = resultProfit >= 0;
-                        break;
-                    }
-                    retries--;
-                }
-
-                return { isWin, profit: resultProfit };
-            } catch (e) {
-                // eslint-disable-next-line no-console
-                console.error('Trade Execution Error', e);
-                throw e;
+            if (proposal.error) {
+                throw new Error(proposal.error.message);
             }
-        },
-        [client?.currency]
-    );
+
+            const buy = await api_base.api.send({
+                buy: proposal.proposal.id,
+                price: proposal.proposal.ask_price,
+            });
+
+            if (buy.error) {
+                throw new Error(buy.error.message);
+            }
+
+            const contractId = buy.buy.contract_id;
+
+            // Subscribe to contract updates for faster result
+            return new Promise((resolve, reject) => {
+                api_base.api.send({
+                    proposal_open_contract: 1,
+                    contract_id: contractId,
+                    subscribe: 1
+                });
+
+                // We need a way to listen to this specific subscription. 
+                // Since api_base might not expose a direct listener for this specific req, 
+                // we can rely on the general onMessage if possible, OR just poll faster if subscription is complex to wire up here without a proper listener ID.
+                // However, MTool uses direct socket. Here we use api_base.
+                // api_base handles subscriptions internally but finding the specific message requires a listener.
+
+                // BACKUP: Optimized polling (every 100ms)
+                let retries = 50;
+                const poll = async () => {
+                    if (retries <= 0) {
+                        reject(new Error("Trade timeout"));
+                        return;
+                    }
+
+                    try {
+                        const status = await api_base.api.send({ proposal_open_contract: 1, contract_id: contractId });
+                        if (status.proposal_open_contract && status.proposal_open_contract.is_sold) {
+                            const contract = status.proposal_open_contract;
+                            const resultProfit = Number(contract.profit);
+                            const isWin = resultProfit >= 0;
+                            resolve({ isWin, profit: resultProfit });
+                        } else {
+                            retries--;
+                            setTimeout(poll, 100);
+                        }
+                    } catch (e) {
+                        reject(e);
+                    }
+                };
+                poll();
+            });
+
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('Trade Execution Error', e);
+            throw e;
+        }
+    }, [client?.currency]);
 
     const startStrategy = () => {
         if (!validateInputs()) return;
@@ -270,7 +279,7 @@ const SpeedBot = observer(() => {
         setIsStrategyRunning(false);
         setExecutionState(prev => ({
             ...prev,
-            isRunning: false,
+            isRunning: false
         }));
     };
 
@@ -287,13 +296,11 @@ const SpeedBot = observer(() => {
             let tradeCount = 0;
             const maxTrades = 1000; // Increased limit
 
-            while (
-                isMounted &&
-                executionState.isRunning &&
+            while (isMounted && executionState.isRunning &&
                 executionState.totalProfit < strategy.takeProfit &&
                 executionState.totalProfit > strategy.stopLoss &&
-                tradeCount < maxTrades
-            ) {
+                tradeCount < maxTrades) {
+
                 tradeCount++;
 
                 try {
@@ -314,27 +321,25 @@ const SpeedBot = observer(() => {
                         totalProfit: newTotalProfit,
                         currentStake: Number(newStake.toFixed(2)),
                         lastTrade: isWin ? 'win' : 'loss',
-                        isRunning: !(newTotalProfit >= strategy.takeProfit || newTotalProfit <= strategy.stopLoss),
+                        isRunning: !(newTotalProfit >= strategy.takeProfit || newTotalProfit <= strategy.stopLoss)
                     }));
 
                     // Add to trade history
                     setTradeHistory(prev => {
                         const result: 'win' | 'loss' = isWin ? 'win' : 'loss';
-                        return [
-                            {
-                                id: Date.now() + tradeCount,
-                                timestamp: new Date(),
-                                stake: currentStake,
-                                prediction: currentPrediction,
-                                result,
-                                profit,
-                            },
-                            ...prev,
-                        ].slice(0, 50); // Keep last 50 trades
+                        return [{
+                            id: Date.now() + tradeCount,
+                            timestamp: new Date(),
+                            stake: currentStake,
+                            prediction: currentPrediction,
+                            result,
+                            profit,
+                        }, ...prev].slice(0, 50); // Keep last 50 trades
                     });
 
                     // Client balance update
-                    client?.send({ balance: 1, subscribe: 0 });
+                    // Use api_base as client.send is not available
+                    api_base.api.send({ balance: 1, subscribe: 0 });
 
                     if (isWin) {
                         currentStake = strategy.initialStake;
@@ -345,6 +350,7 @@ const SpeedBot = observer(() => {
                         currentStake = strategy.initialStake * Math.pow(strategy.martingaleLevel, consecutiveLosses);
                         currentPrediction = strategy.predictionAfterLoss;
                     }
+
                 } catch (error) {
                     // eslint-disable-next-line no-console
                     console.error('Trade error:', error);
@@ -354,7 +360,7 @@ const SpeedBot = observer(() => {
 
                 // Add delay between trades
                 if (isMounted && executionState.isRunning) {
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Fast execution
                 }
             }
 
@@ -385,30 +391,26 @@ const SpeedBot = observer(() => {
     // Handle market change
     const handleMarketChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedValue = e.target.value;
-        const selectedMarket = VOLATILITY_MARKETS.find(market => market.value === selectedValue) || DEFAULT_MARKET;
+        const selectedMarket = markets.find(market => market.value === selectedValue);
 
-        setStrategy(prev => ({
-            ...prev,
-            selectedMarket: selectedMarket.value,
-            marketSymbol: selectedMarket.symbol,
-            volatility: selectedMarket.volatility,
-        }));
+        if (selectedMarket) {
+            setStrategy(prev => ({
+                ...prev,
+                selectedMarket: selectedMarket.value,
+                marketSymbol: selectedMarket.symbol,
+                volatility: selectedMarket.volatility
+            }));
+        }
     };
 
     const getMarketColor = () => {
         switch (strategy.selectedMarket) {
-            case '1HZ10V':
-                return '#4caf50';
-            case '1HZ25V':
-                return '#8bc34a';
-            case '1HZ50V':
-                return '#2196f3';
-            case '1HZ75V':
-                return '#ff9800';
-            case '1HZ100V':
-                return '#f44336';
-            default:
-                return '#2196f3';
+            case '1HZ10V': return '#4caf50';
+            case '1HZ25V': return '#8bc34a';
+            case '1HZ50V': return '#2196f3';
+            case '1HZ75V': return '#ff9800';
+            case '1HZ100V': return '#f44336';
+            default: return '#2196f3';
         }
     };
 
@@ -416,42 +418,29 @@ const SpeedBot = observer(() => {
     if (!client) return <Loading />;
 
     return (
-        <div
-            className='speedbot-container'
-            style={
-                {
-                    '--primary-color': '#2196f3',
-                    '--profit-color': '#4caf50',
-                    '--loss-color': '#f44336',
-                    '--market-color': getMarketColor(),
-                } as React.CSSProperties
-            }
-        >
+        <div className='speedbot-container' style={{
+            '--primary-color': '#2196f3',
+            '--profit-color': '#4caf50',
+            '--loss-color': '#f44336',
+            '--market-color': getMarketColor()
+        } as React.CSSProperties}>
             {!client.is_logged_in && (
-                <div
-                    className='auth-warning-banner'
-                    style={{
-                        background: '#ff4444',
-                        color: 'white',
-                        padding: '10px',
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        marginBottom: '10px',
-                        borderRadius: '4px',
-                    }}
-                >
+                <div className="auth-warning-banner" style={{
+                    background: '#ff4444',
+                    color: 'white',
+                    padding: '10px',
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    marginBottom: '10px',
+                    borderRadius: '4px'
+                }}>
                     Unauthorised Login - Please Log In to Trade
                 </div>
             )}
-            <div className='speedbot-maintenance-banner'>
-                <Icon icon='IcAlertWarning' className='maintenance-icon' />
-                <Text as='p' size='s' className='maintenance-text'>
-                    <Localize i18n_default_text='SpeedBot is currently under maintenance. Some features may be limited or unavailable.' />
-                </Text>
-            </div>
+
             <div className='speedbot-header'>
                 <Text as='h1' weight='bold' className='speedbot-title'>
-                    <Icon icon='IcTradingPlatform' className='speedbot-title-icon' />
+                    <Icon icon='IcChart' className='speedbot-title-icon' />
                     <Localize i18n_default_text='SpeedBot Pro' />
                 </Text>
 
@@ -463,19 +452,19 @@ const SpeedBot = observer(() => {
                         data-testid='market-selector'
                         className='speedbot-select'
                         value={strategy.selectedMarket}
-                        list_items={VOLATILITY_MARKETS.map(market => ({
+                        list_items={markets.length > 0 ? markets.map(market => ({
                             text: market.text,
-                            value: market.value,
-                        }))}
+                            value: market.value
+                        })) : [{ text: 'Loading Markets...', value: '' }]}
                         onChange={handleMarketChange}
-                        disabled={isStrategyRunning}
+                        disabled={isStrategyRunning || markets.length === 0}
                     />
                 </div>
             </div>
 
             {error && (
                 <div className='speedbot-error'>
-                    <Icon icon='IcAlertDanger' />
+                    <Icon icon='IcClose' />
                     <Text as='p' size='xs' color='loss-danger'>
                         {error}
                     </Text>
@@ -485,7 +474,7 @@ const SpeedBot = observer(() => {
             <div className='speedbot-controls-card'>
                 <div className='speedbot-section'>
                     <div className='speedbot-section-header'>
-                        <Icon icon='IcCog' className='speedbot-section-icon' />
+                        <Icon icon='IcBotBuilder' className='speedbot-section-icon' />
                         <Text as='h3' weight='bold' className='speedbot-section-title'>
                             <Localize i18n_default_text='Strategy Settings' />
                         </Text>
@@ -500,7 +489,7 @@ const SpeedBot = observer(() => {
                                 type='number'
                                 value={strategy.predictionBeforeLoss}
                                 disabled={isStrategyRunning}
-                                onChange={e => handleInputChange('predictionBeforeLoss', e.target.value)}
+                                onChange={(e) => handleInputChange('predictionBeforeLoss', e.target.value)}
                                 min='0'
                                 max='9'
                             />
@@ -514,7 +503,7 @@ const SpeedBot = observer(() => {
                                 type='number'
                                 value={strategy.predictionAfterLoss}
                                 disabled={isStrategyRunning}
-                                onChange={e => handleInputChange('predictionAfterLoss', e.target.value)}
+                                onChange={(e) => handleInputChange('predictionAfterLoss', e.target.value)}
                                 min='0'
                                 max='9'
                             />
@@ -528,7 +517,7 @@ const SpeedBot = observer(() => {
                                 type='number'
                                 value={strategy.initialStake}
                                 disabled={isStrategyRunning}
-                                onChange={e => handleInputChange('initialStake', e.target.value)}
+                                onChange={(e) => handleInputChange('initialStake', e.target.value)}
                                 min='0.35'
                                 step='0.1'
                             />
@@ -542,7 +531,7 @@ const SpeedBot = observer(() => {
                                 type='number'
                                 value={strategy.nextStake}
                                 disabled={isStrategyRunning}
-                                onChange={e => handleInputChange('nextStake', e.target.value)}
+                                onChange={(e) => handleInputChange('nextStake', e.target.value)}
                                 min='0.35'
                                 step='0.1'
                             />
@@ -556,7 +545,7 @@ const SpeedBot = observer(() => {
                                 type='number'
                                 value={strategy.takeProfit}
                                 disabled={isStrategyRunning}
-                                onChange={e => handleInputChange('takeProfit', e.target.value)}
+                                onChange={(e) => handleInputChange('takeProfit', e.target.value)}
                                 min='1'
                             />
                         </div>
@@ -569,7 +558,7 @@ const SpeedBot = observer(() => {
                                 type='number'
                                 value={strategy.stopLoss}
                                 disabled={isStrategyRunning}
-                                onChange={e => handleInputChange('stopLoss', e.target.value)}
+                                onChange={(e) => handleInputChange('stopLoss', e.target.value)}
                                 max='-1'
                             />
                         </div>
@@ -582,7 +571,7 @@ const SpeedBot = observer(() => {
                                 type='number'
                                 value={strategy.martingaleLevel}
                                 disabled={isStrategyRunning}
-                                onChange={e => handleInputChange('martingaleLevel', e.target.value)}
+                                onChange={(e) => handleInputChange('martingaleLevel', e.target.value)}
                                 min='1'
                                 step='0.1'
                             />
@@ -603,11 +592,7 @@ const SpeedBot = observer(() => {
                             <Text as='p' className='speedbot-label'>
                                 <Localize i18n_default_text='Status' />
                             </Text>
-                            <Text
-                                as='p'
-                                weight='bold'
-                                color={executionState.isRunning ? 'profit-success' : 'loss-danger'}
-                            >
+                            <Text as='p' weight='bold' color={executionState.isRunning ? 'profit-success' : 'loss-danger'}>
                                 {executionState.isRunning ? 'RUNNING' : 'STOPPED'}
                             </Text>
                         </div>
@@ -648,9 +633,7 @@ const SpeedBot = observer(() => {
                                     <span className={executionState.lastTrade === 'win' ? 'text-profit' : 'text-loss'}>
                                         {executionState.lastTrade.toUpperCase()}
                                     </span>
-                                ) : (
-                                    '-'
-                                )}
+                                ) : '-'}
                             </Text>
                         </div>
                     </div>
@@ -685,7 +668,7 @@ const SpeedBot = observer(() => {
                                 large
                                 secondary
                             >
-                                <Icon icon='IcUpdate' className='btn-icon' />
+                                <Icon icon='IcRedo' className='btn-icon' />
                                 <Localize i18n_default_text='Reset' />
                             </Button>
                         </div>
