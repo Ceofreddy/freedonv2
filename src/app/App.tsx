@@ -16,7 +16,10 @@ import './app-root.scss';
 const Layout = lazy(() => import('../components/layout'));
 const AppRoot = lazy(() => import('./app-root'));
 
-const { TRANSLATIONS_CDN_URL, R2_PROJECT_NAME, CROWDIN_BRANCH_NAME } = process.env;
+const TRANSLATIONS_CDN_URL = process.env.TRANSLATIONS_CDN_URL;
+const R2_PROJECT_NAME = process.env.R2_PROJECT_NAME;
+const CROWDIN_BRANCH_NAME = process.env.CROWDIN_BRANCH_NAME;
+
 const i18nInstance = initializeI18n({
     cdnUrl: `${TRANSLATIONS_CDN_URL}/${R2_PROJECT_NAME}/${CROWDIN_BRANCH_NAME}`,
 });
@@ -171,8 +174,8 @@ function App() {
             const parsedClientAccounts = JSON.parse(clientAccounts) as TAuthData['account_list'];
             const isValidCurrency = accountCurrency
                 ? Object.values(parsedClientAccounts).some(
-                      account => account.currency.toUpperCase() === accountCurrency.toUpperCase()
-                  )
+                    account => account.currency.toUpperCase() === accountCurrency.toUpperCase()
+                )
                 : false;
 
             const updateLocalStorage = (token: string, loginid: string) => {
