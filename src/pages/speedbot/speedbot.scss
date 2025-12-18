@@ -56,17 +56,30 @@
             .speedbot-select {
                 min-width: 200px;
 
-                .dc-dropdown__display {
-                    background: var(--general-section-1);
-                    border: 1px solid var(--border-normal);
+                // Target the actual structure of SelectNative
+                .dc-select-native__display,
+                .dc-input {
+                    background: var(--general-section-1) !important;
+                    border-color: var(--border-normal) !important;
                     border-radius: 4px;
-                    padding: 0.8rem 1.2rem;
-                    font-weight: 500;
-                    color: var(--text-general);
-                    transition: all 0.2s;
+                    color: var(--text-prominent) !important;
+                }
 
-                    &:hover {
-                        border-color: var(--text-less-prominent);
+                // The text inside the display
+                .dc-select-native__display-text {
+                    font-weight: 500;
+                    color: var(--text-prominent) !important;
+                }
+
+                // The native select element (dropdown list)
+                select.dc-select-native__picker {
+                    color: var(--text-prominent) !important;
+                    background-color: var(--general-main-1) !important;
+
+                    option {
+                        color: var(--text-prominent) !important;
+                        background-color: var(--general-main-1) !important;
+                        padding: 10px;
                     }
                 }
             }
