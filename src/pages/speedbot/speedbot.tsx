@@ -48,8 +48,8 @@ interface TradeHistoryItem {
 }
 
 const SpeedBot = observer(() => {
-    const { client } = useStore();
-    // const api = useApiBase(); // Removed, using api_base directly
+    const store = useStore();
+    const client = store?.client;
 
     // --- State ---
     const [strategy, setStrategy] = useState<StrategyConfig>({
@@ -296,7 +296,7 @@ const SpeedBot = observer(() => {
                 amount: stake,
                 basis: 'stake',
                 contract_type: contractType,
-                currency: client.currency || 'USD',
+                currency: client?.currency || 'USD',
                 duration: 1,
                 duration_unit: 't',
                 symbol: strategy.selectedMarket,
@@ -475,8 +475,26 @@ const SpeedBot = observer(() => {
         }
     }, [processTickRef]);
 
+    if (!client) return <div className='speedbot-loading'>Loading...</div>;
+
     return (
         <div className='speedbot-container' style={{ '--market-color': '#2196f3' } as React.CSSProperties}>
+            {!client.is_logged_in && (
+                <div
+                    className='auth-warning-banner'
+                    style={{
+                        background: '#ff4444',
+                        color: 'white',
+                        padding: '10px',
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        marginBottom: '10px',
+                        borderRadius: '4px',
+                    }}
+                >
+                    Unauthorised Login - Please Log In to Trade
+                </div>
+            )}
             <div className='speedbot-header'>
                 <Text as='h1' weight='bold' className='speedbot-title'>
                     <Localize i18n_default_text='SpeedBot Pro' />
@@ -587,7 +605,7 @@ const SpeedBot = observer(() => {
                                 weight='bold'
                                 color={executionState.totalProfit >= 0 ? 'profit-success' : 'loss-danger'}
                             >
-                                {formatMoney(client.currency, executionState.totalProfit, true)}
+                                {formatMoney(client?.currency || 'USD', executionState.totalProfit, true)}
                             </Text>
                         </div>
                     </div>
