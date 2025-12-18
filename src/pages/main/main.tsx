@@ -366,7 +366,6 @@ const AppWrapper = observer(() => {
     useEffect(() => {
         const fetchBots = async () => {
             const botFiles = [
-                'Freedon_Digit_Switcher.xml',
                 'AUTO C4 VOLT 🇬🇧 2 🇬🇧 AI PREMIUM ROBOT 💯.xml',
                 'THE BINOTEK 5 - 2025🥇.xml',
                 'FREEDON 🥇OVER PRO BOT 💫.xml',

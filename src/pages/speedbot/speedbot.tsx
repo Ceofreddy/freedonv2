@@ -4,8 +4,8 @@ import { formatMoney } from '@/components/shared/utils/currency/currency';
 import Button from '@/components/shared_ui/button';
 import Input from '@/components/shared_ui/input';
 import Text from '@/components/shared_ui/text';
-import { useApiBase } from '@/hooks/useApiBase';
 import { useStore } from '@/hooks/useStore';
+import { api_base } from '@deriv/bot-skeleton';
 import { Localize } from '@deriv-com/translations';
 import './speedbot.scss';
 
@@ -49,7 +49,7 @@ interface TradeHistoryItem {
 
 const SpeedBot = observer(() => {
     const { client } = useStore();
-    const api = useApiBase();
+    // const api = useApiBase(); // Removed, using api_base directly
 
     // --- State ---
     const [strategy, setStrategy] = useState<StrategyConfig>({
@@ -291,7 +291,7 @@ const SpeedBot = observer(() => {
             const contractType = type === 'OVER' ? 'DIGITOVER' : 'DIGITUNDER';
             const barrier = type === 'OVER' ? '1' : '8';
 
-            const proposal = await api.send({
+            const proposal = await api_base.api.send({
                 proposal: 1,
                 amount: stake,
                 basis: 'stake',
@@ -308,7 +308,7 @@ const SpeedBot = observer(() => {
             }
 
             // 2. Buy
-            const buy = await api.send({
+            const buy = await api_base.api.send({
                 buy: proposal.proposal.id,
                 price: proposal.proposal.ask_price,
             });
@@ -342,7 +342,7 @@ const SpeedBot = observer(() => {
             let profit = 0;
 
             while (retries > 0) {
-                const status = await api.send({ proposal_open_contract: 1, contract_id: contractId });
+                const status = await api_base.api.send({ proposal_open_contract: 1, contract_id: contractId });
                 if (status.proposal_open_contract && status.proposal_open_contract.is_sold) {
                     const contract = status.proposal_open_contract;
                     profit = Number(contract.profit);
