@@ -1,6 +1,6 @@
 import { reaction } from 'mobx';
 import { TStatistics } from '@/components/transaction-details/transaction-details.types';
-import RootStore from '@/stores/root-store';
+import type RootStore from '@/stores/root-store';
 import { ProposalOpenContract } from '@deriv/api-types';
 
 const GTM = (() => {

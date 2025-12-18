@@ -1,10 +1,10 @@
 import { ComponentProps, ReactNode } from 'react';
-import useThemeSwitcher from '@/hooks/useThemeSwitcher';
-import RootStore from '@/stores/root-store';
-import { LegacyLogout1pxIcon, LegacyTheme1pxIcon } from '@deriv/quill-icons/Legacy';
-import { ToggleSwitch } from '@deriv-com/ui';
-import { useTranslations } from '@deriv-com/translations';
 import { useOauth2 } from '@/hooks/auth/useOauth2';
+import useThemeSwitcher from '@/hooks/useThemeSwitcher';
+import type RootStore from '@/stores/root-store';
+import { LegacyLogout1pxIcon, LegacyTheme1pxIcon } from '@deriv/quill-icons/Legacy';
+import { useTranslations } from '@deriv-com/translations';
+import { ToggleSwitch } from '@deriv-com/ui';
 
 export type TSubmenuSection = 'accountSettings' | 'cashier';
 

@@ -22,12 +22,14 @@ export default defineConfig({
         },
         define: {
             'process.env': {
-                DERIV_APP_ID: JSON.stringify(process.env.DERIV_APP_ID), // ✅ Added App ID
-                TRANSLATIONS_CDN_URL: JSON.stringify(process.env.TRANSLATIONS_CDN_URL),
+                DERIV_APP_ID: JSON.stringify(process.env.DERIV_APP_ID || '116730'), // ✅ Added fallback
+                TRANSLATIONS_CDN_URL: JSON.stringify(
+                    process.env.TRANSLATIONS_CDN_URL || 'https://translations.deriv.com/fusion'
+                ), // ✅ Added fallback
                 R2_PROJECT_NAME: JSON.stringify(process.env.R2_PROJECT_NAME),
                 CROWDIN_BRANCH_NAME: JSON.stringify(process.env.CROWDIN_BRANCH_NAME),
                 TRACKJS_TOKEN: JSON.stringify(process.env.TRACKJS_TOKEN),
-                APP_ENV: JSON.stringify(process.env.APP_ENV),
+                APP_ENV: JSON.stringify(process.env.APP_ENV || 'production'),
                 REF_NAME: JSON.stringify(process.env.REF_NAME),
                 REMOTE_CONFIG_URL: JSON.stringify(process.env.REMOTE_CONFIG_URL),
                 GD_CLIENT_ID: JSON.stringify(process.env.GD_CLIENT_ID),

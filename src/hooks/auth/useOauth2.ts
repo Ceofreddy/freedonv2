@@ -1,4 +1,4 @@
-import RootStore from '@/stores/root-store';
+import type RootStore from '@/stores/root-store';
 import { TOAuth2EnabledAppList, useIsOAuth2Enabled, useOAuth2 } from '@deriv-com/auth-client';
 import useGrowthbookGetFeatureValue from '../growthbook/useGrowthbookGetFeatureValue';
 
