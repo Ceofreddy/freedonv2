@@ -3,7 +3,7 @@ import { scrollWorkspace } from '@/external/bot-skeleton';
 import GTM from '@/utils/gtm';
 import { TStores } from '@deriv/stores/types';
 import { localize } from '@deriv-com/translations';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export default class ToolboxStore {
     root_store: RootStore;

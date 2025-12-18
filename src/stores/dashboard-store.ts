@@ -20,7 +20,7 @@ import {
     TQuickStrategyContent,
     TUserGuideContent,
 } from '../pages/tutorials/tutorials.types';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 type TDialogOptions = {
     title?: string;

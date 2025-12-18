@@ -10,7 +10,7 @@ import { api_base, ApiHelpers, DBot, runIrreversibleEvents } from '@/external/bo
 import { setCurrency } from '@/external/bot-skeleton/scratch/utils';
 import { TApiHelpersStore } from '@/types/stores.types';
 import { localize } from '@deriv-com/translations';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export default class AppStore {
     root_store: RootStore;

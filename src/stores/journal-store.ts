@@ -8,7 +8,7 @@ import { isCustomJournalMessage } from '../utils/journal-notifications';
 import { getStoredItemsByKey, getStoredItemsByUser, setStoredItemsByKey } from '../utils/session-storage';
 import { getSetting, storeSetting } from '../utils/settings';
 import { TAccountList } from './client-store';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 type TExtra = {
     current_currency?: string;

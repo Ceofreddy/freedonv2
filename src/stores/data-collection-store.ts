@@ -3,7 +3,7 @@ import { action, makeObservable, observable, reaction } from 'mobx';
 import { cloneObject, isProduction } from '@/components/shared';
 import { convertStrategyToIsDbot, DBot } from '@/external/bot-skeleton';
 import { TStores } from '@deriv/stores/types';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export default class DataCollectionStore {
     root_store: RootStore;

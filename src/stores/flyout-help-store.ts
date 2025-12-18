@@ -1,7 +1,7 @@
 import { action, makeObservable, observable, runInAction } from 'mobx';
 import { help_content_config } from '@/utils/help-content/help-content.config';
 import * as help_strings from '@/utils/help-content/help-strings';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export default class FlyoutHelpStore {
     root_store: RootStore;

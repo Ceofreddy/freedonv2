@@ -2,7 +2,7 @@ import { action, computed, makeObservable, observable } from 'mobx';
 import { api_base } from '@/external/bot-skeleton';
 import { V2GetActiveClientId } from '@/external/bot-skeleton/services/api/appId';
 import { TStores } from '@deriv/stores/types';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export default class SelfExclusionStore {
     root_store: RootStore;

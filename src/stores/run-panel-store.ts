@@ -13,7 +13,7 @@ import { Buy, ProposalOpenContract } from '@deriv/api-types';
 import { TStores } from '@deriv/stores/types';
 import { localize } from '@deriv-com/translations';
 import { TDbot } from 'Types';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export type TContractState = {
     buy?: Buy;

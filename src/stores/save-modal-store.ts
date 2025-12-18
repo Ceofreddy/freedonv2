@@ -12,7 +12,7 @@ import {
 } from '@/external/bot-skeleton';
 import { localize } from '@deriv-com/translations';
 import { TStrategy } from 'Types';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 type IOnConfirmProps = {
     is_local: boolean;

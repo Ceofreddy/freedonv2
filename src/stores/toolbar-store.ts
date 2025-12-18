@@ -1,6 +1,6 @@
 import { action, makeObservable, observable } from 'mobx';
 import { config, load, runGroupedEvents } from '@/external/bot-skeleton';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 interface IToolbarStore {
     is_animation_info_modal_open: boolean;

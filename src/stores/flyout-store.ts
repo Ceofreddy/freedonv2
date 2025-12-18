@@ -2,7 +2,7 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 import { config } from '@/external/bot-skeleton';
 import GTM from '@/utils/gtm';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export interface IFlyoutStore {
     block_listeners: unknown[];

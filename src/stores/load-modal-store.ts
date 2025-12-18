@@ -21,7 +21,7 @@ import {
 import { getStrategyType } from '../analytics/utils';
 import { tabs_title } from '../constants/load-modal';
 import { waitForDomElement } from '../utils/dom-observer';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export default class LoadModalStore {
     root_store: RootStore;

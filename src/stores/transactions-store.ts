@@ -6,7 +6,7 @@ import { TPortfolioPosition, TStores } from '@deriv/stores/types';
 import { TContractInfo } from '../components/summary/summary-card.types';
 import { transaction_elements } from '../constants/transactions';
 import { getStoredItemsByKey, getStoredItemsByUser, setStoredItemsByKey } from '../utils/session-storage';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 type TTransaction = {
     type: string;

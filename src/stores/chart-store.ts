@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable, reaction } from 'mobx';
 import { LocalStore } from '@/components/shared';
 import { api_base } from '@/external/bot-skeleton';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 type TSubscription = {
     id: string | null;

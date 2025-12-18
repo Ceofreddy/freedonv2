@@ -6,7 +6,7 @@ import { save_types } from '@/external/bot-skeleton/constants/save-type';
 import { addDynamicBlockToDOM } from '@/utils/xml-dom-quick-strategy';
 import { STRATEGIES } from '../pages/bot-builder/quick-strategy/config';
 import { TFormData } from '../pages/bot-builder/quick-strategy/types';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export type TActiveSymbol = {
     group: string;

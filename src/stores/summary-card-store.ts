@@ -13,7 +13,7 @@ import { api_base } from '@/external/bot-skeleton';
 import { getContractUpdateConfig } from '@/utils/multiplier';
 import { ProposalOpenContract, UpdateContractResponse } from '@deriv/api-types';
 import { TStores } from '@deriv/stores/types';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 type TLimitOrder = {
     take_profit?: number;

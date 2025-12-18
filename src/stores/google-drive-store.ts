@@ -9,7 +9,7 @@ import {
     rudderStackSendUploadStrategyFailedEvent,
 } from '../analytics/rudderstack-common-events';
 import { getStrategyType } from '../analytics/utils';
-import RootStore from './root-store';
+import type RootStore from './root-store';
 
 export type TErrorWithStatus = Error & { status?: number; result?: { error: { message: string } } };
 
