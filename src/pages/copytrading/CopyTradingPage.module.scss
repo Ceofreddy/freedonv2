@@ -1,1521 +1,312 @@
-$dark-bg: #0a0a0a;
-$card-bg: #121212;
-$header-bg: #1a1a1a;
 $green-primary: #10b981;
-$green-secondary: #34d399;
-$green-light: #6ee7b7;
+$card-bg: #121212;
 $text-primary: #e0e0e0;
 $text-secondary: #a0a0a0;
 $success: #2ecc71;
 $error: #e74c3c;
 $warning: #f39c12;
-$info: #3498db;
 
 .container {
-    min-height: 100vh;
-    width: 100%;
-    background: linear-gradient(135deg, #000000 0%, #0d0d0d 100%);
-    color: $text-primary;
-    padding: 16px;
-    font-family: 'Arial', sans-serif;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    scroll-behavior: smooth;
+    padding: 24px;
+    height: 100vh;
+    overflow-y: auto;
+    background-color: var(--general-main-1, #0a0a0a);
+    color: var(--text-prominent, #fff);
+    font-family: 'Inter', sans-serif;
 }
 
-// Role Selection Screen
-.roleSelectionCard {
-    max-width: 900px;
-    margin: 20px auto;
-    background-color: $card-bg;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    border: 1px solid rgba($green-primary, 0.3);
-    animation: slideIn 0.5s ease;
-    position: relative;
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, $green-primary, $green-secondary, $green-primary);
-    }
-}
-
-.roleHeader {
-    background: linear-gradient(to right, #1a1a1a, #2a2a2a);
-    padding: 24px 16px;
-    text-align: center;
-    border-bottom: 1px solid rgba($green-primary, 0.2);
-
-    h1 {
-        font-size: 28px;
-        font-weight: bold;
-        color: $green-primary;
-        margin: 0 0 8px 0;
-        text-shadow: 0 0 8px rgba($green-light, 0.3);
-    }
-
-    p {
-        color: $green-secondary;
-        font-size: 14px;
-        margin: 0;
-    }
-}
-
-.roleGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-    padding: 24px 16px;
-}
-
-.roleOption {
-    background-color: rgba(26, 26, 26, 0.8);
-    padding: 20px 16px;
-    border-radius: 8px;
-    border: 1px solid rgba($green-primary, 0.2);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-
-    &:hover {
-        transform: translateY(-8px);
-        border-color: $green-primary;
-        box-shadow: 0 12px 24px rgba($green-primary, 0.2);
-    }
-
-    .roleIcon {
-        font-size: 40px;
-        margin-bottom: 12px;
-    }
-
-    h2 {
-        font-size: 18px;
-        color: $green-primary;
-        margin: 0 0 8px 0;
-    }
-
-    p {
-        color: $text-secondary;
-        margin: 0 0 12px 0;
-        font-size: 13px;
-    }
-}
-
-.roleFeatures {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-
-    li {
-        color: $text-secondary;
-        font-size: 12px;
-        padding: 4px 0;
-        border-bottom: 1px solid rgba($green-primary, 0.1);
-
-        &:last-child {
-            border-bottom: none;
-        }
-    }
-}
-
-// Main Card
 .card {
-    max-width: 1200px;
-    margin: 0 auto 40px auto;
-    background-color: $card-bg;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--general-section-1, #1a1a1a);
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--border-normal, rgba(255, 255, 255, 0.1));
     overflow: hidden;
-    width: 100%;
-    border: 1px solid rgba($green-primary, 0.3);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    max-height: 90vh;
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, $green-primary, $green-secondary, $green-primary);
-    }
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .header {
-    background: linear-gradient(to right, #1a1a1a, #2a2a2a);
     padding: 24px;
-    color: $green-primary;
-    border-bottom: 1px solid rgba($green-primary, 0.2);
-    flex-shrink: 0;
-}
-
-.headerContent {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
+    border-bottom: 1px solid var(--border-normal, rgba(255, 255, 255, 0.1));
+    background: linear-gradient(to right, rgba(16, 185, 129, 0.1), transparent);
 
     h1 {
+        margin: 0 0 8px 0;
         font-size: 24px;
-        font-weight: bold;
+        color: var(--text-prominent, #fff);
+    }
+
+    p {
         margin: 0;
-        text-shadow: 0 0 8px rgba($green-light, 0.3);
-        letter-spacing: 0.5px;
+        color: var(--text-less-prominent, #aaa);
+        font-size: 14px;
     }
 }
 
-.roleLabel {
-    color: $green-secondary;
-    font-size: 12px;
-    margin-top: 4px;
-    margin-bottom: 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.subtitle {
-    color: $green-secondary;
-    margin-top: 8px;
-    margin-bottom: 0;
-    font-size: 14px;
-}
-
-.connectionStatusContainer {
+.accountInfo {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-}
+    padding: 16px 24px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border-normal, rgba(255, 255, 255, 0.1));
 
-.connectionStatus {
-    display: flex;
-    align-items: center;
-    padding: 6px 12px;
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 20px;
-    border: 1px solid rgba($green-primary, 0.2);
-    white-space: nowrap;
-}
-
-.statusIndicator {
-    height: 10px;
-    width: 10px;
-    border-radius: 50%;
-    margin-right: 8px;
-    box-shadow: 0 0 8px currentColor;
-}
-
-.connected {
-    background-color: $success;
-    color: $success;
-}
-
-.disconnected {
-    background-color: $error;
-    color: $error;
-}
-
-.warning {
-    background-color: $warning;
-    color: $warning;
-}
-
-.syncing {
-    background-color: $info;
-    color: $info;
-    animation: pulse 1.5s infinite;
-}
-
-.content {
-    padding: 24px;
-    width: 100%;
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-}
-
-.tabs {
-    display: flex;
-    flex-wrap: wrap;
-    border-bottom: 1px solid rgba($green-primary, 0.2);
-    margin-bottom: 24px;
-    gap: 8px;
-}
-
-.tabButton {
-    padding: 8px 16px;
-    font-weight: 600;
-    color: $text-secondary;
-    background: none;
-    border: none;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    transition: all 0.3s ease;
-    position: relative;
-    letter-spacing: 0.5px;
-    font-size: 14px;
-
-    &:hover {
-        color: $green-primary;
+    .balanceLabel {
+        color: var(--text-less-prominent, #aaa);
+        font-size: 14px;
     }
 
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: linear-gradient(90deg, $green-primary, $green-secondary);
-        transition: width 0.3s ease;
+    .balanceValue {
+        color: var(--text-profit-success, #10b981);
+        font-size: 20px;
+        font-weight: bold;
     }
-
-    &:hover::after {
-        width: 100%;
-    }
-}
-
-.activeTab {
-    color: $green-primary;
-
-    &::after {
-        width: 100%;
-    }
-}
-
-.switchRoleButton {
-    margin-left: auto;
-    color: $error;
-
-    &:hover {
-        color: lighten($error, 10%);
-    }
-}
-
-.controlsContainer {
-    display: grid;
-    gap: 24px;
-    width: 100%;
 }
 
 .section {
-    background-color: rgba(26, 26, 26, 0.8);
-    padding: 20px;
-    border-radius: 8px;
-    width: 100%;
-    border: 1px solid rgba($green-primary, 0.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-        border-color: rgba($green-primary, 0.3);
-    }
-
-    h2 {
-        font-size: 20px;
-        font-weight: 600;
-        margin-bottom: 16px;
-        color: $green-primary;
-        display: flex;
-        align-items: center;
-
-        &::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: $green-primary;
-            border-radius: 50%;
-            margin-right: 12px;
-        }
-    }
-}
-
-// Account Card
-.accountCard {
-    background-color: rgba(10, 10, 10, 0.8);
-    padding: 16px;
-    border-radius: 6px;
-    border-left: 3px solid $green-primary;
-}
-
-.accountRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba($green-primary, 0.1);
+    padding: 24px;
+    border-bottom: 1px solid var(--border-normal, rgba(255, 255, 255, 0.05));
 
     &:last-child {
         border-bottom: none;
     }
 
-    .label {
-        color: $text-secondary;
-        font-size: 14px;
-    }
-
-    .value {
-        color: $green-primary;
-        font-weight: 600;
-        font-size: 14px;
-
-        &.active {
-            color: $success;
-        }
-
-        &.inactive {
-            color: $error;
-        }
-    }
-}
-
-// Form Elements
-.formGroup {
-    display: grid;
-    gap: 16px;
-    width: 100%;
-    margin-bottom: 16px;
-
-    label {
-        color: $green-primary;
-        font-weight: 600;
-        font-size: 14px;
-    }
-}
-
-.input {
-    width: 100%;
-    padding: 12px 16px;
-    background-color: rgba(10, 10, 10, 0.8);
-    border: 1px solid rgba($green-primary, 0.3);
-    border-radius: 6px;
-    color: $text-primary;
-    outline: none;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-
-    &:focus {
-        border-color: $green-primary;
-        box-shadow: 0 0 0 2px rgba($green-primary, 0.2);
-    }
-
-    &::placeholder {
-        color: rgba($text-secondary, 0.6);
-    }
-}
-
-.helperText {
-    margin-top: 4px;
-    font-size: 12px;
-    color: rgba($green-secondary, 0.8);
-    font-style: italic;
-}
-
-// Buttons
-.actionButtons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    width: 100%;
-}
-
-.button {
-    flex: 1;
-    min-width: 160px;
-    color: #000;
-    font-weight: 600;
-    padding: 14px 24px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    font-size: 14px;
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, $green-primary, $green-secondary);
-        z-index: -1;
-        transition: all 0.3s ease;
-    }
-
-    &:hover:not(:disabled)::before {
-        filter: brightness(1.1);
-        transform: scale(1.02);
-    }
-
-    &:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-}
-
-.primaryButton {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 4px 12px rgba($green-primary, 0.3);
-
-    &:hover:not(:disabled) {
-        box-shadow: 0 6px 16px rgba($green-primary, 0.4);
-    }
-}
-
-.dangerButton {
-    background: linear-gradient(135deg, #c0392b, #e74c3c);
-    color: #ffffff;
-
-    &::before {
-        background: linear-gradient(135deg, #c0392b, #e74c3c);
-    }
-
-    &:hover:not(:disabled) {
-        box-shadow: 0 6px 16px rgba(#e74c3c, 0.4);
-    }
-}
-
-.deleteButton {
-    background: none;
-    border: none;
-    color: $error;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 4px 8px;
-    transition: all 0.3s ease;
-
-    &:hover {
-        color: lighten($error, 10%);
-        transform: scale(1.2);
-    }
-}
-
-.spinner {
-    animation: spin 1s linear infinite;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba($green-primary, 0.2);
-    border-top-color: $green-primary;
-    border-radius: 50%;
-    margin-right: 12px;
-}
-
-// Status Grid
-.statusGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    width: 100%;
-}
-
-.statusCard {
-    background-color: rgba(18, 18, 18, 0.8);
-    padding: 16px;
-    border-radius: 8px;
-    border-left: 3px solid $green-primary;
-    transition: all 0.3s ease;
-
-    &:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    p {
-        font-size: 14px;
-        color: $text-secondary;
-        margin-top: 8px;
-        line-height: 1.4;
-    }
-}
-
-.statusRow {
-    display: flex;
-    align-items: center;
-    font-weight: 600;
-    color: $text-primary;
-}
-
-// Followers List
-.followersList {
-    display: grid;
-    gap: 16px;
-}
-
-.followerCard {
-    background-color: rgba(18, 18, 18, 0.8);
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid rgba($green-primary, 0.2);
-    transition: all 0.3s ease;
-
-    &:hover {
-        border-color: $green-primary;
-        box-shadow: 0 4px 12px rgba($green-primary, 0.1);
-    }
-}
-
-.followerHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-
-    h3 {
-        color: $green-primary;
-        margin: 0;
-        font-size: 16px;
-    }
-}
-
-.followerStatus {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: $text-secondary;
-    font-size: 12px;
-    margin-top: 4px;
-}
-
-.followerDetails {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba($green-primary, 0.1);
-
-    div {
+    h2 {
+        font-size: 18px;
+        margin: 0 0 16px 0;
+        color: var(--text-prominent, #fff);
         display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
+        align-items: center;
+        gap: 8px;
 
-    .label {
-        color: $text-secondary;
-        font-size: 12px;
-    }
-
-    .value {
-        color: $green-primary;
-        font-weight: 600;
-        font-size: 14px;
+        .icon {
+            color: var(--brand-secondary, #10b981);
+        }
     }
 }
 
-// Settings
-.settingItem {
+// Internal Copy (Demo -> Real)
+.demoCopyControl {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: rgba(255, 255, 255, 0.03);
     padding: 16px;
-    background-color: rgba(18, 18, 18, 0.8);
-    border-radius: 6px;
-    margin-bottom: 12px;
-    border: 1px solid rgba($green-primary, 0.1);
+    border-radius: 8px;
+    border: 1px solid var(--border-normal, rgba(255, 255, 255, 0.1));
 
-    &:last-child {
-        margin-bottom: 0;
+    .info {
+        h3 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            color: var(--text-prominent, #fff);
+        }
+
+        p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-less-prominent, #aaa);
+        }
     }
 }
 
-.settingLabel {
-    flex: 1;
-
-    h3 {
-        color: $text-primary;
-        margin: 0;
-        font-size: 16px;
-    }
-
-    p {
-        color: $text-secondary;
-        margin: 4px 0 0 0;
-        font-size: 12px;
-    }
-}
-
-.toggle {
+.toggleSwitch {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 24px;
-    cursor: pointer;
+    width: 52px;
+    height: 28px;
 
     input {
         opacity: 0;
         width: 0;
         height: 0;
+    }
 
-        &:checked + .toggleSlider {
-            background-color: $success;
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #444;
+        transition: .4s;
+        border-radius: 34px;
 
-            &::before {
-                transform: translateX(26px);
-            }
+        &:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+    }
+
+    input:checked+.slider {
+        background-color: var(--brand-secondary, #10b981);
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #10b981;
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(24px);
+    }
+}
+
+// External Copy
+.externalInputGroup {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    input {
+        flex: 1;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border-normal, #444);
+        background: rgba(0, 0, 0, 0.3);
+        color: var(--text-prominent, #fff);
+        font-family: inherit;
+
+        &:focus {
+            outline: none;
+            border-color: var(--brand-secondary, #10b981);
+        }
+    }
+
+    button {
+        padding: 0 20px;
+        border-radius: 6px;
+        border: none;
+        background: var(--brand-secondary, #10b981);
+        color: #000;
+        font-weight: 600;
+        cursor: pointer;
+        transition: opacity 0.2s;
+
+        &:hover {
+            opacity: 0.9;
+        }
+
+        &:disabled {
+            background: #555;
+            cursor: not-allowed;
         }
     }
 }
 
-.toggleSlider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: $text-secondary;
-    transition: 0.3s;
-    border-radius: 24px;
-
-    &::before {
-        position: absolute;
-        content: '';
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        transition: 0.3s;
-        border-radius: 50%;
-    }
-}
-
-// Accounts List
-.accountsList {
-    display: grid;
-    gap: 12px;
-}
-
-.accountItem {
+.masterInfo {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 8px;
+    padding: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    background-color: rgba(18, 18, 18, 0.8);
-    border-radius: 6px;
-    border: 1px solid rgba($green-primary, 0.2);
-    cursor: pointer;
-    transition: all 0.3s ease;
 
-    &:hover {
-        border-color: $green-primary;
-        background-color: rgba(26, 26, 26, 0.8);
+    .masterDetails {
+        h3 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--text-prominent, #fff);
+        }
+
+        p {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            color: var(--text-profit-success, #10b981);
+        }
     }
+}
+
+.copyStatus {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
 
     &.active {
-        border-color: $green-primary;
-        background-color: rgba($green-primary, 0.1);
-    }
-}
-
-.accountItemContent {
-    h4 {
-        color: $green-primary;
-        margin: 0;
-        font-size: 14px;
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--text-profit-success, #10b981);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        animation: pulse 2s infinite;
     }
 
-    p {
-        color: $text-secondary;
-        margin: 4px 0 0 0;
-        font-size: 12px;
-    }
-}
-
-.checkmark {
-    color: $success;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-// Response Container
-.responseContainer {
-    background-color: rgba(10, 10, 10, 0.8);
-    padding: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-    width: 100%;
-    border: 1px solid rgba($green-primary, 0.2);
-    display: flex;
-    flex-direction: column;
-    max-height: 100%;
-}
-
-.responseHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    gap: 16px;
-    flex-wrap: wrap;
-
-    h2 {
-        margin: 0;
-        color: $green-primary;
-        font-size: 20px;
-        font-weight: 600;
-
-        &::before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: $green-primary;
-            border-radius: 50%;
-            margin-right: 12px;
-        }
-    }
-}
-
-.apiLogsList {
-    display: grid;
-    gap: 8px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex: 1;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    padding-right: 4px;
-}
-
-.apiLogItem {
-    background-color: rgba(18, 18, 18, 0.8);
-    border-radius: 8px;
-    border-left: 4px solid $green-primary;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    margin-bottom: 8px;
-
-    &:hover {
-        box-shadow: 0 4px 12px rgba($green-primary, 0.1);
-    }
-
-    &.log-request {
-        border-left-color: $info;
-
-        .logType {
-            background-color: rgba($info, 0.2);
-            color: $info;
-        }
-    }
-
-    &.log-response {
-        border-left-color: $success;
-
-        .logType {
-            background-color: rgba($success, 0.2);
-            color: $success;
-        }
-    }
-}
-
-.logHeader {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    background-color: rgba(10, 10, 10, 0.6);
-    border-bottom: 1px solid rgba($green-primary, 0.1);
-    flex-wrap: wrap;
-}
-
-.logType {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-}
-
-.logTime {
-    color: $text-secondary;
-    font-size: 12px;
-    margin-left: auto;
-    white-space: nowrap;
-}
-
-.copyButton {
-    background: none;
-    border: 1px solid rgba($green-primary, 0.3);
-    color: $green-primary;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-
-    &:hover {
-        background-color: rgba($green-primary, 0.1);
-        border-color: $green-primary;
-    }
-}
-
-.logContent {
-    padding: 16px;
-    margin: 0;
-    font-size: 12px;
-    color: $text-primary;
-    background-color: rgba(26, 26, 26, 0.6);
-    overflow-x: auto;
-    overflow-y: auto;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    word-break: break-word;
-    font-family: 'Courier New', monospace;
-    border: none;
-    max-height: 400px;
-    -webkit-overflow-scrolling: touch;
-    line-height: 1.6;
-
-    @media (max-width: 768px) {
-        font-size: 11px;
-        padding: 12px;
-        max-height: 300px;
-    }
-
-    @media (max-width: 480px) {
-        font-size: 10px;
-        padding: 10px;
-        max-height: 250px;
-    }
-}
-
-// Notifications
-.notification {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 16px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    z-index: 1000;
-    animation: slideInRight 0.3s ease;
-    max-width: 400px;
-
-    &.notification-success {
-        background-color: rgba($success, 0.2);
-        border: 1px solid $success;
-        color: $success;
-    }
-
-    &.notification-error {
-        background-color: rgba($error, 0.2);
-        border: 1px solid $error;
-        color: $error;
-    }
-
-    &.notification-warning {
-        background-color: rgba($warning, 0.2);
-        border: 1px solid $warning;
-        color: $warning;
-    }
-}
-
-// Footer
-.footer {
-    background-color: rgba(10, 10, 10, 0.8);
-    padding: 16px;
-    text-align: center;
-    font-size: 14px;
-    color: rgba($green-secondary, 0.8);
-    border-top: 1px solid rgba($green-primary, 0.1);
-    letter-spacing: 0.5px;
-    flex-shrink: 0;
-}
-
-// No Data Message
-.noData {
-    color: $text-secondary;
-    text-align: center;
-    padding: 24px;
-    font-style: italic;
-}
-
-// Animations
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
+    &.inactive {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-less-prominent, #aaa);
     }
 }
 
 @keyframes pulse {
     0% {
-        opacity: 0.6;
+        opacity: 1;
     }
+
     50% {
-        opacity: 1;
+        opacity: 0.7;
     }
+
     100% {
-        opacity: 0.6;
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
         opacity: 1;
-        transform: translateY(0);
     }
 }
 
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(100px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-// Responsive Design
-@media (max-width: 1024px) {
-    .card {
-        max-height: 85vh;
-    }
-
-    .content {
-        padding: 20px;
-    }
-
-    .section {
-        padding: 16px;
-    }
-
-    .button {
-        min-width: 140px;
-        padding: 12px 20px;
-        font-size: 13px;
-    }
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: 8px;
-    }
-
-    .card {
-        max-height: 80vh;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-
-    .header {
-        padding: 16px;
-    }
-
-    .headerContent {
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .header h1 {
-        font-size: 20px;
-    }
-
-    .content {
-        padding: 16px;
-    }
-
-    .section {
-        padding: 14px;
-    }
-
-    .section h2 {
-        font-size: 18px;
-    }
-
-    .tabs {
-        gap: 4px;
-        overflow-x: auto;
-        padding-bottom: 8px;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .tabButton {
-        padding: 6px 12px;
-        font-size: 12px;
-        white-space: nowrap;
-    }
-
-    .switchRoleButton {
-        margin-left: 0;
-        margin-top: 8px;
-        width: 100%;
-    }
-
-    .actionButtons {
-        flex-direction: column;
-    }
-
-    .button {
-        min-width: 100%;
-        padding: 12px 16px;
-        font-size: 13px;
-    }
-
-    .statusGrid {
-        grid-template-columns: 1fr;
-    }
-
-    .walletGrid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 10px;
-    }
-
-    .walletCard {
-        padding: 12px;
-
-        .walletType {
-            font-size: 20px;
-            margin-bottom: 6px;
-        }
-
-        h3 {
-            font-size: 13px;
-        }
-
-        .walletBalance {
-            font-size: 14px;
-        }
-
-        p {
-            font-size: 11px;
-        }
-    }
-
-    .modeSelectorWrapper {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 8px;
-
-        @media (max-width: 768px) {
-            overflow-x: auto;
-            scroll-behavior: smooth;
-        }
-    }
-
-    .modeSelector {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 12px;
-        min-width: min-content;
-
-        @media (max-width: 768px) {
-            flex-wrap: nowrap;
-            overflow-x: auto;
-        }
-    }
-
-    .modeButton {
-        flex: 1;
-        min-width: 140px;
-        padding: 12px 16px;
-        background-color: rgba(18, 18, 18, 0.8);
-        border: 2px solid rgba($green-primary, 0.2);
-        border-radius: 6px;
-        color: $text-secondary;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 600;
-        font-size: 14px;
-        white-space: nowrap;
-
-        &:hover {
-            border-color: $green-primary;
-            color: $green-primary;
-        }
-
-        &.active {
-            background: linear-gradient(135deg, $green-primary, $green-secondary);
-            border-color: $green-primary;
-            color: #000;
-            box-shadow: 0 0 12px rgba($green-primary, 0.3);
-        }
-
-        @media (max-width: 768px) {
-            min-width: 130px;
-            padding: 10px 12px;
-            font-size: 12px;
-        }
-    }
-
-    .apiLogsList {
-        max-height: 400px;
-    }
-
-    .logContent {
-        max-height: 200px;
-        font-size: 10px;
-    }
-
-    .responseHeader {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .responseHeader h2 {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 4px;
-    }
-
-    .card {
-        max-height: 75vh;
-        border-radius: 6px;
-    }
-
-    .header {
-        padding: 12px;
-    }
-
-    .header h1 {
-        font-size: 18px;
-    }
-
-    .content {
-        padding: 12px;
-    }
-
-    .section {
-        padding: 12px;
-    }
-
-    .section h2 {
-        font-size: 16px;
-    }
-
-    .button {
-        min-width: 100%;
-        padding: 10px 12px;
-        font-size: 12px;
-    }
-
-    .tabs {
-        gap: 2px;
-    }
-
-    .tabButton {
-        padding: 5px 10px;
-        font-size: 11px;
-    }
-
-    .walletGrid {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 8px;
-    }
-
-    .walletCard {
-        padding: 10px;
-
-        .walletType {
-            font-size: 18px;
-        }
-
-        h3 {
-            font-size: 12px;
-        }
-
-        .walletBalance {
-            font-size: 13px;
-        }
-    }
-
-    .modeSelectorWrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-bottom: 8px;
-    }
-
-    .modeSelector {
-        flex-wrap: nowrap;
-        gap: 8px;
-        min-width: min-content;
-    }
-
-    .modeButton {
-        min-width: 110px;
-        padding: 8px 10px;
-        font-size: 11px;
-    }
-
-    .logContent {
-        font-size: 10px;
-        padding: 10px;
-        max-height: 250px;
-    }
-
-    .connectionStatusContainer {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .pingIndicator {
-        font-size: 11px;
-        padding: 5px 10px;
-    }
-
-    .roleSelectionCard {
-        margin: 12px auto;
-    }
-
-    .roleHeader {
-        padding: 12px 8px;
-
-        h1 {
-            font-size: 18px;
-        }
-    }
-
-    .roleGrid {
-        grid-template-columns: 1fr;
-        gap: 8px;
-        padding: 12px 8px;
-    }
-
-    .roleOption {
-        padding: 12px 8px;
-
-        .roleIcon {
-            font-size: 28px;
-        }
-
-        h2 {
-            font-size: 14px;
-        }
-
-        p {
-            font-size: 11px;
-        }
-    }
-}
-
-// Wallet and mode selector styles
-.walletGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.walletCard {
-    background-color: rgba(18, 18, 18, 0.8);
-    padding: 16px;
+// Logs
+.logContainer {
+    height: 300px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 8px;
-    border: 2px solid rgba($green-primary, 0.2);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
+    padding: 12px;
+    border: 1px solid var(--border-normal, #333);
 
-    &:hover {
-        border-color: $green-primary;
-        transform: translateY(-2px);
-    }
-
-    &.selected {
-        border-color: $green-primary;
-        background-color: rgba($green-primary, 0.1);
-        box-shadow: 0 0 12px rgba($green-primary, 0.2);
-    }
-
-    .walletType {
-        font-size: 24px;
-        margin-bottom: 8px;
-    }
-
-    h3 {
-        color: $green-primary;
-        margin: 0 0 8px 0;
-        font-size: 14px;
-    }
-
-    .walletBalance {
-        color: $green-secondary;
-        font-weight: 600;
-        margin: 0 0 4px 0;
-        font-size: 16px;
-    }
-
-    p {
-        color: $text-secondary;
-        margin: 0;
-        font-size: 12px;
-        text-transform: uppercase;
+    .emptyLog {
+        color: var(--text-less-prominent, #666);
+        text-align: center;
+        margin-top: 20px;
+        font-style: italic;
     }
 }
 
-.modeSelector {
+.logItem {
     display: flex;
-    gap: 12px;
-    margin-bottom: 12px;
-    min-width: min-content;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 13px;
 
-    @media (max-width: 768px) {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-    }
-}
-
-.modeButton {
-    flex: 1;
-    min-width: 140px;
-    padding: 12px 16px;
-    background-color: rgba(18, 18, 18, 0.8);
-    border: 2px solid rgba($green-primary, 0.2);
-    border-radius: 6px;
-    color: $text-secondary;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    font-size: 14px;
-    white-space: nowrap;
-
-    &:hover {
-        border-color: $green-primary;
-        color: $green-primary;
+    &:last-child {
+        border-bottom: none;
     }
 
-    &.active {
-        background: linear-gradient(135deg, $green-primary, $green-secondary);
-        border-color: $green-primary;
-        color: #000;
-        box-shadow: 0 0 12px rgba($green-primary, 0.3);
+    .time {
+        color: var(--text-less-prominent, #aaa);
+        margin-right: 12px;
     }
 
-    @media (max-width: 768px) {
-        min-width: 130px;
-        padding: 10px 12px;
-        font-size: 12px;
-    }
-}
-
-.accountNameDisplay {
-    color: $green-secondary;
-    font-size: 12px;
-    margin-top: 4px;
-    margin-bottom: 0;
-}
-
-.followerWallets {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba($green-primary, 0.1);
-
-    label {
-        color: $text-secondary;
-        font-size: 12px;
-        display: block;
-        margin-bottom: 8px;
-    }
-}
-
-.walletOptions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.walletOption {
-    padding: 6px 12px;
-    background-color: rgba(10, 10, 10, 0.8);
-    border: 1px solid rgba($green-primary, 0.2);
-    border-radius: 4px;
-    color: $text-secondary;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 12px;
-    white-space: nowrap;
-
-    &:hover {
-        border-color: $green-primary;
-        color: $green-primary;
+    .message {
+        color: var(--text-prominent, #ddd);
+        flex: 1;
     }
 
-    &.selected {
-        background-color: rgba($green-primary, 0.2);
-        border-color: $green-primary;
-        color: $green-primary;
-    }
-}
-
-.followerMode {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba($green-primary, 0.1);
-
-    label {
-        color: $text-secondary;
-        font-size: 12px;
-        display: block;
-        margin-bottom: 8px;
-    }
-}
-
-.modeOptions {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.modeOption {
-    padding: 6px 12px;
-    background-color: rgba(10, 10, 10, 0.8);
-    border: 1px solid rgba($green-primary, 0.2);
-    border-radius: 4px;
-    color: $text-secondary;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 12px;
-    white-space: nowrap;
-
-    &:hover {
-        border-color: $green-primary;
-        color: $green-primary;
+    &.buy {
+        .message {
+            color: var(--text-profit-success, #10b981);
+        }
     }
 
-    &.selected {
-        background-color: rgba($green-primary, 0.2);
-        border-color: $green-primary;
-        color: $green-primary;
-        font-weight: 600;
+    &.error {
+        .message {
+            color: var(--text-loss-danger, #e74c3c);
+        }
     }
 }
