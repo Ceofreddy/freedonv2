@@ -131,13 +131,22 @@
                         box-shadow: 0 0 8px rgb(239 68 68 / 50%);
                     }
 
-                    &:last-child {
+                    // Highlight LATEST tick (First one because list is reversed)
+                    &:first-child {
                         width: 32px;
                         height: 32px;
                         font-size: 1.2rem;
                         border: 2px solid #fff;
                         z-index: 2;
                         transform: scale(1.1);
+                        box-shadow: 0 0 15px rgb(255 255 255 / 40%); // Extra glow for latest
+                    }
+
+                    // On small screens, hide older ticks (elements > 7)
+                    @media (width <=480px) {
+                        &:nth-child(n + 8) {
+                            display: none;
+                        }
                     }
                 }
             }

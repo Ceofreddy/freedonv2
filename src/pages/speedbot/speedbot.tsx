@@ -408,6 +408,11 @@ const SpeedBot = observer(() => {
 
         api_base.api.send({ forget_all: 'ticks' });
 
+        // --- INSTANT RESET ---
+        setTicks([]);
+        setCurrentPrice('Loading...');
+        setDigitFreq({});
+
         const startStream = async () => {
             // 1. Get History (Last 1000)
             try {
@@ -429,7 +434,10 @@ const SpeedBot = observer(() => {
                     }));
                     setTicks(mappedTicks);
                     updateFrequency(mappedTicks);
-                    setCurrentPrice(mappedTicks[mappedTicks.length - 1].quote.toFixed(2));
+                    // Set price from the LATEST tick in history (last item in array)
+                    if (mappedTicks.length > 0) {
+                        setCurrentPrice(mappedTicks[mappedTicks.length - 1].quote.toFixed(2));
+                    }
                 }
 
                 // 2. Subscribe
@@ -450,6 +458,8 @@ const SpeedBot = observer(() => {
                     quote: t.quote,
                     digit: getLastDigit(t.quote),
                 };
+
+                // Direct update from stream
                 setCurrentPrice(t.quote.toFixed(2));
 
                 setTicks(prev => {
