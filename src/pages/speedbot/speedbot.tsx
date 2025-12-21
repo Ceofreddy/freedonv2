@@ -88,6 +88,7 @@ const SpeedBot = observer(() => {
 
     const [error, setError] = useState<string | null>(null);
     const [logs, setLogs] = useState<string[]>([]);
+    const [digitFreq, setDigitFreq] = useState<Record<number, number>>({});
 
     // Refs for accessing state in callbacks/intervals
     const configRef = useRef(config);
@@ -105,6 +106,21 @@ const SpeedBot = observer(() => {
     useEffect(() => {
         ticksRef.current = ticks;
     }, [ticks]);
+
+    // --- Helper: Calculate Frequency ---
+    const updateFrequency = (currentTicks: TickData[]) => {
+        const subset = currentTicks.slice(-1000);
+        const counts: Record<number, number> = {};
+        for (let i = 0; i <= 9; i++) counts[i] = 0;
+
+        subset.forEach(t => counts[t.digit]++);
+
+        const total = subset.length || 1;
+        const percentages: Record<number, number> = {};
+        for (let i = 0; i <= 9; i++) percentages[i] = (counts[i] / total) * 100;
+
+        setDigitFreq(percentages);
+    };
 
     // --- Logging Helper ---
     const addLog = (msg: string) => {
@@ -153,19 +169,15 @@ const SpeedBot = observer(() => {
 
     // 1. Pressure Engine
     const calculatePressure = (digitGroup: number[], ticks: TickData[]) => {
-        // Find last appearances of digits in the group
-        // Calculate gap (current index - last index)
         const reversed = [...ticks].reverse();
         let minGap = 1000;
 
         for (const d of digitGroup) {
             const idx = reversed.findIndex(t => Number(t.digit) === d);
-            if (idx === -1) return 100; // Not found in recent history (high pressure)
+            if (idx === -1) return 100;
             if (idx < minGap) minGap = idx;
         }
 
-        // Let's calculate simple gap for the group (0,1) or (8,9).
-        // Group Gap = tick count since ANY of the digits in group appeared.
         let groupGap = 0;
         for (let i = 0; i < reversed.length; i++) {
             if (digitGroup.includes(reversed[i].digit)) {
@@ -174,7 +186,6 @@ const SpeedBot = observer(() => {
             groupGap++;
         }
 
-        // Average Gap calculation (over 1000 ticks)
         let totalGaps = 0;
         let gapCount = 0;
         let currentRun = 0;
@@ -189,7 +200,7 @@ const SpeedBot = observer(() => {
                 currentRun++;
             }
         }
-        const avgGap = gapCount > 0 ? totalGaps / gapCount : 10; // default fallback
+        const avgGap = gapCount > 0 ? totalGaps / gapCount : 10;
 
         const pressure = avgGap > 0 ? groupGap / avgGap : 0;
         return pressure;
@@ -197,7 +208,7 @@ const SpeedBot = observer(() => {
 
     // 2. Micro Calm Zone
     const isCalmZone = (ticks: TickData[]) => {
-        const recent = ticks.slice(-20); // Last 20 ticks
+        const recent = ticks.slice(-20);
         let repeats = 1;
         for (let i = 1; i < recent.length; i++) {
             if (recent[i].digit === recent[i - 1].digit) {
@@ -212,7 +223,7 @@ const SpeedBot = observer(() => {
 
     const executeTrade = async (type: 'OVER' | 'UNDER', prediction: number) => {
         // Pause analysis
-        setStats(prev => ({ ...prev, status: 'idle' })); // Temporarily idle while trading
+        setStats(prev => ({ ...prev, status: 'idle' }));
 
         const c = configRef.current;
         const stake = c.initialStake;
@@ -221,7 +232,7 @@ const SpeedBot = observer(() => {
 
         try {
             // 1. Buy
-            const contractType = 'DIGIT' + type; // DIGITOVER / DIGITUNDER
+            const contractType = 'DIGIT' + type;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const proposal = (await api_base.api.send({
                 proposal: 1,
@@ -247,11 +258,10 @@ const SpeedBot = observer(() => {
             const contractId = buy.buy.contract_id;
 
             // 2. Wait for result
-            // Polling for simplicity & reliability
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let result: any = null;
             for (let i = 0; i < 30; i++) {
-                // 3 seconds max for 1-tick trade
+                // 3 seconds max
                 await new Promise(r => setTimeout(r, 100));
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const s = (await api_base.api.send({ proposal_open_contract: 1, contract_id: contractId })) as any;
@@ -277,7 +287,6 @@ const SpeedBot = observer(() => {
                     losses: isWin ? prev.losses : prev.losses + 1,
                     consecutiveLosses: isWin ? 0 : prev.consecutiveLosses + 1,
                     lastTradeResult: isWin ? 'win' : 'loss',
-                    // If Loss -> Cooldown
                     status: isWin ? 'running' : 'cooldown',
                     cooldownRemaining: isWin ? 0 : c.cooldownTicks,
                 };
@@ -292,19 +301,17 @@ const SpeedBot = observer(() => {
         }
     };
 
-    // Use ref to keep executeTrade stable if needed, though we call it directly.
+    // Use ref to keep executeTrade stable if needed
     const executeTradeRef = useRef(executeTrade);
     useEffect(() => {
         executeTradeRef.current = executeTrade;
     }, [executeTrade]);
 
     // --- Core Strategy Evaluation ---
-    // Defined inside component but uses refs for current state, so it's fresh enough.
-    // Wrap in ref to avoid dependency cycle in effect.
     const evaluateStrategy = async (currentTick: TickData) => {
         const s = statsRef.current;
         const c = configRef.current;
-        const t = ticksRef.current; // Includes currentTick (added in Effect)
+        const t = ticksRef.current;
 
         if (s.status !== 'running') {
             if (s.status === 'cooldown') {
@@ -333,8 +340,7 @@ const SpeedBot = observer(() => {
         }
 
         // 2. Bias Analysis (Permission)
-        // Groups: Low (0,1), High (8,9)
-        if (t.length < 1000) return; // Need history
+        if (t.length < 1000) return;
 
         const last1000 = t.slice(-1000);
         const last300 = t.slice(-300);
@@ -347,16 +353,15 @@ const SpeedBot = observer(() => {
         const high1000 = countDigits(last1000, [8, 9]);
         const high300 = countDigits(last300, [8, 9]);
 
-        const allowOver1 = low1000 < 200 && low300 < 60; // Both agree low digits are scarce
-        const allowUnder8 = high1000 < 200 && high300 < 60; // Both agree high digits are scarce
+        const allowOver1 = low1000 < 200 && low300 < 60;
+        const allowUnder8 = high1000 < 200 && high300 < 60;
 
-        // 3. Pressure Engine (Hard Safety)
-        // "Pressure > 1.8 -> BLOCK"
+        // 3. Pressure Engine
         const lowPressure = calculatePressure([0, 1], t);
         const highPressure = calculatePressure([8, 9], t);
 
         const safeOver1 = lowPressure <= 1.8;
-        const safeUnder8 = highPressure <= 1.5; // Stricter threshold for Under 8 as per specs
+        const safeUnder8 = highPressure <= 1.5;
 
         // 4. Micro Timing
         const isCal = isCalmZone(t);
@@ -368,7 +373,6 @@ const SpeedBot = observer(() => {
         // "If both allowed: Choose lower pressure direction"
         if (allowOver1 && safeOver1 && isCal) {
             if (allowUnder8 && safeUnder8) {
-                // Both allowed. Compare pressure. Lower pressure is safer (less due to snap back).
                 if (lowPressure < highPressure) {
                     tradeType = 'OVER';
                     prediction = 1;
@@ -386,14 +390,13 @@ const SpeedBot = observer(() => {
         }
 
         if (tradeType) {
-            // Execute
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const _tick = currentTick; // Use to suppress unused warning if logic didn't use it directly
+            const _tick = currentTick;
             await executeTradeRef.current(tradeType, prediction);
         }
     };
 
-    // Store strategy in ref to use in effect without deps
+    // Store strategy in ref
     const evaluateStrategyRef = useRef(evaluateStrategy);
     useEffect(() => {
         evaluateStrategyRef.current = evaluateStrategy;
@@ -403,7 +406,6 @@ const SpeedBot = observer(() => {
     useEffect(() => {
         if (!config.selectedMarket || !api_base.api) return;
 
-        // Unsubscribe previous if any (handled by api_base internal cleanup conceptually, but we explicitly forget)
         api_base.api.send({ forget_all: 'ticks' });
 
         const startStream = async () => {
@@ -426,6 +428,7 @@ const SpeedBot = observer(() => {
                         digit: getLastDigit(Number(p)),
                     }));
                     setTicks(mappedTicks);
+                    updateFrequency(mappedTicks);
                     setCurrentPrice(mappedTicks[mappedTicks.length - 1].quote.toFixed(2));
                 }
 
@@ -453,8 +456,11 @@ const SpeedBot = observer(() => {
                     const newTicks = [...prev, newTick];
                     // Keep last 1005 to be safe
                     if (newTicks.length > 1005) {
-                        return newTicks.slice(newTicks.length - 1005);
+                        const trimmed = newTicks.slice(newTicks.length - 1005);
+                        updateFrequency(trimmed);
+                        return trimmed;
                     }
+                    updateFrequency(newTicks);
                     return newTicks;
                 });
 
@@ -550,13 +556,39 @@ const SpeedBot = observer(() => {
                 </div>
             </div>
 
+            {/* --- Digit Frequency Section --- */}
+            <div className='digit-frequency-panel'>
+                <Text weight='bold' className='panel-title'>
+                    Digit Frequency (Last 1000)
+                </Text>
+                <div className='digits-grid'>
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => {
+                        const freq = digitFreq[d] || 0;
+                        // Color coding based on frequency relative to expected 10%
+                        let colorClass = 'neutral';
+                        if (freq > 12) colorClass = 'high';
+                        if (freq < 8) colorClass = 'low';
+
+                        return (
+                            <div key={d} className={`digit-stat-item ${colorClass}`}>
+                                <div className='digit-circle'>{d}</div>
+                                <div className='digit-bar'>
+                                    <div className='fill' style={{ height: `${Math.min(freq * 3, 100)}%` }}></div>
+                                </div>
+                                <span className='digit-val'>{freq.toFixed(1)}%</span>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
             {/* --- Main Content Grid --- */}
             <div className='speedbot-grid'>
                 {/* --- Left: Configuration --- */}
                 <div className='config-panel card'>
                     <div className='card-header'>
                         <Icon icon='IcBotBuilder' />
-                        <Text weight='bold'>Probability System Config</Text>
+                        <Text weight='bold'>System Config</Text>
                     </div>
 
                     <div className='inputs-grid'>
