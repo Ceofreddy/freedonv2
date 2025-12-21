@@ -406,6 +406,7 @@ const SpeedBot = observer(() => {
     useEffect(() => {
         if (!config.selectedMarket || !api_base.api) return;
 
+        let isCancelled = false;
         api_base.api.send({ forget_all: 'ticks' });
 
         // --- INSTANT RESET ---
@@ -419,11 +420,13 @@ const SpeedBot = observer(() => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const history = (await api_base.api.send({
                     ticks_history: config.selectedMarket,
-                    count: 1000,
+                    count: 1001,
                     end: 'latest',
                     style: 'ticks',
                     adjust_start_time: 1,
                 })) as any;
+
+                if (isCancelled) return;
 
                 if (history.history && history.history.prices) {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -440,6 +443,7 @@ const SpeedBot = observer(() => {
                     }
                 }
 
+                if (isCancelled) return;
                 // 2. Subscribe
                 api_base.api.send({ ticks: config.selectedMarket, subscribe: 1 });
             } catch (err) {
@@ -453,6 +457,10 @@ const SpeedBot = observer(() => {
         const subscription = api_base.api.onMessage().subscribe(({ data }: any) => {
             if (data.msg_type === 'tick') {
                 const t = data.tick;
+
+                // CRITICAL: Strict symbol check
+                if (t.symbol !== config.selectedMarket) return;
+
                 const newTick = {
                     epoch: t.epoch,
                     quote: t.quote,
@@ -482,6 +490,7 @@ const SpeedBot = observer(() => {
         });
 
         return () => {
+            isCancelled = true;
             subscription.unsubscribe();
             api_base.api.send({ forget_all: 'ticks' });
         };
