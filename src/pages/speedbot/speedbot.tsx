@@ -64,6 +64,7 @@ const SpeedBot = observer(() => {
     const [markets, setMarkets] = useState<Market[]>([]);
     const [ticks, setTicks] = useState<TickData[]>([]); // Keep last 1000+ ticks
     const [currentPrice, setCurrentPrice] = useState<string>('Loading...');
+    const [pipSize, setPipSize] = useState<number>(2);
 
     // --- State: Config & Execution ---
     const [config, setConfig] = useState<StrategyConfig>({
@@ -428,18 +429,24 @@ const SpeedBot = observer(() => {
 
                 if (isCancelled) return;
 
-                if (history.history && history.history.prices) {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const mappedTicks = history.history.prices.map((p: any, idx: number) => ({
-                        epoch: history.history.times[idx],
-                        quote: Number(p),
-                        digit: getLastDigit(Number(p)),
-                    }));
-                    setTicks(mappedTicks);
-                    updateFrequency(mappedTicks);
-                    // Set price from the LATEST tick in history (last item in array)
-                    if (mappedTicks.length > 0) {
-                        setCurrentPrice(mappedTicks[mappedTicks.length - 1].quote.toFixed(2));
+                if (history.msg_type === 'history') {
+                    const { history: h, pip_size } = history;
+                    if (pip_size) setPipSize(pip_size);
+
+                    if (h && h.prices) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const mappedTicks = h.prices.map((p: any, idx: number) => ({
+                            epoch: h.times[idx],
+                            quote: Number(p),
+                            digit: getLastDigit(Number(p)),
+                        }));
+                        setTicks(mappedTicks);
+                        updateFrequency(mappedTicks);
+                        // Set price from the LATEST tick in history (last item in array)
+                        if (mappedTicks.length > 0) {
+                            const lastQuote = mappedTicks[mappedTicks.length - 1].quote;
+                            setCurrentPrice(lastQuote.toFixed(pip_size || 2));
+                        }
                     }
                 }
 
@@ -461,14 +468,18 @@ const SpeedBot = observer(() => {
                 // CRITICAL: Strict symbol check
                 if (t.symbol !== config.selectedMarket) return;
 
+                // Update Pip Size dynamically if present
+                if (t.pip_size) setPipSize(t.pip_size);
+
                 const newTick = {
                     epoch: t.epoch,
                     quote: t.quote,
                     digit: getLastDigit(t.quote),
                 };
 
-                // Direct update from stream
-                setCurrentPrice(t.quote.toFixed(2));
+                // Direct update from stream with CORRECT precision
+                const precision = t.pip_size || pipSize;
+                setCurrentPrice(Number(t.quote).toFixed(precision));
 
                 setTicks(prev => {
                     const newTicks = [...prev, newTick];
