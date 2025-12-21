@@ -572,23 +572,36 @@ const SpeedBot = observer(() => {
                     Digit Frequency (Last 1000)
                 </Text>
                 <div className='digits-grid'>
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => {
-                        const freq = digitFreq[d] || 0;
-                        // Color coding based on frequency relative to expected 10%
-                        let colorClass = 'neutral';
-                        if (freq > 12) colorClass = 'high';
-                        if (freq < 8) colorClass = 'low';
+                    {(() => {
+                        // Calculate stats for coloring
+                        const entries = Object.entries(digitFreq).map(([d, f]) => ({ d: Number(d), f }));
+                        const sorted = [...entries].sort((a, b) => b.f - a.f);
 
-                        return (
-                            <div key={d} className={`digit-stat-item ${colorClass}`}>
-                                <div className='digit-circle'>{d}</div>
-                                <div className='digit-bar'>
-                                    <div className='fill' style={{ height: `${Math.min(freq * 3, 100)}%` }}></div>
+                        const mostActive = sorted[0]?.d;
+                        const secondMost = sorted[1]?.d;
+                        const leastActive = sorted[sorted.length - 1]?.d;
+                        const secondLeast = sorted[sorted.length - 2]?.d;
+
+                        return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(d => {
+                            const freq = digitFreq[d] || 0;
+                            let colorClass = 'neutral';
+
+                            if (d === mostActive) colorClass = 'most-active';
+                            else if (d === secondMost) colorClass = 'second-active';
+                            else if (d === leastActive) colorClass = 'least-active';
+                            else if (d === secondLeast) colorClass = 'second-least-active';
+
+                            return (
+                                <div key={d} className={`digit-stat-item ${colorClass}`}>
+                                    <div className='digit-circle'>{d}</div>
+                                    <div className='digit-bar'>
+                                        <div className='fill' style={{ height: `${Math.min(freq * 3, 100)}%` }}></div>
+                                    </div>
+                                    <span className='digit-val'>{freq.toFixed(1)}%</span>
                                 </div>
-                                <span className='digit-val'>{freq.toFixed(1)}%</span>
-                            </div>
-                        );
-                    })}
+                            );
+                        });
+                    })()}
                 </div>
             </div>
 

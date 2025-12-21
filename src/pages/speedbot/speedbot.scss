@@ -224,12 +224,14 @@
                     opacity: 0.7;
                 }
 
-                // Dynamic Colors
-                &.high {
+                // Dynamic Colors - Specific Stats
+                &.most-active {
+                    // Highest Frequency
                     .digit-circle {
                         background: rgb(16 185 129 / 20%);
                         border-color: #10b981;
                         color: #10b981;
+                        box-shadow: 0 0 10px rgb(16 185 129 / 40%);
                     }
 
                     .digit-bar .fill {
@@ -238,16 +240,46 @@
                     }
                 }
 
-                &.low {
+                &.second-active {
+                    // 2nd Highest
+                    .digit-circle {
+                        background: rgb(59 130 246 / 20%);
+                        border-color: #3b82f6;
+                        color: #3b82f6;
+                    }
+
+                    .digit-bar .fill {
+                        background: #3b82f6;
+                        box-shadow: 0 0 8px #3b82f6;
+                    }
+                }
+
+                &.least-active {
+                    // Lowest Frequency
                     .digit-circle {
                         background: rgb(239 68 68 / 20%);
                         border-color: #ef4444;
                         color: #ef4444;
+                        box-shadow: 0 0 10px rgb(239 68 68 / 40%);
                     }
 
                     .digit-bar .fill {
                         background: #ef4444;
                         box-shadow: 0 0 10px #ef4444;
+                    }
+                }
+
+                &.second-least-active {
+                    // 2nd Lowest
+                    .digit-circle {
+                        background: rgb(245 158 11 / 20%);
+                        border-color: #f59e0b;
+                        color: #f59e0b;
+                    }
+
+                    .digit-bar .fill {
+                        background: #f59e0b;
+                        box-shadow: 0 0 8px #f59e0b;
                     }
                 }
 
