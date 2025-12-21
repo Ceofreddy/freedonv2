@@ -165,7 +165,7 @@
             align-items: end; // Align bars to bottom
             height: 120px; // Fixed height for bars
 
-            @media (width <= 600px) {
+            @media (width <=600px) {
                 grid-template-columns: repeat(5, 1fr); // 2 rows on mobile
                 height: auto;
                 row-gap: 1.5rem;
@@ -243,7 +243,7 @@
                 }
 
                 // Hide bar on small mobile if needed for space, or adjust
-                @media (width <= 600px) {
+                @media (width <=600px) {
                     flex-direction: column-reverse; // Circle on top, val below?
 
                     .digit-bar {
@@ -263,7 +263,7 @@
         grid-template-columns: 1fr 1fr;
         gap: 1.5rem;
 
-        @media (width <= 900px) {
+        @media (width <=900px) {
             grid-template-columns: 1fr; // Stack 1 column on tablet/mobile
         }
 
@@ -274,40 +274,73 @@
                 grid-template-columns: 1fr 1fr; // 2 cols for inputs
                 gap: 1rem;
 
-                @media (width <= 480px) {
+                @media (width <=480px) {
                     grid-template-columns: 1fr; // 1 col for inputs extremely small screens
                 }
 
                 .dc-input {
-                    display: flex;
-                    flex-direction: column;
-                    width: 100%;
+                    // Reset wrapper
+                    margin-bottom: 0;
+
+                    &__container {
+                        // Force a column layout and reset default container styles
+                        display: flex !important;
+                        flex-direction: column !important;
+                        background: transparent !important;
+                        border: none !important;
+                        padding: 0 !important;
+                        height: auto !important;
+                        min-height: auto !important;
+                    }
 
                     &__label {
-                        position: relative;
-                        top: 0;
-                        left: 0;
-                        margin-bottom: 0.4rem;
-                        font-size: 0.9rem;
-                        color: var(--text-less-prominent);
-                        background: transparent;
-                        padding: 0;
+                        // Move label to visual top
+                        order: -1 !important;
+                        position: relative !important;
+                        top: auto !important;
+                        left: auto !important;
+                        transform: none !important;
+                        margin-bottom: 0.5rem;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        color: rgb(255 255 255 / 60%) !important;
+                        background: transparent !important;
+                        pointer-events: auto !important;
+                        padding: 0 !important;
                     }
 
                     &__field {
                         width: 100%;
-                        height: 48px; // Touch friendly
+                        height: 50px; // Comfortable touch target
+                        background: rgb(15 23 42 / 40%) !important;
+                        border: 1px solid rgb(255 255 255 / 10%) !important;
                         border-radius: 8px;
-                        border: 1px solid rgb(255 255 255 / 10%);
-                        background: rgb(0 0 0 / 20%);
-                        padding: 0 1rem;
                         color: #fff !important;
-                        appearance: none; // Remove native styling
+                        padding: 0 1rem;
+                        font-family: 'Space Grotesk', sans-serif;
+                        font-size: 1rem;
+                        transition: all 0.2s ease;
+                        appearance: none;
 
                         &:focus {
-                            border-color: var(--brand-secondary, #d4af37);
-                            box-shadow: 0 0 0 1px var(--brand-secondary, #d4af37);
+                            outline: none;
+                            border-color: var(--brand-secondary, #d4af37) !important;
+                            box-shadow: 0 0 0 2px rgb(212 175 55 / 20%);
+                            background: rgb(15 23 42 / 80%) !important;
                         }
+
+                        &::placeholder {
+                            color: rgb(255 255 255 / 20%);
+                        }
+
+                        // Remove native spin buttons for number inputs
+                        &::-webkit-outer-spin-button,
+                        &::-webkit-inner-spin-button {
+                            appearance: none;
+                            margin: 0;
+                        }
+
+                        appearance: textfield;
                     }
                 }
             }
@@ -435,7 +468,7 @@
 }
 
 // Media Query for Small Mobile specific overrides
-@media (width <= 480px) {
+@media (width <=480px) {
     .speedbot-container {
         padding: 1rem;
     }
