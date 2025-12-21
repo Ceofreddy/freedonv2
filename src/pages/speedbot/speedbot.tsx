@@ -239,6 +239,9 @@ const SpeedBot = observer(() => {
     };
 
     const executeTrade = async (type: 'OVER' | 'UNDER', prediction: number) => {
+        // Prevent Zombie Execution
+        if (!isRunningRef.current) return;
+
         // Pause analysis
         setStats(prev => ({ ...prev, status: 'idle' }));
 
@@ -272,9 +275,11 @@ const SpeedBot = observer(() => {
             })) as any;
 
             if (buy.error) throw new Error(buy.error.message);
+            if (buy.error) throw new Error(buy.error.message);
             const contractId = buy.buy.contract_id;
 
             // 2. Wait for result
+            if (!isRunningRef.current) return; // Stop check mid-trade handling
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             let result: any = null;
             for (let i = 0; i < 30; i++) {
@@ -314,7 +319,10 @@ const SpeedBot = observer(() => {
         } catch (err: any) {
             console.error('Execution error', err);
             addLog(`Error: ${err.message}`);
-            setStats(prev => ({ ...prev, status: 'running' })); // Resume if error
+            // Only resume if still running (prevent zombie restart)
+            if (isRunningRef.current) {
+                setStats(prev => ({ ...prev, status: 'running' }));
+            }
         }
     };
 
@@ -373,12 +381,18 @@ const SpeedBot = observer(() => {
         const allowOver1 = low1000 < 200 && low300 < 60;
         const allowUnder8 = high1000 < 200 && high300 < 60;
 
-        // 3. Pressure Engine
+        // 3. Pressure Engine (TIGHTENED)
         const lowPressure = calculatePressure([0, 1], t);
         const highPressure = calculatePressure([8, 9], t);
 
-        const safeOver1 = lowPressure <= 1.8;
-        const safeUnder8 = highPressure <= 1.5;
+        const safeOver1 = lowPressure <= 1.4; // Was 1.8
+        const safeUnder8 = highPressure <= 1.2; // Was 1.5
+
+        // NEW: Micro-Trend Check (Last 5 Ticks)
+        // Ensure we are not trading AGAINST a sudden spike of 0s or 9s
+        const last5 = t.slice(-5);
+        const recentLows = countDigits(last5, [0, 1]); // For Over 1, we want FEW of these
+        const recentHighs = countDigits(last5, [8, 9]); // For Under 8, we want FEW of these
 
         // 4. Micro Timing
         const isCal = isCalmZone(t);
@@ -396,9 +410,10 @@ const SpeedBot = observer(() => {
         let tradeType: 'OVER' | 'UNDER' | null = null;
         let prediction = 0;
 
-        // "If both allowed: Choose lower pressure direction"
-        if (allowOver1 && safeOver1 && isCal) {
-            if (allowUnder8 && safeUnder8) {
+        // STRICT ENTRY: Pressure + Bias + Calm + MicroTrend
+        if (allowOver1 && safeOver1 && isCal && recentLows === 0) {
+            // Preference logic
+            if (allowUnder8 && safeUnder8 && recentHighs === 0) {
                 if (lowPressure < highPressure) {
                     tradeType = 'OVER';
                     prediction = 1;
@@ -410,7 +425,7 @@ const SpeedBot = observer(() => {
                 tradeType = 'OVER';
                 prediction = 1;
             }
-        } else if (allowUnder8 && safeUnder8 && isCal) {
+        } else if (allowUnder8 && safeUnder8 && isCal && recentHighs === 0) {
             tradeType = 'UNDER';
             prediction = 8;
         }
