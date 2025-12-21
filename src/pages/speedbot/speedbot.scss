@@ -1,417 +1,328 @@
-// SpeedBot Styles
-// Using global theme variables for consistency and dark/light mode support
+// SpeedBot Modern Styles
+// Using global theme variables and Space Grotesk font to match Advanced/MTool
+
+@import 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap';
 
 .speedbot-container {
     width: 100%;
     height: 100vh;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 2.4rem;
+    padding: 2rem;
     background: var(--general-main-1);
     color: var(--text-prominent);
-    margin: 0 auto;
     overflow-y: auto;
-    font-family: 'Inter', sans-serif;
-    font-size: 1.4rem;
-    line-height: 1.6;
+    font-family: 'Space Grotesk', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 
-    // Header styles
-    .speedbot-header {
+    // --- Market Header & Ticks ---
+    .speedbot-market-header {
+        background: var(--general-section-1);
+        border: 1px solid var(--border-normal);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 2.4rem;
-        padding-bottom: 1.2rem;
-        border-bottom: 1px solid var(--border-normal);
+        gap: 2rem;
+        flex-wrap: wrap;
+        box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
 
-        .speedbot-title {
+        .market-info {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
-            margin: 0;
-            color: var(--text-prominent); // Ensure visibility
-            font-size: 2.2rem;
-            font-weight: bold;
-            letter-spacing: -0.5px;
+            gap: 2rem;
 
-            .speedbot-title-icon {
-                width: 2.8rem;
-                height: 2.8rem;
-                color: var(--brand-secondary); // Use Green/Gold brand color
+            .selector-wrap {
+                min-width: 200px;
+
+                // Override SelectNative styles if needed, or rely on global
+                .dc-select-native__picker {
+                    background: var(--general-main-1) !important;
+                    color: var(--text-prominent) !important;
+                    border: 1px solid var(--border-normal) !important;
+                    border-radius: 8px;
+                    padding: 0.5rem 1rem;
+                }
+            }
+
+            .price-display {
+                display: flex;
+                flex-direction: column;
+
+                .price-label {
+                    font-size: 1.1rem;
+                    color: var(--text-less-prominent);
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+
+                .price-value {
+                    font-size: 2.4rem;
+                    font-weight: 700;
+                    color: var(--text-prominent);
+                    font-family: 'Space Grotesk', monospace; // Monospace for numbers
+                }
             }
         }
 
-        .speedbot-market-selector {
+        .ticks-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-end;
+
+            .ticks-label {
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                opacity: 0.7;
+            }
+
+            .ticks-row {
+                display: flex;
+                gap: 0.6rem;
+                align-items: center;
+            }
+
+            .tick-ball {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: #fff;
+                box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+                transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+                &.tick-even {
+                    background: linear-gradient(135deg, var(--status-success, #10b981), #34d399);
+                }
+
+                &.tick-odd {
+                    background: linear-gradient(135deg, var(--status-danger, #ef4444), #f87171);
+                }
+
+                &:last-child {
+                    width: 42px;
+                    height: 42px;
+                    font-size: 1.8rem;
+                    box-shadow: 0 0 0 4px rgb(255 255 255 / 10%);
+                    z-index: 2;
+                }
+
+                // Animation for entering ticks could be added here
+            }
+        }
+    }
+
+    // --- Main Grid ---
+    .speedbot-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        flex: 1;
+
+        @media (width <= 900px) {
+            grid-template-columns: 1fr;
+        }
+
+        .card {
+            background: var(--general-section-1);
+            border: 1px solid var(--border-normal);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+        }
+
+        .card-header {
             display: flex;
             align-items: center;
             gap: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-normal);
 
-            .speedbot-label {
-                font-weight: 500;
-                color: var(--text-less-prominent);
-                white-space: nowrap;
+            .dc-icon {
+                width: 24px;
+                height: 24px;
+                fill: var(--text-prominent); // Or brand color
             }
 
-            .speedbot-select {
-                min-width: 200px;
+            .dc-text {
+                font-size: 1.8rem;
+                letter-spacing: -0.5px;
+            }
+        }
 
-                // Target the actual structure of SelectNative
-                .dc-select-native__display,
-                .dc-input {
-                    background: var(--general-section-1) !important;
-                    border-color: var(--border-normal) !important;
-                    border-radius: 4px;
-                    color: var(--text-prominent) !important;
+        // Config Panel
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+
+            .dc-input {
+                margin-bottom: 0; // Reset
+
+                &__label {
+                    background: transparent;
+                    top: -0.8rem;
+                    left: 0.5rem;
+                    padding: 0 0.4rem;
                 }
 
-                // The text inside the display
-                .dc-select-native__display-text {
-                    font-weight: 500;
-                    color: var(--text-prominent) !important;
-                }
+                &__field {
+                    border-radius: 8px;
+                    background: var(--general-main-2);
+                    border-color: var(--border-normal);
+                    color: var(--text-prominent);
+                    height: 4.4rem;
+                    font-size: 1.4rem;
 
-                // The native select element (dropdown list)
-                select.dc-select-native__picker {
-                    color: var(--text-prominent) !important;
-                    background-color: var(--general-main-1) !important;
-
-                    option {
-                        color: var(--text-prominent) !important;
-                        background-color: var(--general-main-1) !important;
-                        padding: 10px;
+                    &:focus {
+                        border-color: var(--brand-secondary, #d4af37);
                     }
                 }
             }
         }
-    }
 
-    // Error message
-    .speedbot-error {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-        padding: 1.2rem 1.6rem;
-        margin-bottom: 1.6rem;
-        background: var(--status-danger);
-        border-radius: 4px;
-        color: white;
-        font-weight: 500;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-        .dc-icon {
-            flex-shrink: 0;
-            width: 1.8rem;
-            height: 1.8rem;
-            fill: white;
-        }
-
-        p {
-            margin: 0;
-        }
-    }
-
-    // Section styling
-    .speedbot-section {
-        background: var(--general-section-1);
-        border-radius: 8px;
-        padding: 2.4rem;
-        margin-bottom: 2.4rem;
-        border: 1px solid var(--border-normal);
-        color: var(--text-prominent);
-
-        .speedbot-section-header {
+        .control-buttons {
+            margin-top: auto;
             display: flex;
-            align-items: center;
             gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1.2rem;
-            border-bottom: 1px solid var(--border-normal);
 
-            .speedbot-section-icon {
-                width: 2rem;
-                height: 2rem;
-                color: var(--brand-secondary);
-            }
-
-            .speedbot-section-title {
-                margin: 0;
-                color: var(--text-prominent);
-                font-size: 1.8rem;
-                font-weight: 600;
-            }
-        }
-    }
-
-    // Controls grid
-    .speedbot-controls-card {
-        background: var(--general-section-1); // Match section bg
-        border-radius: 8px;
-        padding: 2rem;
-        box-shadow: none; // Flat design usually cleaner in dark mode
-        margin-bottom: 2rem;
-    }
-
-    .speedbot-controls-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 1.8rem;
-        margin-bottom: 1.6rem;
-
-        @media (width <=768px) {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        @media (width <=480px) {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .speedbot-control {
-        display: flex;
-        flex-direction: column;
-        gap: 0.4rem;
-
-        .speedbot-label {
-            font-size: 1.3rem;
-            font-weight: 500;
-            color: var(--text-less-prominent);
-            margin-bottom: 0.2rem;
-        }
-
-        .dc-input {
-            width: 100%;
-            background: var(--general-main-2);
-            border: 1px solid var(--border-normal);
-            color: var(--text-prominent);
-            border-radius: 4px;
-            padding: 0.8rem 1.2rem;
-            font-size: 1.4rem;
-            transition: border-color 0.2s;
-
-            &:focus {
-                border-color: var(--brand-secondary); // Focus color
-                outline: none;
-            }
-
-            &:disabled {
-                opacity: 0.7;
-                cursor: not-allowed;
-            }
-        }
-    }
-
-    // Status section
-    .speedbot-status {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 2rem;
-        background: var(--general-section-2);
-        padding: 2rem;
-        border-radius: 8px;
-        margin: 2rem 0;
-        border: 1px solid var(--border-normal);
-
-        .speedbot-status-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-            padding: 1.2rem;
-            background: var(--general-main-1);
-            border-radius: 6px;
-            border: 1px solid var(--border-normal);
-
-            .speedbot-label {
-                font-size: 1.2rem;
-                font-weight: 500;
-                color: var(--text-less-prominent);
-            }
-
-            .dc-text {
-                font-size: 1.6rem;
-                font-weight: 600;
-                color: var(--text-prominent);
-
-                &[color='profit-success'] {
-                    color: var(--text-profit-success);
-                }
-
-                &[color='loss-danger'] {
-                    color: var(--text-loss-danger);
-                }
-            }
-        }
-    }
-
-    // Action buttons
-    .speedbot-actions {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-        margin-top: 2.4rem;
-        padding-top: 1.6rem;
-        border-top: 1px dashed var(--border-normal);
-
-        .speedbot-actions-buttons {
-            display: flex;
-            gap: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .speedbot-action-btn {
-            min-width: 160px;
-            height: 44px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 1.4rem;
-            text-transform: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            padding: 0 2rem;
-            cursor: pointer;
-            border: none;
-
-            .btn-icon {
-                width: 1.6rem;
-                height: 1.6rem;
-                fill: currentColor;
-            }
-
-            &.run {
-                background: var(--brand-secondary); // Green/Gold
-                color: var(--brand-dark-grey); // Black text on Gold/Green often better?
-                color: white;
-
-                &:hover {
-                    opacity: 0.9;
-                }
-
-                &:disabled {
-                    background: var(--general-disabled);
-                    cursor: not-allowed;
-                }
-            }
-
-            &.stop {
-                background: var(--status-danger);
-                color: white;
-
-                &:hover {
-                    opacity: 0.9;
-                }
-            }
-
-            &.reset {
-                background: var(--general-main-2);
-                border: 1px solid var(--border-normal);
-                color: var(--text-prominent);
-
-                &:hover {
-                    background: var(--general-hover);
-                }
-            }
-        }
-
-        .login-notice {
-            text-align: center;
-            color: var(--status-danger);
-            font-weight: 500;
-            margin: 0.5rem 0 0;
-            padding: 0.8rem;
-            background: rgba(255, 0, 0, 0.1);
-            border-radius: 4px;
-        }
-    }
-
-    // Trade history table
-    .speedbot-trade-history {
-        width: 100%;
-        overflow-x: auto;
-        margin-top: 1.6rem;
-        border-radius: 8px;
-        border: 1px solid var(--border-normal);
-        background: var(--general-section-1);
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            min-width: 600px;
-
-            th,
-            td {
-                padding: 1.2rem 1.6rem;
-                text-align: left;
-                border-bottom: 1px solid var(--border-normal);
-                font-size: 1.3rem;
-                color: var(--text-prominent);
-            }
-
-            th {
-                font-weight: 600;
-                color: var(--text-less-prominent);
-                background-color: var(--general-section-2);
+            button {
+                flex: 1;
+                border-radius: 8px;
+                font-weight: 700;
                 text-transform: uppercase;
-                font-size: 1.1rem;
-                letter-spacing: 0.5px;
+                letter-spacing: 1px;
+                padding: 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                transition:
+                    transform 0.1s,
+                    opacity 0.2s;
+
+                &:active {
+                    transform: scale(0.98);
+                }
             }
 
-            tr:last-child td {
-                border-bottom: none;
+            .btn-run {
+                background: linear-gradient(135deg, var(--brand-secondary, #d4af37), #f59e0b);
+                color: #000;
+                border: none;
+
+                &:hover {
+                    opacity: 0.9;
+                    box-shadow: 0 4px 12px rgb(212 175 55 / 30%);
+                }
             }
 
-            .trade-win {
-                color: var(--text-profit-success);
-                font-weight: 600;
-            }
+            .btn-stop {
+                background: linear-gradient(135deg, var(--status-danger, #ef4444), #b91c1c);
+                color: #fff;
+                border: none;
 
-            .trade-loss {
-                color: var(--text-loss-danger);
-                font-weight: 600;
+                &:hover {
+                    opacity: 0.9;
+                    box-shadow: 0 4px 12px rgb(239 68 68 / 30%);
+                }
             }
         }
-    }
 
-    // Responsive adjustments
-    @media (width <=1024px) {
-        padding: 1.5rem;
+        .error-msg {
+            color: var(--status-danger);
+            background: rgb(239 68 68 / 10%);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
 
-        .speedbot-header {
-            flex-direction: column;
-            align-items: flex-start;
+        // Stats Panel
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
 
-            .speedbot-market-selector {
-                width: 100%;
+            .stat-item {
+                background: var(--general-main-1);
+                border: 1px solid var(--border-normal);
+                border-radius: 12px;
+                padding: 1.5rem;
+                display: flex;
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 0.8rem;
+                gap: 0.5rem;
+                align-items: center;
+                text-align: center;
 
-                .speedbot-select {
-                    width: 100%;
+                .label {
+                    font-size: 1.2rem;
+                    opacity: 0.7;
+                    text-transform: uppercase;
+                }
+
+                .value {
+                    font-size: 2rem;
+                    font-weight: 700;
+                    color: var(--text-prominent);
+                    font-family: 'Space Grotesk', monospace;
+
+                    &.profit {
+                        color: var(--status-success, #10b981);
+                    }
+
+                    &.loss {
+                        color: var(--status-danger, #ef4444);
+                    }
                 }
             }
         }
 
-        .speedbot-status {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-
-    @media (width <=768px) {
-        .speedbot-status {
-            grid-template-columns: 1fr;
-        }
-
-        .speedbot-actions-buttons {
+        .logs-container {
+            display: flex;
             flex-direction: column;
-            width: 100%;
-        }
+            gap: 1rem;
+            flex: 1;
+            min-height: 200px;
+            background: #000; // Terminal look
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border-normal);
 
-        .speedbot-action-btn {
-            width: 100%;
+            .logs-title {
+                color: var(--text-less-prominent);
+                text-transform: uppercase;
+            }
+
+            .logs-scroll {
+                flex: 1;
+                overflow-y: auto;
+                font-family: 'Courier New', monospace;
+                font-size: 1.2rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.4rem;
+                max-height: 250px;
+
+                .log-line {
+                    color: #4ade80; // Terminal green
+                    word-break: break-all;
+
+                    &:first-child {
+                        color: #fff;
+                        font-weight: bold;
+                    }
+                }
+            }
         }
     }
 }

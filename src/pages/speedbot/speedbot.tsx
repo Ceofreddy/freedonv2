@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { formatMoney } from '@/components/shared/utils/currency/currency';
 import Button from '@/components/shared_ui/button';
@@ -8,185 +8,222 @@ import SelectNative from '@/components/shared_ui/select-native';
 import Text from '@/components/shared_ui/text';
 import { useStore } from '@/hooks/useStore';
 import { Icon } from '@/utils/tmp/dummy';
-// @ts-expect-error
+// @ts-expect-error Ignoring missing type definitions for bot-skeleton
 import { api_base } from '@deriv/bot-skeleton';
-import { Localize } from '@deriv-com/translations';
 import './speedbot.scss';
 
-interface StrategyState {
-    entryPoint: number;
-    predictionBeforeLoss: number;
-    predictionAfterLoss: number;
-    initialStake: number;
-    nextStake: number;
-    takeProfit: number;
-    stopLoss: number;
-    martingaleLevel: number;
-    isRunning: boolean;
-    currentStake: number;
-    totalProfit: number;
-    lastTrade: 'win' | 'loss' | null;
-    selectedMarket: string;
-    marketSymbol: string;
-    volatility: number;
-}
+// --- Types & Interfaces ---
 
-interface VolatilityMarket {
+interface Market {
     text: string;
     value: string;
     symbol: string;
-    volatility: number;
+    subgroup?: string;
+    display_order?: number;
 }
+
+interface StrategyConfig {
+    initialStake: number;
+    takeProfit: number;
+    stopLoss: number; // Positive value representing max loss amount
+    maxTrades: number;
+    cooldownTicks: number;
+    selectedMarket: string;
+}
+
+interface RunningStats {
+    totalProfit: number;
+    tradeCount: number;
+    wins: number;
+    losses: number;
+    consecutiveLosses: number;
+    lastTradeResult: 'win' | 'loss' | null;
+    status: 'idle' | 'running' | 'cooldown' | 'stopped';
+    cooldownRemaining: number;
+}
+
+interface TickData {
+    epoch: number;
+    quote: number;
+    digit: number;
+}
+
+// --- Strategy Logic Helpers ---
+
+const getLastDigit = (price: number): number => {
+    return Number(price.toFixed(2).slice(-1));
+};
+
+// --- Main Component ---
 
 const SpeedBot = observer(() => {
     const store = useStore();
     const client = store?.client;
-    const [isStrategyRunning, setIsStrategyRunning] = useState(false);
-    const [markets, setMarkets] = useState<VolatilityMarket[]>([]);
-    const [strategy, setStrategy] = useState<
-        Omit<StrategyState, 'isRunning' | 'currentStake' | 'totalProfit' | 'lastTrade'>
-    >({
-        entryPoint: 1,
-        predictionBeforeLoss: 1,
-        predictionAfterLoss: 6,
+
+    // --- State: Markets & Data ---
+    const [markets, setMarkets] = useState<Market[]>([]);
+    const [ticks, setTicks] = useState<TickData[]>([]); // Keep last 1000+ ticks
+    const [currentPrice, setCurrentPrice] = useState<string>('Loading...');
+
+    // --- State: Config & Execution ---
+    const [config, setConfig] = useState<StrategyConfig>({
         initialStake: 1,
-        nextStake: 1.9,
-        takeProfit: 5,
-        stopLoss: -10,
-        martingaleLevel: 2,
-        selectedMarket: 'R_100', // Default
-        marketSymbol: 'R_100',
-        volatility: 0.5,
+        takeProfit: 10,
+        stopLoss: 10,
+        maxTrades: 50,
+        cooldownTicks: 5,
+        selectedMarket: 'R_100',
     });
 
-    const [executionState, setExecutionState] = useState({
-        isRunning: false,
-        currentStake: 1,
+    const [stats, setStats] = useState<RunningStats>({
         totalProfit: 0,
-        lastTrade: null as 'win' | 'loss' | null,
+        tradeCount: 0,
+        wins: 0,
+        losses: 0,
+        consecutiveLosses: 0,
+        lastTradeResult: null,
+        status: 'idle',
+        cooldownRemaining: 0,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [tradeHistory, setTradeHistory] = useState<Array<{
-        id: number;
-        timestamp: Date;
-        stake: number;
-        prediction: number;
-        result: 'win' | 'loss';
-        profit: number;
-    }>>([]);
+    const [logs, setLogs] = useState<string[]>([]);
 
-    // Use ref to access current state in callbacks
-    const stateRef = useRef({
-        ...strategy,
-        ...executionState
-    });
+    // Refs for accessing state in callbacks/intervals
+    const configRef = useRef(config);
+    const statsRef = useRef(stats);
+    const ticksRef = useRef(ticks);
+    const isRunningRef = useRef(false);
+
+    // Sync refs
     useEffect(() => {
-        stateRef.current = {
-            ...strategy,
-            ...executionState
-        };
-    }, [strategy, executionState]);
+        configRef.current = config;
+    }, [config]);
+    useEffect(() => {
+        statsRef.current = stats;
+    }, [stats]);
+    useEffect(() => {
+        ticksRef.current = ticks;
+    }, [ticks]);
 
+    // --- Logging Helper ---
+    const addLog = (msg: string) => {
+        const time = new Date().toLocaleTimeString();
+        setLogs(prev => [`[${time}] ${msg}`, ...prev].slice(0, 50));
+    };
+
+    // --- Data Fetching: Markets ---
     useEffect(() => {
         let isMounted = true;
-
         const fetchMarkets = async () => {
             if (!api_base.api) return;
-
             try {
-                const response = await api_base.api.send({
-                    active_symbols: 'brief',
-                    product_type: 'basic'
-                });
-
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const response = (await api_base.api.send({ active_symbols: 'brief', product_type: 'basic' })) as any;
                 if (response.active_symbols && isMounted) {
-                    // Match MTool filtering: Include all proper 'synthetics' subgroup symbols
-                    // This covers Volatility Indices and Jump Indices
-                    const volatilitySymbols = response.active_symbols.filter(
-                        (symbol: any) => symbol.subgroup === 'synthetics'
-                    );
-
-                    // Sort by display order
-                    volatilitySymbols.sort((a: any, b: any) => a.display_order - b.display_order);
-
-                    const formattedMarkets = volatilitySymbols.map((m: any) => ({
-                        text: m.display_name,
-                        value: m.symbol,
-                        symbol: m.symbol,
-                        volatility: 0.5 // Default or calculated if needed based on tick history
-                    }));
-
-                    setMarkets(formattedMarkets);
-
-                    if (formattedMarkets.length > 0 && !formattedMarkets.find((m: any) => m.value === strategy.selectedMarket)) {
-                        setStrategy(prev => ({
-                            ...prev,
-                            selectedMarket: formattedMarkets[0].value,
-                            marketSymbol: formattedMarkets[0].symbol
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const volatilitySymbols = response.active_symbols
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        .filter((s: any) => s.subgroup === 'synthetics')
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        .sort((a: any, b: any) => a.display_order - b.display_order)
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        .map((m: any) => ({
+                            text: m.display_name,
+                            value: m.symbol,
+                            symbol: m.symbol,
                         }));
+                    setMarkets(volatilitySymbols);
+                    if (volatilitySymbols.length > 0 && !config.selectedMarket) {
+                        setConfig(prev => ({ ...prev, selectedMarket: volatilitySymbols[0].value }));
                     }
                 }
             } catch (err) {
-                console.error("Failed to fetch markets:", err);
+                console.error('Fetch markets error', err);
             }
         };
-
         fetchMarkets();
-
         return () => {
             isMounted = false;
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleInputChange = (field: keyof typeof strategy, value: string | number) => {
-        const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
-        setStrategy(prev => ({
-            ...prev,
-            [field]: numValue,
-        }));
+    // --- Strategy Analysis Engines ---
+
+    // 1. Pressure Engine
+    const calculatePressure = (digitGroup: number[], ticks: TickData[]) => {
+        // Find last appearances of digits in the group
+        // Calculate gap (current index - last index)
+        const reversed = [...ticks].reverse();
+        let minGap = 1000;
+
+        for (const d of digitGroup) {
+            const idx = reversed.findIndex(t => Number(t.digit) === d);
+            if (idx === -1) return 100; // Not found in recent history (high pressure)
+            if (idx < minGap) minGap = idx;
+        }
+
+        // Let's calculate simple gap for the group (0,1) or (8,9).
+        // Group Gap = tick count since ANY of the digits in group appeared.
+        let groupGap = 0;
+        for (let i = 0; i < reversed.length; i++) {
+            if (digitGroup.includes(reversed[i].digit)) {
+                break;
+            }
+            groupGap++;
+        }
+
+        // Average Gap calculation (over 1000 ticks)
+        let totalGaps = 0;
+        let gapCount = 0;
+        let currentRun = 0;
+        for (let i = 0; i < ticks.length; i++) {
+            if (digitGroup.includes(ticks[i].digit)) {
+                if (currentRun > 0) {
+                    totalGaps += currentRun;
+                    gapCount++;
+                }
+                currentRun = 0;
+            } else {
+                currentRun++;
+            }
+        }
+        const avgGap = gapCount > 0 ? totalGaps / gapCount : 10; // default fallback
+
+        const pressure = avgGap > 0 ? groupGap / avgGap : 0;
+        return pressure;
     };
 
-    const validateInputs = () => {
-        if (strategy.initialStake <= 0) {
-            setError('Initial stake must be greater than 0');
-            return false;
+    // 2. Micro Calm Zone
+    const isCalmZone = (ticks: TickData[]) => {
+        const recent = ticks.slice(-20); // Last 20 ticks
+        let repeats = 1;
+        for (let i = 1; i < recent.length; i++) {
+            if (recent[i].digit === recent[i - 1].digit) {
+                repeats++;
+                if (repeats > 3) return false;
+            } else {
+                repeats = 1;
+            }
         }
-        if (strategy.predictionBeforeLoss < 0 || strategy.predictionBeforeLoss > 9) {
-            setError('Prediction before loss must be between 0 and 9');
-            return false;
-        }
-        if (strategy.predictionAfterLoss < 0 || strategy.predictionAfterLoss > 9) {
-            setError('Prediction after loss must be between 0 and 9');
-            return false;
-        }
-        if (strategy.takeProfit <= 0) {
-            setError('Take profit must be greater than 0');
-            return false;
-        }
-        // stopLoss is typically negative, but user might input positive number implying loss limit
-        if (strategy.stopLoss >= 0) {
-            // If user ensures negative, ok.
-            // eslint-disable-next-line no-console
-            console.warn('Stop loss is positive or zero, which might be unintended for a loss limit.');
-        }
-        if (strategy.martingaleLevel < 1) {
-            setError('Martingale level must be at least 1');
-            return false;
-        }
-        setError(null);
         return true;
     };
 
-    const executeTrade = useCallback(async (stake: number, prediction: number): Promise<{ isWin: boolean; profit: number }> => {
-        // Real API Implementation with Subscription
-        try {
-            const symbol = stateRef.current.selectedMarket;
-            const contractType = 'DIGITMATCH';
+    const executeTrade = async (type: 'OVER' | 'UNDER', prediction: number) => {
+        // Pause analysis
+        setStats(prev => ({ ...prev, status: 'idle' })); // Temporarily idle while trading
 
-            const proposal = await api_base.api.send({
+        const c = configRef.current;
+        const stake = c.initialStake;
+
+        addLog(`Executing ${type} ${prediction} | Stake: ${stake}`);
+
+        try {
+            // 1. Buy
+            const contractType = 'DIGIT' + type; // DIGITOVER / DIGITUNDER
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const proposal = (await api_base.api.send({
                 proposal: 1,
                 amount: stake,
                 basis: 'stake',
@@ -194,532 +231,436 @@ const SpeedBot = observer(() => {
                 currency: client?.currency || 'USD',
                 duration: 1,
                 duration_unit: 't',
-                symbol: symbol,
+                symbol: c.selectedMarket,
                 barrier: String(prediction),
-            });
+            })) as any;
 
-            if (proposal.error) {
-                throw new Error(proposal.error.message);
-            }
+            if (proposal.error) throw new Error(proposal.error.message);
 
-            const buy = await api_base.api.send({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const buy = (await api_base.api.send({
                 buy: proposal.proposal.id,
                 price: proposal.proposal.ask_price,
-            });
+            })) as any;
 
-            if (buy.error) {
-                throw new Error(buy.error.message);
-            }
-
+            if (buy.error) throw new Error(buy.error.message);
             const contractId = buy.buy.contract_id;
 
-            // Subscribe to contract updates for faster result
-            return new Promise((resolve, reject) => {
-                api_base.api.send({
-                    proposal_open_contract: 1,
-                    contract_id: contractId,
-                    subscribe: 1
-                });
+            // 2. Wait for result
+            // Polling for simplicity & reliability
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            let result: any = null;
+            for (let i = 0; i < 30; i++) {
+                // 3 seconds max for 1-tick trade
+                await new Promise(r => setTimeout(r, 100));
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const s = (await api_base.api.send({ proposal_open_contract: 1, contract_id: contractId })) as any;
+                if (s.proposal_open_contract && s.proposal_open_contract.is_sold) {
+                    result = s.proposal_open_contract;
+                    break;
+                }
+            }
 
-                // We need a way to listen to this specific subscription. 
-                // Since api_base might not expose a direct listener for this specific req, 
-                // we can rely on the general onMessage if possible, OR just poll faster if subscription is complex to wire up here without a proper listener ID.
-                // However, MTool uses direct socket. Here we use api_base.
-                // api_base handles subscriptions internally but finding the specific message requires a listener.
+            if (!result) throw new Error('Trade timed out');
 
-                // BACKUP: Optimized polling (every 100ms)
-                let retries = 50;
-                const poll = async () => {
-                    if (retries <= 0) {
-                        reject(new Error("Trade timeout"));
-                        return;
-                    }
+            const profit = Number(result.profit);
+            const isWin = profit >= 0;
 
-                    try {
-                        const status = await api_base.api.send({ proposal_open_contract: 1, contract_id: contractId });
-                        if (status.proposal_open_contract && status.proposal_open_contract.is_sold) {
-                            const contract = status.proposal_open_contract;
-                            const resultProfit = Number(contract.profit);
-                            const isWin = resultProfit >= 0;
-                            resolve({ isWin, profit: resultProfit });
-                        } else {
-                            retries--;
-                            setTimeout(poll, 100);
-                        }
-                    } catch (e) {
-                        reject(e);
-                    }
+            // 3. Update Stats
+            setStats(prev => {
+                const newProfit = prev.totalProfit + profit;
+                return {
+                    ...prev,
+                    totalProfit: newProfit,
+                    tradeCount: prev.tradeCount + 1,
+                    wins: isWin ? prev.wins + 1 : prev.wins,
+                    losses: isWin ? prev.losses : prev.losses + 1,
+                    consecutiveLosses: isWin ? 0 : prev.consecutiveLosses + 1,
+                    lastTradeResult: isWin ? 'win' : 'loss',
+                    // If Loss -> Cooldown
+                    status: isWin ? 'running' : 'cooldown',
+                    cooldownRemaining: isWin ? 0 : c.cooldownTicks,
                 };
-                poll();
             });
 
-        } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('Trade Execution Error', e);
-            throw e;
+            addLog(`Trade Finished: ${isWin ? 'WIN' : 'LOSS'} (${profit})`);
+            api_base.api.send({ balance: 1, subscribe: 0 }); // Force balance update
+        } catch (err: any) {
+            console.error('Execution error', err);
+            addLog(`Error: ${err.message}`);
+            setStats(prev => ({ ...prev, status: 'running' })); // Resume if error
         }
-    }, [client?.currency]);
+    };
 
-    const startStrategy = () => {
-        if (!validateInputs()) return;
-        if (!client?.is_logged_in) {
-            setError('Please log in to trade.');
+    // Use ref to keep executeTrade stable if needed, though we call it directly.
+    const executeTradeRef = useRef(executeTrade);
+    useEffect(() => {
+        executeTradeRef.current = executeTrade;
+    }, [executeTrade]);
+
+    // --- Core Strategy Evaluation ---
+    // Defined inside component but uses refs for current state, so it's fresh enough.
+    // Wrap in ref to avoid dependency cycle in effect.
+    const evaluateStrategy = async (currentTick: TickData) => {
+        const s = statsRef.current;
+        const c = configRef.current;
+        const t = ticksRef.current; // Includes currentTick (added in Effect)
+
+        if (s.status !== 'running') {
+            if (s.status === 'cooldown') {
+                if (s.cooldownRemaining > 0) {
+                    setStats(prev => ({ ...prev, cooldownRemaining: prev.cooldownRemaining - 1 }));
+                } else {
+                    setStats(prev => ({ ...prev, status: 'running' }));
+                    addLog('Cooldown finished. Resuming analysis.');
+                }
+            }
             return;
         }
 
-        // Initialize execution state
-        setExecutionState({
-            isRunning: true,
-            currentStake: strategy.initialStake,
-            totalProfit: 0,
-            lastTrade: null,
-        });
+        // 1. Global Risk Checks
+        if (s.tradeCount >= c.maxTrades) {
+            stopStrategy('Max trades reached.');
+            return;
+        }
+        if (s.totalProfit <= -c.stopLoss) {
+            stopStrategy('Stop Loss triggered.');
+            return;
+        }
+        if (s.totalProfit >= c.takeProfit) {
+            stopStrategy('Take Profit reached.');
+            return;
+        }
 
-        setIsStrategyRunning(true);
-    };
+        // 2. Bias Analysis (Permission)
+        // Groups: Low (0,1), High (8,9)
+        if (t.length < 1000) return; // Need history
 
-    const stopStrategy = () => {
-        setIsStrategyRunning(false);
-        setExecutionState(prev => ({
-            ...prev,
-            isRunning: false
-        }));
-    };
+        const last1000 = t.slice(-1000);
+        const last300 = t.slice(-300);
 
-    // Effect to handle strategy execution
-    useEffect(() => {
-        if (!executionState.isRunning) return;
+        const countDigits = (arr: TickData[], group: number[]) => arr.filter(x => group.includes(x.digit)).length;
 
-        let isMounted = true;
+        const low1000 = countDigits(last1000, [0, 1]);
+        const low300 = countDigits(last300, [0, 1]);
 
-        const runStrategy = async () => {
-            let currentStake = executionState.currentStake;
-            let currentPrediction = strategy.predictionBeforeLoss;
-            let consecutiveLosses = 0;
-            let tradeCount = 0;
-            const maxTrades = 1000; // Increased limit
+        const high1000 = countDigits(last1000, [8, 9]);
+        const high300 = countDigits(last300, [8, 9]);
 
-            while (isMounted && executionState.isRunning &&
-                executionState.totalProfit < strategy.takeProfit &&
-                executionState.totalProfit > strategy.stopLoss &&
-                tradeCount < maxTrades) {
+        const allowOver1 = low1000 < 200 && low300 < 60; // Both agree low digits are scarce
+        const allowUnder8 = high1000 < 200 && high300 < 60; // Both agree high digits are scarce
 
-                tradeCount++;
+        // 3. Pressure Engine (Hard Safety)
+        // "Pressure > 1.8 -> BLOCK"
+        const lowPressure = calculatePressure([0, 1], t);
+        const highPressure = calculatePressure([8, 9], t);
 
-                try {
-                    // Execute Real Trade
-                    const { isWin, profit } = await executeTrade(currentStake, currentPrediction);
+        const safeOver1 = lowPressure <= 1.8;
+        const safeUnder8 = highPressure <= 1.5; // Stricter threshold for Under 8 as per specs
 
-                    if (!isMounted) return;
+        // 4. Micro Timing
+        const isCal = isCalmZone(t);
 
-                    // Update execution state
-                    const newTotalProfit = executionState.totalProfit + profit;
-                    // Logic from user code:
-                    // Win -> Reset Stake
-                    // Loss -> Martingale
-                    const newStake = isWin ? strategy.initialStake : currentStake * strategy.martingaleLevel;
+        // 5. Decision
+        let tradeType: 'OVER' | 'UNDER' | null = null;
+        let prediction = 0;
 
-                    setExecutionState(prev => ({
-                        ...prev,
-                        totalProfit: newTotalProfit,
-                        currentStake: Number(newStake.toFixed(2)),
-                        lastTrade: isWin ? 'win' : 'loss',
-                        isRunning: !(newTotalProfit >= strategy.takeProfit || newTotalProfit <= strategy.stopLoss)
-                    }));
-
-                    // Add to trade history
-                    setTradeHistory(prev => {
-                        const result: 'win' | 'loss' = isWin ? 'win' : 'loss';
-                        return [{
-                            id: Date.now() + tradeCount,
-                            timestamp: new Date(),
-                            stake: currentStake,
-                            prediction: currentPrediction,
-                            result,
-                            profit,
-                        }, ...prev].slice(0, 50); // Keep last 50 trades
-                    });
-
-                    // Client balance update
-                    // Use api_base as client.send is not available
-                    api_base.api.send({ balance: 1, subscribe: 0 });
-
-                    if (isWin) {
-                        currentStake = strategy.initialStake;
-                        currentPrediction = strategy.predictionBeforeLoss;
-                        consecutiveLosses = 0;
-                    } else {
-                        consecutiveLosses++;
-                        currentStake = strategy.initialStake * Math.pow(strategy.martingaleLevel, consecutiveLosses);
-                        currentPrediction = strategy.predictionAfterLoss;
-                    }
-
-                } catch (error) {
-                    // eslint-disable-next-line no-console
-                    console.error('Trade error:', error);
-                    // Add delay before retrying
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+        // "If both allowed: Choose lower pressure direction"
+        if (allowOver1 && safeOver1 && isCal) {
+            if (allowUnder8 && safeUnder8) {
+                // Both allowed. Compare pressure. Lower pressure is safer (less due to snap back).
+                if (lowPressure < highPressure) {
+                    tradeType = 'OVER';
+                    prediction = 1;
+                } else {
+                    tradeType = 'UNDER';
+                    prediction = 8;
                 }
-
-                // Add delay between trades
-                if (isMounted && executionState.isRunning) {
-                    await new Promise(resolve => setTimeout(resolve, 500)); // Fast execution
-                }
+            } else {
+                tradeType = 'OVER';
+                prediction = 1;
             }
+        } else if (allowUnder8 && safeUnder8 && isCal) {
+            tradeType = 'UNDER';
+            prediction = 8;
+        }
 
-            if (isMounted) {
-                setIsStrategyRunning(false);
+        if (tradeType) {
+            // Execute
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const _tick = currentTick; // Use to suppress unused warning if logic didn't use it directly
+            await executeTradeRef.current(tradeType, prediction);
+        }
+    };
+
+    // Store strategy in ref to use in effect without deps
+    const evaluateStrategyRef = useRef(evaluateStrategy);
+    useEffect(() => {
+        evaluateStrategyRef.current = evaluateStrategy;
+    }, [evaluateStrategy]);
+
+    // --- Data Fetching: Ticks Stream ---
+    useEffect(() => {
+        if (!config.selectedMarket || !api_base.api) return;
+
+        // Unsubscribe previous if any (handled by api_base internal cleanup conceptually, but we explicitly forget)
+        api_base.api.send({ forget_all: 'ticks' });
+
+        const startStream = async () => {
+            // 1. Get History (Last 1000)
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const history = (await api_base.api.send({
+                    ticks_history: config.selectedMarket,
+                    count: 1000,
+                    end: 'latest',
+                    style: 'ticks',
+                    adjust_start_time: 1,
+                })) as any;
+
+                if (history.history && history.history.prices) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const mappedTicks = history.history.prices.map((p: any, idx: number) => ({
+                        epoch: history.history.times[idx],
+                        quote: Number(p),
+                        digit: getLastDigit(Number(p)),
+                    }));
+                    setTicks(mappedTicks);
+                    setCurrentPrice(mappedTicks[mappedTicks.length - 1].quote.toFixed(2));
+                }
+
+                // 2. Subscribe
+                api_base.api.send({ ticks: config.selectedMarket, subscribe: 1 });
+            } catch (err) {
+                console.error('Tick stream error', err);
             }
         };
 
-        runStrategy();
+        startStream();
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const subscription = api_base.api.onMessage().subscribe(({ data }: any) => {
+            if (data.msg_type === 'tick') {
+                const t = data.tick;
+                const newTick = {
+                    epoch: t.epoch,
+                    quote: t.quote,
+                    digit: getLastDigit(t.quote),
+                };
+                setCurrentPrice(t.quote.toFixed(2));
+
+                setTicks(prev => {
+                    const newTicks = [...prev, newTick];
+                    // Keep last 1005 to be safe
+                    if (newTicks.length > 1005) {
+                        return newTicks.slice(newTicks.length - 1005);
+                    }
+                    return newTicks;
+                });
+
+                // TRIGGER STRATEGY HERE
+                if (isRunningRef.current) {
+                    evaluateStrategyRef.current(newTick);
+                }
+            }
+        });
 
         return () => {
-            isMounted = false;
+            subscription.unsubscribe();
+            api_base.api.send({ forget_all: 'ticks' });
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [executionState.isRunning]); // Strategy dependencies in ref
+    }, [config.selectedMarket]);
 
-    const resetStrategy = () => {
-        setExecutionState({
-            isRunning: false,
-            currentStake: strategy.initialStake,
-            totalProfit: 0,
-            lastTrade: null,
-        });
-        setTradeHistory([]);
+    // --- Actions ---
+
+    const startStrategy = () => {
+        if (!client?.is_logged_in) {
+            setError('Please log in.');
+            return;
+        }
         setError(null);
+        setLogs([]);
+        setStats(prev => ({
+            ...prev,
+            totalProfit: 0,
+            tradeCount: 0,
+            wins: 0,
+            losses: 0,
+            consecutiveLosses: 0,
+            status: 'running',
+            lastTradeResult: null,
+        }));
+        isRunningRef.current = true;
+        addLog('Strategy Started. Analysis Active.');
     };
 
-    // Handle market change
-    const handleMarketChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedValue = e.target.value;
-        const selectedMarket = markets.find(market => market.value === selectedValue);
-
-        if (selectedMarket) {
-            setStrategy(prev => ({
-                ...prev,
-                selectedMarket: selectedMarket.value,
-                marketSymbol: selectedMarket.symbol,
-                volatility: selectedMarket.volatility
-            }));
-        }
+    const stopStrategy = (reason = 'User Stop') => {
+        setStats(prev => ({ ...prev, status: 'stopped' }));
+        isRunningRef.current = false;
+        addLog(`Strategy Stopped: ${reason}`);
     };
 
-    const getMarketColor = () => {
-        switch (strategy.selectedMarket) {
-            case '1HZ10V': return '#4caf50';
-            case '1HZ25V': return '#8bc34a';
-            case '1HZ50V': return '#2196f3';
-            case '1HZ75V': return '#ff9800';
-            case '1HZ100V': return '#f44336';
-            default: return '#2196f3';
-        }
+    // --- Inputs Handling ---
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateConfig = (key: keyof StrategyConfig, val: any) => {
+        setConfig(prev => ({ ...prev, [key]: val }));
     };
 
-    // Provide safe access
+    // --- Helper for Digits Display (MTool Style) ---
+    const lastDigits = ticks.slice(-15).reverse();
+
     if (!client) return <Loading />;
 
     return (
-        <div className='speedbot-container' style={{
-            '--primary-color': '#2196f3',
-            '--profit-color': '#4caf50',
-            '--loss-color': '#f44336',
-            '--market-color': getMarketColor()
-        } as React.CSSProperties}>
-            {!client.is_logged_in && (
-                <div className="auth-warning-banner" style={{
-                    background: '#ff4444',
-                    color: 'white',
-                    padding: '10px',
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                    marginBottom: '10px',
-                    borderRadius: '4px'
-                }}>
-                    Unauthorised Login - Please Log In to Trade
+        <div className='speedbot-container'>
+            {/* --- MTool-Style Header: Market & Ticks --- */}
+            <div className='speedbot-market-header'>
+                <div className='market-info'>
+                    <div className='selector-wrap'>
+                        <SelectNative
+                            label='Market'
+                            list_items={markets}
+                            value={config.selectedMarket}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onChange={(e: any) => updateConfig('selectedMarket', e.target.value)}
+                            disabled={stats.status !== 'idle' && stats.status !== 'stopped'}
+                        />
+                    </div>
+                    <div className='price-display'>
+                        <span className='price-label'>Current Price</span>
+                        <span className='price-value'>{currentPrice}</span>
+                    </div>
                 </div>
-            )}
 
-            <div className='speedbot-header'>
-                <Text as='h1' weight='bold' className='speedbot-title'>
-                    <Icon icon='IcChart' className='speedbot-title-icon' />
-                    <Localize i18n_default_text='SpeedBot Pro' />
-                </Text>
-
-                <div className='speedbot-market-selector'>
-                    <Text as='p' className='speedbot-label' size='s'>
-                        <Localize i18n_default_text='Market Volatility' />
+                <div className='ticks-visual'>
+                    <Text size='xs' className='ticks-label'>
+                        Latest Ticks
                     </Text>
-                    <SelectNative
-                        data-testid='market-selector'
-                        className='speedbot-select'
-                        value={strategy.selectedMarket}
-                        list_items={markets.length > 0 ? markets.map(market => ({
-                            text: market.text,
-                            value: market.value
-                        })) : [{ text: 'Loading Markets...', value: '' }]}
-                        onChange={handleMarketChange}
-                        disabled={isStrategyRunning || markets.length === 0}
-                    />
+                    <div className='ticks-row'>
+                        {lastDigits.map(t => (
+                            <div
+                                key={t.epoch}
+                                className={`tick-ball tick-${t.digit % 2 === 0 ? 'even' : 'odd'} digit-${t.digit}`}
+                            >
+                                {t.digit}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {error && (
-                <div className='speedbot-error'>
-                    <Icon icon='IcClose' />
-                    <Text as='p' size='xs' color='loss-danger'>
-                        {error}
-                    </Text>
-                </div>
-            )}
-
-            <div className='speedbot-controls-card'>
-                <div className='speedbot-section'>
-                    <div className='speedbot-section-header'>
-                        <Icon icon='IcBotBuilder' className='speedbot-section-icon' />
-                        <Text as='h3' weight='bold' className='speedbot-section-title'>
-                            <Localize i18n_default_text='Strategy Settings' />
-                        </Text>
+            {/* --- Main Content Grid --- */}
+            <div className='speedbot-grid'>
+                {/* --- Left: Configuration --- */}
+                <div className='config-panel card'>
+                    <div className='card-header'>
+                        <Icon icon='IcBotBuilder' />
+                        <Text weight='bold'>Probability System Config</Text>
                     </div>
 
-                    <div className='speedbot-controls-grid'>
-                        <div className='speedbot-control'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Prediction Before Loss' />
-                            </Text>
-                            <Input
-                                type='number'
-                                value={strategy.predictionBeforeLoss}
-                                disabled={isStrategyRunning}
-                                onChange={(e) => handleInputChange('predictionBeforeLoss', e.target.value)}
-                                min='0'
-                                max='9'
-                            />
-                        </div>
-
-                        <div className='speedbot-control'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Prediction After Loss' />
-                            </Text>
-                            <Input
-                                type='number'
-                                value={strategy.predictionAfterLoss}
-                                disabled={isStrategyRunning}
-                                onChange={(e) => handleInputChange('predictionAfterLoss', e.target.value)}
-                                min='0'
-                                max='9'
-                            />
-                        </div>
-
-                        <div className='speedbot-control'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Initial Stake (USD)' />
-                            </Text>
-                            <Input
-                                type='number'
-                                value={strategy.initialStake}
-                                disabled={isStrategyRunning}
-                                onChange={(e) => handleInputChange('initialStake', e.target.value)}
-                                min='0.35'
-                                step='0.1'
-                            />
-                        </div>
-
-                        <div className='speedbot-control'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Next Stake (USD)' />
-                            </Text>
-                            <Input
-                                type='number'
-                                value={strategy.nextStake}
-                                disabled={isStrategyRunning}
-                                onChange={(e) => handleInputChange('nextStake', e.target.value)}
-                                min='0.35'
-                                step='0.1'
-                            />
-                        </div>
-
-                        <div className='speedbot-control'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Take Profit (USD)' />
-                            </Text>
-                            <Input
-                                type='number'
-                                value={strategy.takeProfit}
-                                disabled={isStrategyRunning}
-                                onChange={(e) => handleInputChange('takeProfit', e.target.value)}
-                                min='1'
-                            />
-                        </div>
-
-                        <div className='speedbot-control'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Stop Loss (USD)' />
-                            </Text>
-                            <Input
-                                type='number'
-                                value={strategy.stopLoss}
-                                disabled={isStrategyRunning}
-                                onChange={(e) => handleInputChange('stopLoss', e.target.value)}
-                                max='-1'
-                            />
-                        </div>
-
-                        <div className='speedbot-control'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Martingale Level' />
-                            </Text>
-                            <Input
-                                type='number'
-                                value={strategy.martingaleLevel}
-                                disabled={isStrategyRunning}
-                                onChange={(e) => handleInputChange('martingaleLevel', e.target.value)}
-                                min='1'
-                                step='0.1'
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className='speedbot-section'>
-                    <div className='speedbot-section-header'>
-                        <Icon icon='IcDashboard' className='speedbot-section-icon' />
-                        <Text as='h3' weight='bold' className='speedbot-section-title'>
-                            <Localize i18n_default_text='Trading Status' />
-                        </Text>
+                    <div className='inputs-grid'>
+                        <Input
+                            label='Initial Stake (USD)'
+                            type='number'
+                            value={config.initialStake}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onChange={(e: any) => updateConfig('initialStake', parseFloat(e.target.value))}
+                            disabled={stats.status !== 'idle' && stats.status !== 'stopped'}
+                        />
+                        <Input
+                            label='Take Profit (USD)'
+                            type='number'
+                            value={config.takeProfit}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onChange={(e: any) => updateConfig('takeProfit', parseFloat(e.target.value))}
+                            disabled={stats.status !== 'idle' && stats.status !== 'stopped'}
+                        />
+                        <Input
+                            label='Stop Loss (USD)'
+                            type='number'
+                            value={config.stopLoss}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onChange={(e: any) => updateConfig('stopLoss', parseFloat(e.target.value))}
+                            disabled={stats.status !== 'idle' && stats.status !== 'stopped'}
+                        />
+                        <Input
+                            label='Max Trades'
+                            type='number'
+                            value={config.maxTrades}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onChange={(e: any) => updateConfig('maxTrades', parseFloat(e.target.value))}
+                            disabled={stats.status !== 'idle' && stats.status !== 'stopped'}
+                        />
+                        <Input
+                            label='Cooldown (Ticks)'
+                            type='number'
+                            value={config.cooldownTicks}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onChange={(e: any) => updateConfig('cooldownTicks', parseFloat(e.target.value))}
+                            disabled={stats.status !== 'idle' && stats.status !== 'stopped'}
+                        />
                     </div>
 
-                    <div className='speedbot-status'>
-                        <div className='speedbot-status-item'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Status' />
-                            </Text>
-                            <Text as='p' weight='bold' color={executionState.isRunning ? 'profit-success' : 'loss-danger'}>
-                                {executionState.isRunning ? 'RUNNING' : 'STOPPED'}
-                            </Text>
-                        </div>
-
-                        <div className='speedbot-status-item'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Current Stake' />
-                            </Text>
-                            <Text as='p' weight='bold' color='profit-success' size='l'>
-                                {formatMoney(client.currency, executionState.currentStake, true)}
-                            </Text>
-                        </div>
-
-                        <div className='speedbot-status-item'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Total Profit/Loss' />
-                            </Text>
-                            <Text
-                                as='p'
-                                weight='bold'
-                                color={executionState.totalProfit >= 0 ? 'profit-success' : 'loss-danger'}
-                            >
-                                {formatMoney(client.currency, Math.abs(executionState.totalProfit), true, 2)}
-                                {executionState.totalProfit >= 0 ? ' PROFIT' : ' LOSS'}
-                            </Text>
-                        </div>
-
-                        <div className='speedbot-status-item'>
-                            <Text as='p' className='speedbot-label'>
-                                <Localize i18n_default_text='Last Trade' />
-                            </Text>
-                            <Text
-                                as='p'
-                                weight='bold'
-                                color={executionState.lastTrade === 'win' ? 'profit-success' : 'loss-danger'}
-                            >
-                                {executionState.lastTrade ? (
-                                    <span className={executionState.lastTrade === 'win' ? 'text-profit' : 'text-loss'}>
-                                        {executionState.lastTrade.toUpperCase()}
-                                    </span>
-                                ) : '-'}
-                            </Text>
-                        </div>
-                    </div>
-
-                    <div className='speedbot-actions'>
-                        <div className='speedbot-actions-buttons'>
-                            {!isStrategyRunning ? (
-                                <Button
-                                    className='speedbot-action-btn run'
-                                    onClick={startStrategy}
-                                    disabled={isLoading || executionState.isRunning}
-                                    large
-                                >
-                                    <Icon icon='IcPlay' className='btn-icon' />
-                                    <Localize i18n_default_text='Run Strategy' />
-                                </Button>
-                            ) : (
-                                <Button
-                                    className='speedbot-action-btn stop'
-                                    onClick={stopStrategy}
-                                    disabled={!executionState.isRunning || isLoading}
-                                    large
-                                >
-                                    <Icon icon='IcCross' className='btn-icon' />
-                                    <Localize i18n_default_text='Stop' />
-                                </Button>
-                            )}
-                            <Button
-                                className='speedbot-action-btn reset'
-                                onClick={resetStrategy}
-                                disabled={isStrategyRunning || isLoading}
-                                large
-                                secondary
-                            >
-                                <Icon icon='IcRedo' className='btn-icon' />
-                                <Localize i18n_default_text='Reset' />
+                    <div className='control-buttons'>
+                        {stats.status === 'idle' || stats.status === 'stopped' ? (
+                            <Button className='btn-run' onClick={startStrategy} large>
+                                <Icon icon='IcPlay' /> Run System
                             </Button>
-                        </div>
-                        {!client.is_logged_in && (
-                            <Text as='p' size='xs' color='loss-danger' className='login-notice'>
-                                <Localize i18n_default_text='Please log in to start trading' />
-                            </Text>
+                        ) : (
+                            <Button className='btn-stop' onClick={() => stopStrategy('User Click')} large>
+                                <Icon icon='IcCross' /> Stop
+                            </Button>
                         )}
                     </div>
+                    {error && <div className='error-msg'>{error}</div>}
                 </div>
 
-                {tradeHistory.length > 0 && (
-                    <div className='speedbot-section'>
-                        <div className='speedbot-section-header'>
-                            <Icon icon='IcHistory' className='speedbot-section-icon' />
-                            <Text as='h3' weight='bold' className='speedbot-section-title'>
-                                <Localize i18n_default_text='Trade History' />
-                            </Text>
+                {/* --- Right: Stats & Logs --- */}
+                <div className='stats-panel card'>
+                    <div className='card-header'>
+                        <Icon icon='IcDashboard' />
+                        <Text weight='bold'>Live Statistics</Text>
+                    </div>
+
+                    <div className='stats-grid'>
+                        <div className='stat-item'>
+                            <span className='label'>Total Profit</span>
+                            <span className={`value ${stats.totalProfit >= 0 ? 'profit' : 'loss'}`}>
+                                {formatMoney('USD', Math.abs(stats.totalProfit), true)}
+                            </span>
                         </div>
-                        <div className='speedbot-trade-history'>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Time</th>
-                                        <th>Stake</th>
-                                        <th>Prediction</th>
-                                        <th>Result</th>
-                                        <th>P/L</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {tradeHistory.map(trade => (
-                                        <tr key={trade.id}>
-                                            <td>{trade.timestamp.toLocaleTimeString()}</td>
-                                            <td>{formatMoney('USD', trade.stake, true)}</td>
-                                            <td>{trade.prediction}</td>
-                                            <td className={`trade-${trade.result}`}>{trade.result.toUpperCase()}</td>
-                                            <td className={trade.profit >= 0 ? 'profit' : 'loss'}>
-                                                {formatMoney('USD', Math.abs(trade.profit), true, 2)}
-                                                {trade.profit >= 0 ? ' ✅' : ' ❌'}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                        <div className='stat-item'>
+                            <span className='label'>Status</span>
+                            <span className='value'>{stats.status.toUpperCase()}</span>
+                        </div>
+                        <div className='stat-item'>
+                            <span className='label'>W/L</span>
+                            <span className='value'>
+                                {stats.wins} / {stats.losses}
+                            </span>
+                        </div>
+                        <div className='stat-item'>
+                            <span className='label'>Trades</span>
+                            <span className='value'>
+                                {stats.tradeCount} / {config.maxTrades}
+                            </span>
                         </div>
                     </div>
-                )}
+
+                    <div className='logs-container'>
+                        <Text size='xs' weight='bold' className='logs-title'>
+                            System Logs
+                        </Text>
+                        <div className='logs-scroll'>
+                            {logs.map((log, i) => (
+                                <div key={i} className='log-line'>
+                                    {log}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
