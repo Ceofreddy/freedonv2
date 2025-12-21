@@ -752,15 +752,15 @@ const SpeedBot = observer(() => {
                                 <span className='value'>{metrics.isCalm ? 'CALM (Tradeable)' : 'VOLATILE (Wait)'}</span>
                             </div>
                             <div className='analysis-item'>
-                                <span className='label'>Over 1 Pressure</span>
-                                <span className={`value ${metrics.pressureOver1 <= 1.8 ? 'safe' : 'danger'}`}>
-                                    {metrics.pressureOver1} {metrics.pressureOver1 <= 1.8 ? '(Safe)' : '(High)'}
+                                <span className='label'>Over Pressure</span>
+                                <span className={`value ${metrics.pressureOver1 <= 1.4 ? 'safe' : 'danger'}`}>
+                                    {metrics.pressureOver1} {metrics.pressureOver1 <= 1.4 ? '(Safe)' : '(High)'}
                                 </span>
                             </div>
                             <div className='analysis-item'>
-                                <span className='label'>Under 8 Pressure</span>
-                                <span className={`value ${metrics.pressureUnder8 <= 1.5 ? 'safe' : 'danger'}`}>
-                                    {metrics.pressureUnder8} {metrics.pressureUnder8 <= 1.5 ? '(Safe)' : '(High)'}
+                                <span className='label'>Under Pressure</span>
+                                <span className={`value ${metrics.pressureUnder8 <= 1.2 ? 'safe' : 'danger'}`}>
+                                    {metrics.pressureUnder8} {metrics.pressureUnder8 <= 1.2 ? '(Safe)' : '(High)'}
                                 </span>
                             </div>
                         </div>
