@@ -427,6 +427,51 @@
 
         // --- Stats Panel ---
         .stats-panel {
+            .analysis-card-section {
+                padding-bottom: 0;
+            }
+
+            .analysis-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px;
+                background: rgb(0 0 0 / 20%);
+                border-radius: 8px;
+                margin-bottom: 16px;
+            }
+
+            .analysis-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 6px 0;
+                border-bottom: 1px solid rgb(255 255 255 / 5%);
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                .label {
+                    font-size: 13px;
+                    color: rgb(255 255 255 / 60%);
+                }
+
+                .value {
+                    font-family: 'Space Grotesk', monospace;
+                    font-size: 13px;
+                    font-weight: 600;
+
+                    &.safe {
+                        color: #10b981;
+                    }
+
+                    &.danger {
+                        color: #ef4444;
+                    }
+                }
+            }
+
             .stats-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
