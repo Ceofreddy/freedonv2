@@ -42,6 +42,14 @@ interface RunningStats {
     cooldownRemaining: number;
 }
 
+interface AnalysisMetrics {
+    pressureOver1: number;
+    pressureUnder8: number;
+    isCalm: boolean;
+    biasOver: boolean;
+    biasUnder: boolean;
+}
+
 interface TickData {
     epoch: number;
     quote: number;
@@ -65,6 +73,14 @@ const SpeedBot = observer(() => {
     const [ticks, setTicks] = useState<TickData[]>([]); // Keep last 1000+ ticks
     const [currentPrice, setCurrentPrice] = useState<string>('Loading...');
     const [pipSize, setPipSize] = useState<number>(2);
+
+    const [metrics, setMetrics] = useState<AnalysisMetrics>({
+        pressureOver1: 0,
+        pressureUnder8: 0,
+        isCalm: false,
+        biasOver: false,
+        biasUnder: false,
+    });
 
     // --- State: Config & Execution ---
     const [config, setConfig] = useState<StrategyConfig>({
@@ -367,7 +383,16 @@ const SpeedBot = observer(() => {
         // 4. Micro Timing
         const isCal = isCalmZone(t);
 
-        // 5. Decision
+        // 5. Update UI Metrics
+        setMetrics({
+            pressureOver1: Number(lowPressure.toFixed(2)),
+            pressureUnder8: Number(highPressure.toFixed(2)),
+            isCalm: isCal,
+            biasOver: allowOver1,
+            biasUnder: allowUnder8,
+        });
+
+        // 6. Decision
         let tradeType: 'OVER' | 'UNDER' | null = null;
         let prediction = 0;
 
@@ -569,6 +594,13 @@ const SpeedBot = observer(() => {
                     </div>
                 </div>
 
+                <div className='account-balance'>
+                    <span className='bal-label'>Balance:</span>
+                    <span className='bal-value'>
+                        {formatMoney(client?.currency || 'USD', client?.balance || 0, true)}
+                    </span>
+                </div>
+
                 <div className='ticks-visual'>
                     <Text size='xs' className='ticks-label'>
                         Latest Ticks
@@ -693,6 +725,33 @@ const SpeedBot = observer(() => {
 
                 {/* --- Right: Stats & Logs --- */}
                 <div className='stats-panel card'>
+                    {/* --- LIVE ANALYSIS PANEL (INSIDE STATS COLUMN) --- */}
+                    <div className='analysis-card-section'>
+                        <div className='card-header sub-header'>
+                            <Icon icon='IcStats' />
+                            <Text weight='bold'>Live Market Analysis</Text>
+                        </div>
+                        <div className='analysis-grid'>
+                            <div className={`analysis-item ${metrics.isCalm ? 'safe' : 'danger'}`}>
+                                <span className='label'>Market State</span>
+                                <span className='value'>{metrics.isCalm ? 'CALM (Tradeable)' : 'VOLATILE (Wait)'}</span>
+                            </div>
+                            <div className='analysis-item'>
+                                <span className='label'>Over 1 Pressure</span>
+                                <span className={`value ${metrics.pressureOver1 <= 1.8 ? 'safe' : 'danger'}`}>
+                                    {metrics.pressureOver1} {metrics.pressureOver1 <= 1.8 ? '(Safe)' : '(High)'}
+                                </span>
+                            </div>
+                            <div className='analysis-item'>
+                                <span className='label'>Under 8 Pressure</span>
+                                <span className={`value ${metrics.pressureUnder8 <= 1.5 ? 'safe' : 'danger'}`}>
+                                    {metrics.pressureUnder8} {metrics.pressureUnder8 <= 1.5 ? '(Safe)' : '(High)'}
+                                </span>
+                            </div>
+                        </div>
+                        <div className='analysis-divider'></div>
+                    </div>
+
                     <div className='card-header'>
                         <Icon icon='IcDashboard' />
                         <Text weight='bold'>Live Statistics</Text>
