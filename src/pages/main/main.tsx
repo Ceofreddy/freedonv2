@@ -609,6 +609,17 @@ const AppWrapper = observer(() => {
                                                         >
                                                             The ANEX -ENHANCED TRADING AI
                                                         </h3>
+                                                        <p
+                                                            style={{
+                                                                color: '#ccc',
+                                                                fontSize: '0.9rem',
+                                                                marginTop: '8px',
+                                                                lineHeight: '1.4',
+                                                            }}
+                                                        >
+                                                            Ready to buy ANEX – Enhanced Trading AI. <br />
+                                                            Get full access for only $1,150 or KSh 148,000
+                                                        </p>
                                                         <div
                                                             className='bot-tags'
                                                             style={{ display: 'flex', gap: '8px', marginTop: '8px' }}
@@ -681,7 +692,7 @@ const AppWrapper = observer(() => {
                                                             '0 4px 15px rgba(212, 175, 55, 0.3)';
                                                     }}
                                                 >
-                                                    Get Access
+                                                    Buy Now
                                                 </button>
                                             </div>
                                         </div>
