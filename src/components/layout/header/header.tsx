@@ -86,7 +86,7 @@ const AppHeader = observer(() => {
                         primary
                         className='signup-button'
                         onClick={() => {
-                            window.open('https://track.deriv.com/_vgGqj-CGwUWNhxmBqQyZL2Nd7ZgqdRLk/1/', '_blank');
+                            window.open('https://deriv.partners/rx?ca=339550df28492e&utm_campaign=dynamicworks&utm_medium=affiliate&utm_source=CU16814', '_blank');
                         }}
                     >
                         <Localize i18n_default_text='Sign up' />
