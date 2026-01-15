@@ -745,6 +745,8 @@ const AppWrapper = observer(() => {
                                 </>
                             }
                             id='id-dcircles'
+                            // eslint-disable-next-line react/no-unknown-property
+                            keep_alive={true}
                         >
                             <Suspense fallback={<ChunkLoader message={localize('Please wait, loading Dcircles...')} />}>
                                 <div style={fullPanelStyle}>

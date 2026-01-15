@@ -9,6 +9,7 @@ declare module 'react' {
     interface HTMLAttributes<T> extends React.AriaAttributes, React.DOMAttributes<T> {
         label?: React.ReactNode;
         hash?: string;
+        keep_alive?: boolean;
     }
 }
 
@@ -222,10 +223,24 @@ const Tabs = ({
             >
                 {React.Children.map(children, (child, index) => {
                     if (!child) return null;
-                    if (index !== active_tab_index) {
+                    const isActive = index === active_tab_index;
+                    const keepAlive = child.props.keep_alive;
+
+                    if (!isActive && !keepAlive) {
                         return undefined;
                     }
-                    return child.props.children;
+
+                    return (
+                        <div
+                            key={index}
+                            style={{
+                                display: isActive ? 'block' : 'none',
+                                height: '100%',
+                            }}
+                        >
+                            {child.props.children}
+                        </div>
+                    );
                 })}
             </div>
         </div>
