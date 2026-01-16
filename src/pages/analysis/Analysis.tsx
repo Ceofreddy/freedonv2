@@ -15,7 +15,17 @@ const Analysis: React.FC = () => {
     }, []);
 
     return (
-        <div className={styles.analysisContainer} style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
+        <div
+            className={styles.analysisContainer}
+            style={{
+                height: '100%',
+                width: '100%',
+                overflowY: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                paddingBottom: '120px',
+                boxSizing: 'border-box',
+            }}
+        >
             <iframe
                 src={url}
                 title='Dcircles Analysis'
@@ -23,6 +33,7 @@ const Analysis: React.FC = () => {
                     width: '100%',
                     height: '100%',
                     border: 'none',
+                    display: 'block',
                 }}
                 allowFullScreen
             />
