@@ -304,24 +304,6 @@ const TelegramIcon = () => (
     </svg>
 );
 
-const PremiumBadgeIcon = () => (
-    <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
-        <defs>
-            <linearGradient id='gradPremium' x1='0%' y1='0%' x2='100%' y2='100%'>
-                <stop offset='0%' stopColor='#FFD700' />
-                <stop offset='100%' stopColor='#FDB931' />
-            </linearGradient>
-        </defs>
-        <path
-            d='M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z'
-            fill='url(#gradPremium)'
-            stroke='#B8860B'
-            strokeWidth='1'
-        />
-        <circle cx='12' cy='12' r='3' fill='rgba(255,255,255,0.2)' />
-    </svg>
-);
-
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
     const { dashboard, load_modal, run_panel, summary_card } = useStore();
@@ -372,6 +354,8 @@ const AppWrapper = observer(() => {
                 'ENHANCED AUTO C4 VOLT 🇬🇧 3 🇬🇧 AI PREMIUM 🤖   (3) PASS_ Ac4@Volt (1).xml',
                 'EXPERT TRADER BOT NV  (1).xml',
                 'WALLSTREET_AUTO_C4_PRO_2025 2.0.xml',
+                'ODD_ AUTO BOT 💹V3.0.xml',
+                'EVEN AUTO BOT💹 V2.0.xml',
             ];
             const botPromises = botFiles.map(async file => {
                 try {
@@ -537,165 +521,6 @@ const AppWrapper = observer(() => {
                                                 </button>
                                             </div>
                                         ))}
-                                    </div>
-                                    <div
-                                        className='premium-bots-section'
-                                        style={{ marginBottom: '2rem', marginTop: '2rem' }}
-                                    >
-                                        <h3
-                                            style={{
-                                                color: '#D4AF37',
-                                                marginBottom: '1rem',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.5rem',
-                                                fontSize: '1.2rem',
-                                                fontWeight: '600',
-                                                padding: '0 1rem',
-                                            }}
-                                        >
-                                            <PremiumBadgeIcon />
-                                            Premium Bots
-                                        </h3>
-                                        <div className='free-bots__content'>
-                                            <div
-                                                className='free-bot-item'
-                                                style={{
-                                                    border: '1px solid rgba(212, 175, 55, 0.4)',
-                                                    background: 'linear-gradient(135deg, #111 0%, #222 100%)',
-                                                    boxShadow: '0 8px 32px 0 rgba(212, 175, 55, 0.2)',
-                                                    borderRadius: '16px',
-                                                    position: 'relative',
-                                                    overflow: 'hidden',
-                                                }}
-                                            >
-                                                {/* Glassmorphism overlay */}
-                                                <div
-                                                    style={{
-                                                        position: 'absolute',
-                                                        top: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        bottom: 0,
-                                                        background:
-                                                            'radial-gradient(circle at top right, rgba(255, 215, 0, 0.1), transparent 60%)',
-                                                        pointerEvents: 'none',
-                                                    }}
-                                                />
-                                                <div
-                                                    className='gradient-border'
-                                                    style={{
-                                                        background: 'linear-gradient(90deg, #D4AF37, #FDB931, #D4AF37)',
-                                                        height: '3px',
-                                                    }}
-                                                />
-                                                <div className='bot-info' style={{ position: 'relative', zIndex: 1 }}>
-                                                    <div className='bot-icon-container'>
-                                                        <PremiumBadgeIcon />
-                                                    </div>
-                                                    <div className='bot-details'>
-                                                        <h3
-                                                            className='bot-title'
-                                                            style={{
-                                                                background:
-                                                                    'linear-gradient(to right, #D4AF37, #FDB931)',
-                                                                WebkitBackgroundClip: 'text',
-                                                                WebkitTextFillColor: 'transparent',
-                                                                fontWeight: '800',
-                                                                fontSize: '1.1rem',
-                                                                letterSpacing: '0.5px',
-                                                                textTransform: 'uppercase',
-                                                            }}
-                                                        >
-                                                            The ANEX -ENHANCED TRADING AI
-                                                        </h3>
-                                                        <p
-                                                            style={{
-                                                                color: '#ccc',
-                                                                fontSize: '0.9rem',
-                                                                marginTop: '8px',
-                                                                lineHeight: '1.4',
-                                                            }}
-                                                        >
-                                                            Ready to buy ANEX – Enhanced Trading AI. <br />
-                                                            Get full access for only $1,150 or KSh 148,000
-                                                        </p>
-                                                        <div
-                                                            className='bot-tags'
-                                                            style={{ display: 'flex', gap: '8px', marginTop: '8px' }}
-                                                        >
-                                                            <span
-                                                                style={{
-                                                                    background:
-                                                                        'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)',
-                                                                    color: '#000',
-                                                                    padding: '4px 10px',
-                                                                    borderRadius: '20px',
-                                                                    fontSize: '10px',
-                                                                    fontWeight: '800',
-                                                                    letterSpacing: '0.5px',
-                                                                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                                                                }}
-                                                            >
-                                                                PREMIUM
-                                                            </span>
-                                                            <span
-                                                                style={{
-                                                                    background: 'rgba(212, 175, 55, 0.1)',
-                                                                    color: '#D4AF37',
-                                                                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                                                                    padding: '4px 10px',
-                                                                    borderRadius: '20px',
-                                                                    fontSize: '10px',
-                                                                    fontWeight: '600',
-                                                                }}
-                                                            >
-                                                                AI ENHANCED
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <button
-                                                    onClick={() => {
-                                                        const message =
-                                                            'I want the bot named .. The ANEX -ENHANCED TRADING AI';
-                                                        window.open(
-                                                            `https://wa.me/254793632071?text=${encodeURIComponent(message)}`,
-                                                            '_blank'
-                                                        );
-                                                    }}
-                                                    className='load-bot-button'
-                                                    style={{
-                                                        background: 'linear-gradient(90deg, #D4AF37, #FDB931)',
-                                                        color: '#000',
-                                                        fontWeight: '800',
-                                                        border: 'none',
-                                                        borderRadius: '8px',
-                                                        padding: '12px 24px',
-                                                        boxShadow: '0 4px 15px rgba(212, 175, 55, 0.3)',
-                                                        textTransform: 'uppercase',
-                                                        letterSpacing: '1px',
-                                                        fontSize: '12px',
-                                                        transition: 'transform 0.2s, box-shadow 0.2s',
-                                                        cursor: 'pointer',
-                                                        width: '100%',
-                                                        marginTop: '1rem',
-                                                    }}
-                                                    onMouseOver={e => {
-                                                        e.currentTarget.style.transform = 'translateY(-2px)';
-                                                        e.currentTarget.style.boxShadow =
-                                                            '0 6px 20px rgba(212, 175, 55, 0.5)';
-                                                    }}
-                                                    onMouseOut={e => {
-                                                        e.currentTarget.style.transform = 'translateY(0)';
-                                                        e.currentTarget.style.boxShadow =
-                                                            '0 4px 15px rgba(212, 175, 55, 0.3)';
-                                                    }}
-                                                >
-                                                    Buy Now
-                                                </button>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
