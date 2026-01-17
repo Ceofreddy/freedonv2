@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import styles from './analysis.module.css';
 
 const Analysis: React.FC = () => {
-    // Base64 encoded URL: https://nilotetrader.netlify.app/
-    const encodedUrl = 'aHR0cHM6Ly9uaWxvdGV0cmFkZXIubmV0bGlmeS5hcHAv';
+    // Base64 encoded URL: https://analysern.netlify.app/
+    const encodedUrl = 'aHR0cHM6Ly9hbmFseXNlcm4ubmV0bGlmeS5hcHAv';
 
     const url = useMemo(() => {
         try {
