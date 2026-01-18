@@ -471,7 +471,7 @@ const AppWrapper = observer(() => {
                                         <InstagramIcon />
                                     </a>
                                     <a
-                                        href='https://whatsapp.com/channel/0029Vb6FiCw8vd1HDvva2i2K'
+                                        href='https://wa.me/254793632071'
                                         target='_blank'
                                         rel='noopener noreferrer'
                                         className='social-icon whatsapp-icon'
