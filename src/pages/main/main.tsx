@@ -356,6 +356,7 @@ const AppWrapper = observer(() => {
                 'WALLSTREET_AUTO_C4_PRO_2025 2.0.xml',
                 'ODD_ AUTO BOT 💹V3.0.xml',
                 'EVEN AUTO BOT💹 V2.0.xml',
+                '💰📊 Rise _ Fall Apex AI Bot 🤖💹.xml',
             ];
             const botPromises = botFiles.map(async file => {
                 try {
