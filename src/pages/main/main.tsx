@@ -323,7 +323,7 @@ const AppWrapper = observer(() => {
     const { isDesktop } = useDevice();
     const [bots, setBots] = useState([]);
     const [showDisclaimer, setShowDisclaimer] = useState(false);
-    const analysisUrl = 'https://mesoflxadvanced.netlify.app/';
+    const analysisUrl = 'https://bot-analysis-tool-belex.web.app/';
     const strategyUrl = 'https://mesoflixstrategies.netlify.app/';
 
     useEffect(() => {

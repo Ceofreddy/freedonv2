@@ -171,14 +171,13 @@ const AppContent = observer(() => {
                     clearInterval(intervalId);
                     retrieveActiveSymbols();
                 }
-            }, 500); // Make loading faster
+            }, 200); // Optimized polling interval
         }
     };
 
     React.useEffect(() => {
         if (is_api_initialized) {
             init();
-            setIsLoading(true);
             if (!client.is_logged_in) {
                 changeActiveSymbolLoadingState();
             }
