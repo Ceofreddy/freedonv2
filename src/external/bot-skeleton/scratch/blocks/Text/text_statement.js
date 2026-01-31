@@ -51,10 +51,14 @@ window.Blockly.Blocks.text_statement = {
         }
 
         if (event.type === window.Blockly.Events.BLOCK_DRAG && !event.isStart) {
-            const stack_blocks = window.Blockly.getMainWorkspace().getBlockById(event.blockId);
+            const mainWorkspace = window.Blockly.getMainWorkspace
+                ? window.Blockly.getMainWorkspace()
+                : window.Blockly.common.getMainWorkspace();
+
+            const stack_blocks = mainWorkspace.getBlockById(event.blockId);
 
             if (this.required_parent_id && (!surround_parent || surround_parent.id !== this.required_parent_id)) {
-                const original_parent = window.Blockly.getMainWorkspace().getBlockById(this.required_parent_id);
+                const original_parent = mainWorkspace.getBlockById(this.required_parent_id);
 
                 if (original_parent) {
                     const first_block_in_stack = original_parent.getInputTargetBlock('STACK');

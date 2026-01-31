@@ -411,7 +411,10 @@ window.Blockly.Blocks.trade_definition_tradeoptions = {
             },
         } = config();
         setTimeout(() => {
-            window.Blockly.getMainWorkspace().cleanUp(x, y);
+            const mainWorkspace = window.Blockly.getMainWorkspace
+                ? window.Blockly.getMainWorkspace()
+                : window.Blockly.common.getMainWorkspace();
+            mainWorkspace.cleanUp(x, y);
         }, 10);
     },
     updateBarrierInputs(should_use_default_type, should_use_default_values) {

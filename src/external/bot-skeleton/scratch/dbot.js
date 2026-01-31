@@ -96,7 +96,7 @@ class DBot {
         };
 
         return new Promise((resolve, reject) => {
-            // __webpack_public_path__ = public_path; // eslint-disable-line no-global-assign
+            __webpack_public_path__ = public_path; // eslint-disable-line no-global-assign
             ApiHelpers.setInstance(api_helpers_store);
             DBotStore.setInstance(store);
             const window_width = window.innerWidth;
@@ -160,17 +160,30 @@ class DBot {
                 this.workspace.current_strategy_id = window.Blockly.utils.idGenerator.genUid();
 
                 window.Blockly.derivWorkspace.strategy_to_load = main_xml;
-                window.Blockly.getMainWorkspace().strategy_to_load = main_xml;
-                window.Blockly.getMainWorkspace().RTL = isDbotRTL();
+                // eslint-disable-next-line no-underscore-dangle
+                if (window.Blockly.getMainWorkspace) {
+                    window.Blockly.getMainWorkspace().strategy_to_load = main_xml;
+                    window.Blockly.getMainWorkspace().RTL = isDbotRTL();
+                } else if (window.Blockly.common && window.Blockly.common.getMainWorkspace) {
+                    window.Blockly.common.getMainWorkspace().strategy_to_load = main_xml;
+                    window.Blockly.common.getMainWorkspace().RTL = isDbotRTL();
+                }
 
                 let file_name = config().default_file_name;
                 if (recent_files && recent_files.length) {
                     const latest_file = recent_files[0];
                     window.Blockly.derivWorkspace.strategy_to_load = latest_file.xml;
-                    window.Blockly.getMainWorkspace().strategy_to_load = latest_file.xml;
+
+                    if (window.Blockly.getMainWorkspace) {
+                        window.Blockly.getMainWorkspace().strategy_to_load = latest_file.xml;
+                        window.Blockly.getMainWorkspace().current_strategy_id = latest_file.id;
+                    } else if (window.Blockly.common && window.Blockly.common.getMainWorkspace) {
+                        window.Blockly.common.getMainWorkspace().strategy_to_load = latest_file.xml;
+                        window.Blockly.common.getMainWorkspace().current_strategy_id = latest_file.id;
+                    }
+
                     file_name = latest_file.name;
                     window.Blockly.derivWorkspace.current_strategy_id = latest_file.id;
-                    window.Blockly.getMainWorkspace().current_strategy_id = latest_file.id;
                 }
 
                 const event_group = `dbot-load${Date.now()}`;

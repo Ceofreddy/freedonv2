@@ -245,7 +245,10 @@ window.Blockly.Blocks.trade_definition_multiplier = {
                     stake_shadow_block.renderEfficiently();
 
                     this.dispose();
-                    window.Blockly.getMainWorkspace().cleanUp(x, y);
+                    const mainWorkspace = window.Blockly.getMainWorkspace
+                        ? window.Blockly.getMainWorkspace()
+                        : window.Blockly.common.getMainWorkspace();
+                    mainWorkspace.cleanUp(x, y);
                 });
             });
         }
