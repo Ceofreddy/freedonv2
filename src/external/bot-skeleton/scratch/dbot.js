@@ -96,7 +96,7 @@ class DBot {
         };
 
         return new Promise((resolve, reject) => {
-            __webpack_public_path__ = public_path; // eslint-disable-line no-global-assign
+            // __webpack_public_path__ = public_path; // eslint-disable-line no-global-assign
             ApiHelpers.setInstance(api_helpers_store);
             DBotStore.setInstance(store);
             const window_width = window.innerWidth;
