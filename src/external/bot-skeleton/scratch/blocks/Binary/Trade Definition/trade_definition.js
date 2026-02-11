@@ -183,7 +183,9 @@ window.Blockly.JavaScript.javascriptGenerator.forBlock.trade_definition = block 
     const should_restart_on_buy_sell = restart_on_buy_sell_block.getFieldValue('TIME_MACHINE_ENABLED') !== 'FALSE';
 
     const { opposites } = config();
-    const contract_type_list = opposites[trade_type.toUpperCase()].map(opposite => Object.keys(opposite)[0]);
+    const contract_type_list = Object.values(opposites)
+        .flat()
+        .map(opposite => Object.keys(opposite)[0]);
 
     const initialization = window.Blockly.JavaScript.javascriptGenerator.statementToCode(block, 'INITIALIZATION');
     const trade_options_statement = window.Blockly.JavaScript.javascriptGenerator.statementToCode(block, 'SUBMARKET');
